@@ -12,7 +12,7 @@ import { toast } from 'react-toastify'
 
 function SignIn() {
 
-  const { logIn } = useContext(AuthContext)
+  const { logIn, loadingAuth } = useContext(AuthContext)
 
   const validationLogin = yup.object().shape({
     login: yup.string().email("Digite um email válido").required("Digite seu email"),
@@ -40,7 +40,7 @@ function SignIn() {
           <input type='text' name="login" placeholder="Digite seu Login" {...register("login")} ></input>
           <p>{errors.login?.message}</p>
           <input type='password' name="password" {...register("password")} placeholder="Digite sua senha"></input>
-          <button type="submit">Logar</button>
+          <button type="submit">{loadingAuth ? 'Carregando...' : 'Logar' }</button>
         </form>
         <Link to='/register'>Cadastrar</Link>
       </div>

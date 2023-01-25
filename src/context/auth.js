@@ -53,6 +53,7 @@ function AuthProvider({ children }) {
 
                 }).catch((error)=>{
                     console.log(error)
+                    setLoadingAuth(true)
                 })
         
 
@@ -80,6 +81,7 @@ function AuthProvider({ children }) {
         })
         .catch((error)=>{
             console.log(error)
+            setLoadingAuth(false)
         })
 
     }
@@ -95,7 +97,7 @@ function AuthProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={{ signed: !!user, user, loading, registerUser, signOut, logIn }}>
+        <AuthContext.Provider value={{ signed: !!user, user, loading, registerUser, signOut, logIn, loadingAuth }}>
             {children}
         </AuthContext.Provider>
     )

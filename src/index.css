@@ -95,4 +95,40 @@ button{
   border: none;
 }
 
+.sidebar{
+  width: 200px;
+  height: 100vh;
+  background-color: #4C555C;
+  position: fixed;
+}
+
+.avatar{
+  padding: 10px;
+}
+
+.avatar img{
+  width: 100px;
+  height: 90px;
+  padding-left: 10px;
+}
+
+.links{
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+}
+
+.links a{
+  padding: 10px 20px;
+  transition: ease-in-out .4s;
+  font-size: 1.2em;
+}
+
+.links svg{
+  margin-right: 7px;
+}
+
+.links a:hover{
+  background-color: #32383D;
+}
 
