@@ -1,8 +1,8 @@
-import React, { useState, useEffect} from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext} from "react";
+import { Link } from "react-router-dom";
 import logo from '../images/Logo.png'
+import { AuthContext } from '../context/auth'
 
-import { signInWithEmailAndPassword } from "firebase/auth"
 import firebase from '../services/firebaseConnection'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -11,6 +11,8 @@ import { toast } from 'react-toastify'
 
 
 function SignIn() {
+
+  const { logIn } = useContext(AuthContext)
 
   const validationLogin = yup.object().shape({
     login: yup.string().email("Digite um email válido").required("Digite seu email"),
@@ -24,19 +26,6 @@ function SignIn() {
   const handleLogin = (value) =>{
     logIn(value)
   }
-
-  async function logIn(value){
-
-    console.log(value)
-    // if(value.login !== '' && value.password !== ''){
-      // await signInWithEmailAndPassword(firebase.auth(), value.login, value.password)
-      // .then(()=>{
-        // navigate('/dashboard', {replace: true})
-      // })
-    // }
-
-  }
-
 
 
 
