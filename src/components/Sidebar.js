@@ -1,5 +1,5 @@
 import '../index.css'
-import { FiHome, FiUser, FiSettings,FiUsers } from 'react-icons/fi'
+import { FiHome, FiUser, FiSettings, FiUsers, FiLogOut } from 'react-icons/fi'
 import { AuthContext } from '../context/auth'
 import { useContext } from 'react'
 import { Link } from 'react-router-dom'
@@ -8,7 +8,7 @@ import avatar from '../images/avatar.png'
 
 export default function Sidebar() {
 
-    const { user } = useContext(AuthContext)
+    const { user, signOut } = useContext(AuthContext)
 
     return (
         <div className='sidebar'>
@@ -21,14 +21,15 @@ export default function Sidebar() {
                     <FiHome />
                     Chamados
                 </Link>
-                <Link to='/dashboard'>
+                <Link to='/clients'>
                     <FiUsers />
                     Clientes
                 </Link>
-                <Link to='/dashboard'>
+                <Link to='/profile'>
                     <FiSettings />
                     Configurações
                 </Link>
+                <a href=""onClick={signOut}><FiLogOut/>Sair</a>
             </div>
         </div>
     )

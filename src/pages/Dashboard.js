@@ -1,19 +1,22 @@
-import React, { useState, useEffect, useContext} from "react";
-import { Link } from "react-router-dom";
-import { AuthContext } from "../context/auth";
 import Sidebar from "../components/Sidebar";
+import Title from "../components/Title";
+import { FiMessageSquare } from "react-icons/fi";
 
 
 export default function Dashboard(){
 
-  const { signOut } = useContext(AuthContext)
+  
 
   return(
-    <div>
+    <div className="rigth-container">
       <Sidebar/>
-      <h1>PAGINA DASHBOARD</h1>
+      <div className="title">
+        <Title name="Chamados">
+          <FiMessageSquare size={22} />
+        </Title>
+      </div>
 
-      <button onClick={signOut}>Sair</button>
+      
     </div>
   )
 }
