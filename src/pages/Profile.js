@@ -12,16 +12,52 @@ export default function Profile() {
     const { user, storage, setUser } = useContext(AuthContext)
     const [name, setName] = useState(user && user.name)
     const [email, setEmail] = useState(user && user.email)
-    const [avatarUrl, setAvatarUrl] = useState(user && user.avatarUrl)
+    const [avatarUrl, setAvatarUrl] = useState(user && user.avatar)
     const [newAvatar, setNewAvatar] = useState(null)
 
 
     function preview(e){
 
         const image = e.target.files[0]
-        setNewAvatar(image)
-        setAvatarUrl(URL.createObjectURL(image))
 
+        if(image.type === 'image/jpeg' || image.type === 'image/png'){
+            setNewAvatar(image)
+            setAvatarUrl(URL.createObjectURL(image))
+        } else {
+            alert('Envia uma imagem do tipo PNG ou JPEG')
+            setNewAvatar(null)
+            return null
+        }
+    }
+
+    async function upload(){
+        await firebase.storage().ref(`images/${user.id}/${newAvatar.name}`)
+        .put(newAvatar)
+        .then(async()=>{
+            alert('Foto enviada')
+
+            await firebase.storage().ref(`images/${user.id}`)
+            .child(newAvatar.name).getDownloadURL()
+            .then( async (url)=>{
+
+                await firebase.firestore().collection('users')
+                .doc(user.id)
+                .update({
+                    avatar: url,
+                    name: name
+                })
+                .then(()=>{
+                    let userData={
+                        ...user,
+                        avatar: url,
+                        name: name
+                    }
+
+                    setUser(userData)
+                    storage(userData)
+                })
+            })
+        })
     }
 
     async function handleEdit(e){
@@ -37,6 +73,7 @@ export default function Profile() {
                 ...user,
                 name: name
             }
+            upload()
             setUser(userData)
             storage(userData)
         })

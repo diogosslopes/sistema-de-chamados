@@ -68,6 +68,8 @@ function AuthProvider({ children }) {
 
             const userProfile = await firebase.firestore().collection('users').doc(uid).get()
 
+            console.log(userProfile)
+
             let userData = {
                 id: uid,
                 name: userProfile.data().name,

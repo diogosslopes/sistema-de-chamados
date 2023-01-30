@@ -114,6 +114,7 @@ button{
   width: 100px;
   height: 90px;
   padding-left: 10px;
+  border-radius: 50%;
 }
 
 .links{
@@ -201,6 +202,8 @@ button{
 }
 
 .avatar-label img{
+  width: 280px;
+  height: 280px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -279,6 +282,17 @@ button{
 
   .container-profile{
     margin-left: 0;
+  }
+}
+
+@media screen and (max-width: 460px){
+  .sidebar svg{
+    display: none;
+  }
+
+  .links a {
+    font-size: 1em;
+    
   }
 }
 

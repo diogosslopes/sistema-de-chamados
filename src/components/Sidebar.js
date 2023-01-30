@@ -10,6 +10,8 @@ export default function Sidebar() {
 
     const { user, signOut } = useContext(AuthContext)
 
+    console.log(user)
+
     return (
         <div className='sidebar'>
             <div className='avatar'>
