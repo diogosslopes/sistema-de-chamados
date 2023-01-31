@@ -11,6 +11,7 @@ export default function Clients() {
     const [cnpj, setCnpj] = useState('')
     const [adress, setAdress] = useState('')
     const [email, setEmail] = useState('')
+    const [clientList, setClientList] = useState([])
 
     const elementForm = document.querySelector('.form-client')
     let list = []
@@ -24,14 +25,15 @@ export default function Clients() {
             
            clients.forEach((doc)=>{
             list.push({
+                id: doc.id,
                 name: doc.data().name,
                 cnpj: doc.data().cnpj,
                 adress: doc.data().adress,
                 email: doc.data().email
             })
-            return(list)
+            
            })
-           console.log(list)
+           setClientList(list)
         }
         loadClients()
     },[])
@@ -99,13 +101,16 @@ export default function Clients() {
                         <button type="button"  onClick={showForm}>Cancelar</button>
                     </div>
                 </form>
-                {console.log(list)}
-                <div className="clients-list">
-                    <label>Nome: </label>
-                    <label>CNPJ: </label>
-                    <label>Endereço: </label>
-                    <label>E-mail: </label>
-                </div>
+                {clientList.map((c)=>{
+                    return(
+                    <div key={c.id} className="clients-list">
+                        <label>Nome: {c.name}</label>
+                        <label>CNPJ: {c.cnpj} </label>
+                        <label>Endereço: {c.adress} </label>
+                        <label>E-mail: {c.email}</label>
+                    </div>
+                    )
+                })}
             </div>
         </div>
     )
