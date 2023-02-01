@@ -3,11 +3,25 @@ import Sidebar from "../components/Sidebar";
 import Title from "../components/Title";
 import { FiEdit2, FiMessageSquare, FiPlus, FiSearch } from "react-icons/fi";
 import {Link} from 'react-router-dom'
+import Modal from "./Modal";
 
 
 export default function Dashboard(){
 
   const [ tasks, setTasks ] = useState([])
+  const [type, setType] = useState('')
+  const [showModal, setShowModal] = useState(false)
+
+  console.log(type)
+
+  function newClient(t){
+    setType(t)
+    setShowModal(!showModal)
+    console.log(t)
+    console.log(type)
+  }
+
+
 
   return(
     <div className="rigth-container">
@@ -17,13 +31,15 @@ export default function Dashboard(){
           <FiMessageSquare size={22} />
         </Title>
       </div>
-
       <div className="container-profile">
         {tasks.length === 0 ?
           <div className="new-task">
             <span>Não existem chamados registrados...</span>
             
-            <Link to='/newtask' > <FiPlus size={25}/> Abrir Chamado</Link>
+            <button  onClick={ () => newClient("type")}>
+              Abrir Chamado
+              {/* <Link to='' > <FiPlus size={25}/> Abrir Chamado</Link> */}
+            </button>
           </div>
           :
           <div>
@@ -51,7 +67,6 @@ export default function Dashboard(){
                   <td data-label="#">
                     <button className="task-btn edit"><FiEdit2 size={17}/></button>
                     <button className="task-btn search"><FiSearch size={17}/></button>
-                    
                   </td>
                 </tr>
                 <tr className="table-body-line">
@@ -63,20 +78,14 @@ export default function Dashboard(){
                   <td data-label="#">
                     <button className="task-btn edit"><FiEdit2 size={17}/></button>
                     <button className="task-btn search"><FiSearch size={17}/></button>
-                    
                   </td>
                 </tr>
-
               </tbody>
             </table>
           </div>
-        
-        
         }
-
       </div>
-
-      
+      <Modal tipo={type} show={showModal} />
     </div>
   )
 }
