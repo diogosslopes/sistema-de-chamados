@@ -8,17 +8,19 @@ import Modal from "./Modal";
 
 export default function Dashboard(){
 
-  const [ tasks, setTasks ] = useState([])
+  const [tasks, setTasks ] = useState('d')
+  const [task, setTask] = useState('')
   const [type, setType] = useState('')
   const [showModal, setShowModal] = useState(false)
 
-  console.log(type)
-
-  function newClient(t){
+  function newClient(t , item){
     setType(t)
+    setTask(item)
     setShowModal(!showModal)
-    console.log(t)
-    console.log(type)
+    if(t === 'new'){
+      setTask('')
+      console.log('Aqui 1')
+    }
   }
 
 
@@ -35,16 +37,12 @@ export default function Dashboard(){
         {tasks.length === 0 ?
           <div className="new-task">
             <span>Não existem chamados registrados...</span>
-            
-            <button  onClick={ () => newClient("type")}>
-              Abrir Chamado
-              {/* <Link to='' > <FiPlus size={25}/> Abrir Chamado</Link> */}
-            </button>
+              <Link onClick={ () => newClient("new")}> <FiPlus size={25}/> Abrir Chamado</Link>
           </div>
           :
           <div>
             <div className="new-task more-task">
-              <Link to='/newtask' > <FiPlus size={25}/> Abrir Chamado</Link>
+              <Link onClick={ () => newClient("new")}> <FiPlus size={25}/> Abrir Chamado</Link>
             </div>
             <table className="table-tasks">
               <thead>
@@ -65,8 +63,8 @@ export default function Dashboard(){
                   <td data-label="Status"><span className="status">Aberto</span></td>
                   <td data-label="Criado em">25/01/2023</td>
                   <td data-label="#">
-                    <button className="task-btn edit"><FiEdit2 size={17}/></button>
-                    <button className="task-btn search"><FiSearch size={17}/></button>
+                    <button className="task-btn edit" onClick={()=> newClient('edit', 'Item 1')}><FiEdit2 size={17}/></button>
+                    <button className="task-btn search" onClick={()=> newClient('show', 'Item 1')}><FiSearch size={17}/></button>
                   </td>
                 </tr>
                 <tr className="table-body-line">
@@ -76,8 +74,8 @@ export default function Dashboard(){
                   <td data-label="Status"><span className="status">Aberto</span></td>
                   <td data-label="Criado em">25/01/2023</td>
                   <td data-label="#">
-                    <button className="task-btn edit"><FiEdit2 size={17}/></button>
-                    <button className="task-btn search"><FiSearch size={17}/></button>
+                  <button className="task-btn edit" onClick={()=> newClient('edit', 'Item 2')}><FiEdit2 size={17}/></button>
+                    <button className="task-btn search" onClick={()=> newClient('show', 'Item 1')}><FiSearch size={17}/></button>
                   </td>
                 </tr>
               </tbody>
@@ -85,7 +83,9 @@ export default function Dashboard(){
           </div>
         }
       </div>
-      <Modal tipo={type} show={showModal} />
+      {showModal && (
+        <Modal tipo={type} close={newClient} item={task} />        
+      )}
     </div>
   )
 }
