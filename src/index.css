@@ -462,6 +462,11 @@ table td  svg{
   height: 70px;
 }
 
+.form-modal .buttons{
+  align-items: center;
+  margin: 60px auto 0;
+}
+
 
 
 @media screen and (max-width: 700px) {

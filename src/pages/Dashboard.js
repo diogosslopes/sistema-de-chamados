@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Title from "../components/Title";
 import { FiEdit2, FiMessageSquare, FiPlus, FiSearch } from "react-icons/fi";
@@ -13,12 +13,19 @@ export default function Dashboard(){
   const [type, setType] = useState('')
   const [showModal, setShowModal] = useState(false)
 
+  useEffect(()=>{
+
+    async function loadTasks(){
+      
+
+    }
+
+  },[])
+
   function newClient(t , item){
     setType(t)
-    setTask(item)
     setShowModal(!showModal)
     if(t === 'new'){
-      setTask('')
       console.log('Aqui 1')
     }
   }
@@ -37,12 +44,12 @@ export default function Dashboard(){
         {tasks.length === 0 ?
           <div className="new-task">
             <span>Não existem chamados registrados...</span>
-              <Link onClick={ () => newClient("new")}> <FiPlus size={25}/> Abrir Chamado</Link>
+              <Link to='#' onClick={ () => newClient("new")}> <FiPlus size={25}/> Abrir Chamado</Link>
           </div>
           :
           <div>
             <div className="new-task more-task">
-              <Link onClick={ () => newClient("new")}> <FiPlus size={25}/> Abrir Chamado</Link>
+              <Link to='#' onClick={ () => newClient("new")}> <FiPlus size={25}/> Abrir Chamado</Link>
             </div>
             <table className="table-tasks">
               <thead>
