@@ -3,7 +3,7 @@ import Sidebar from "../components/Sidebar";
 import Title from "../components/Title";
 import { FiEdit2, FiMessageSquare, FiPlus, FiSearch } from "react-icons/fi";
 import {Link} from 'react-router-dom'
-import Modal from "./Modal";
+import Modal from "../components/Modal";
 
 
 export default function Dashboard(){
@@ -27,6 +27,9 @@ export default function Dashboard(){
     setShowModal(!showModal)
     if(t === 'new'){
       console.log('Aqui 1')
+      setTask('')
+    }else{
+      setTask('25/01/2023')
     }
   }
 
@@ -71,7 +74,7 @@ export default function Dashboard(){
                   <td data-label="Criado em">25/01/2023</td>
                   <td data-label="#">
                     <button className="task-btn edit" onClick={()=> newClient('edit', 'Item 1')}><FiEdit2 size={17}/></button>
-                    <button className="task-btn search" onClick={()=> newClient('show', 'Item 1')}><FiSearch size={17}/></button>
+                    <button className="task-btn search" onClick={()=> newClient('show', '25/01/2023')}><FiSearch size={17}/></button>
                   </td>
                 </tr>
                 <tr className="table-body-line">
@@ -91,7 +94,7 @@ export default function Dashboard(){
         }
       </div>
       {showModal && (
-        <Modal tipo={type} close={newClient} item={task} />        
+        <Modal tipo={type} close={newClient} item={task}  />        
       )}
     </div>
   )

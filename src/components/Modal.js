@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import firebase from '../services/firebaseConnection';
-import Sidebar from "../components/Sidebar";
-import Title from "../components/Title";
+import Sidebar from "./Sidebar";
+import Title from "./Title";
 import { FiEdit2, FiMessageSquare, FiPlus, FiSearch } from "react-icons/fi";
 import { Link } from 'react-router-dom'
 import '../index.css'
@@ -13,31 +13,41 @@ export default function Modal({ tipo, close, item }) {
   const [client, setClient] = useState('')
   const [subject, setSubject] = useState('')
   const [status, setStatus] = useState('')
-  const [created, setCreated] = useState('')
+  const [created, setCreated] = useState(item)
   const [obs, setObs] = useState('')
   
   let disable = false
-  
-  if (tipo === 'edit' || tipo === 'new') {
-    disable = false
-    if(tipo==='new'){
 
+
+  useEffect(()=>{
+    if(!created){
+      const data = new Date()
+      const day = String(data.getDate()).padStart(2, '0')
+      const month = String(data.getMonth() +1).padStart(2, '0')
+      const year = String(data.getFullYear())
+      const hour = String(data.getHours())
+      const minutes = String(data.getMinutes())
+      
+      const fullDate = `${day}/${month}/${year} - ${hour}:${minutes}`
+      setCreated(fullDate)
+      console.log(created)
     }
-  } else if (tipo === 'show') {
-    disable = true
-  }
+
+  },[])
+  
   
   async function saveTask(e){
     e.preventDefault()
-    const data = new Date()
-    const day = String(data.getDate()).padStart(2, '0')
-    const month = String(data.getMonth() +1).padStart(2, '0')
-    const year = String(data.getFullYear())
-    const hour = String(data.getHours())
-    const minutes = String(data.getMinutes())
-    
-    const fullDate = `${day}/${month}/${year} - ${hour}:${minutes}`
 
+    if (tipo === 'edit' || tipo === 'new') {
+      disable = false
+      if(tipo==='new'){
+  
+      }
+    } else if (tipo === 'show') {
+      disable = true
+    }
+    
     setNewTask({
       client: client,
       subject: subject,
@@ -49,7 +59,7 @@ export default function Modal({ tipo, close, item }) {
       client: client,
       subject: subject,
       status: status,
-      created: fullDate,
+      created: created,
       obs: obs
     })
     .then(()=>{
