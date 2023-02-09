@@ -4,11 +4,12 @@ import Title from "../components/Title";
 import { FiEdit2, FiMessageSquare, FiPlus, FiSearch } from "react-icons/fi";
 import {Link} from 'react-router-dom'
 import Modal from "../components/Modal";
+import firebase from '../services/firebaseConnection';
 
 
 export default function Dashboard(){
 
-  const [tasks, setTasks ] = useState('d')
+  const [tasks, setTasks ] = useState('')
   const [task, setTask] = useState('')
   const [type, setType] = useState('')
   const [showModal, setShowModal] = useState(false)
@@ -16,9 +17,19 @@ export default function Dashboard(){
   useEffect(()=>{
 
     async function loadTasks(){
+
+      const docs = await firebase.firestore().collection('tasks').get()
       
+      docs.forEach((doc)=>{
+        setTasks({
+          client: doc.data().client
+        })
+        console.log(doc.data())
+      })
+      console.log(tasks)
 
     }
+    loadTasks()
 
   },[])
 
@@ -54,7 +65,7 @@ export default function Dashboard(){
             <div className="new-task more-task">
               <Link to='#' onClick={ () => newClient("new")}> <FiPlus size={25}/> Abrir Chamado</Link>
             </div>
-            <table className="table-tasks">
+            {/* <table className="table-tasks">
               <thead>
                 <tr className="table-head">
                   <th scope="col">Codigo</th>
@@ -89,7 +100,7 @@ export default function Dashboard(){
                   </td>
                 </tr>
               </tbody>
-            </table>
+            </table> */}
           </div>
         }
       </div>
