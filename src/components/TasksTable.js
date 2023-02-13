@@ -7,24 +7,28 @@ import Modal from "../components/Modal";
 import firebase from '../services/firebaseConnection';
 
 
-export default function TasksTable(props) {
+export default function TasksTable({tasks}) {
 
-    const tasks = props
+    
     const [task, setTask] = useState('')
     const [type, setType] = useState('')
     const [showModal, setShowModal] = useState(false)
-    console.log(props)
+    console.log(tasks)
 
     function editClient(t, item) {
+        console.log(t)
         setType(t)
+        console.log(type)
         setShowModal(!showModal)
         if (t === 'edit') {
             console.log('Aqui 1')
-            setTask('')
+            setTask(item)
         } else {
-            setTask('25/01/2023')
+            setTask(item)
         }
     }
+
+
 
     return (
         <>
@@ -51,7 +55,7 @@ export default function TasksTable(props) {
                                 <td data-label="Criado em">{task.created}</td>
                                 <td data-label="#">
                                     <button className="task-btn edit" onClick={() => editClient('edit', task)}><FiEdit2 size={17} /></button>
-                                    <button className="task-btn search" onClick={() => editClient('show', task.created)}><FiSearch size={17} /></button>
+                                    <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
                                 </td>
                             </tr>
                         )
@@ -60,7 +64,7 @@ export default function TasksTable(props) {
                 </tbody>
             </table>
             {showModal && (
-                <Modal tipo={type} close={newClient} item={task} />
+                <Modal tipo={type} close={editClient} item={task} />
             )}
 
         </>

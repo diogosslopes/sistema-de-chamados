@@ -5,11 +5,13 @@ import { FiEdit2, FiMessageSquare, FiPlus, FiSearch } from "react-icons/fi";
 import {Link} from 'react-router-dom'
 import Modal from "../components/Modal";
 import firebase from '../services/firebaseConnection';
+import TasksTable from "../components/TasksTable"
 
 
 export default function Dashboard(){
 
-  const [tasks, setTasks ] = useState('')
+  const [tasks, setTasks ] = useState([])
+  let list = []
   const [task, setTask] = useState('')
   const [type, setType] = useState('')
   const [showModal, setShowModal] = useState(false)
@@ -21,16 +23,18 @@ export default function Dashboard(){
       const docs = await firebase.firestore().collection('tasks').get()
       
       docs.forEach((doc)=>{
-        setTasks({
-          client: doc.data().client
-        })
-        console.log(doc.data())
+        list.push({
+          client: doc.data().client,
+          created: doc.data().created,
+          obs: doc.data().obs,
+          status: doc.data().status,
+          subject: doc.data().subject
+        }) 
       })
-      console.log(tasks)
-
+      setTasks(list)
     }
     loadTasks()
-
+    console.log(tasks)
   },[])
 
   function newClient(t , item){
@@ -65,6 +69,7 @@ export default function Dashboard(){
             <div className="new-task more-task">
               <Link to='#' onClick={ () => newClient("new")}> <FiPlus size={25}/> Abrir Chamado</Link>
             </div>
+            <TasksTable tasks={tasks}/>
             {/* <table className="table-tasks">
               <thead>
                 <tr className="table-head">
