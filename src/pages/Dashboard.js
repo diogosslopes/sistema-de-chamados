@@ -24,6 +24,7 @@ export default function Dashboard(){
       
       docs.forEach((doc)=>{
         list.push({
+          id: doc.id,
           client: doc.data().client,
           created: doc.data().created,
           obs: doc.data().obs,

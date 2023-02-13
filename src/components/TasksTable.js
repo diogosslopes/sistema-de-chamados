@@ -47,7 +47,7 @@ export default function TasksTable({tasks}) {
                     {tasks.map((task) => {
 
                         return (
-                            <tr className="table-body-line">
+                            <tr className="table-body-line" key={task.id}>
                                 <td data-label="Codigo">1</td>
                                 <td data-label="Cliente">{task.client}</td>
                                 <td data-label="Assunto">{task.subject}</td>
