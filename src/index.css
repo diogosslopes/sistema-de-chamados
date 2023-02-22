@@ -394,6 +394,10 @@ table td  svg{
   color: #fff;
 }
 
+.delete{
+  background-color: red;
+  color: #fff;
+}
 .status{
   background-color: green;
   color: #fff;

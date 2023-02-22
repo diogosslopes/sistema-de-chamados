@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
 import firebase from '../services/firebaseConnection';
-import Sidebar from "./Sidebar";
-import Title from "./Title";
-import { FiEdit2, FiMessageSquare, FiPlus, FiSearch } from "react-icons/fi";
-import { Link } from 'react-router-dom'
 import '../index.css'
 
 export default function Modal({ tipo, close, item }) {
@@ -45,31 +41,57 @@ export default function Modal({ tipo, close, item }) {
   async function saveTask(e) {
     e.preventDefault()
 
-
-
-    setNewTask({
-      client: client,
-      subject: subject,
-      status: status,
-      created: created,
-      obs: obs
-    })
-    await firebase.firestore().collection('tasks').doc().set({
-      client: client,
-      subject: subject,
-      status: status,
-      created: created,
-      obs: obs
-    })
-      .then(() => {
-        console.log('Salvo')
-        close()
+    if(tipo === 'new'){
+      setNewTask({
+        client: client,
+        subject: subject,
+        status: status,
+        created: created,
+        obs: obs
       })
-      .catch((error) => {
-        console.log(error)
+      await firebase.firestore().collection('tasks').doc().set({
+        client: client,
+        subject: subject,
+        status: status,
+        created: created,
+        obs: obs
       })
+        .then(() => {
+          console.log('Salvo')
+          close()
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }else if( tipo === 'edit'){
+      console.log(item.id)
+      await firebase.firestore().collection('tasks').doc(item.id).update({
+        client: client,
+        subject: subject,
+        status: status,
+        obs: obs
+      })
+      .then(()=>{
+        alert('Editou')
+      })
+      .catch((error)=>{
+        alert(error)
+      })
+    } 
+    
   }
-
+  
+  async function deleteTask(e){
+    e.preventDefault()
+    
+    await firebase.firestore().collection('tasks').doc(item.id).delete()
+    .catch(()=>{
+      alert('Chamado apagado')
+    })
+    .catch((error)=>{
+      alert(error)
+    })
+  }
   return (
     <div className="modal">
       <div className="modal-new">

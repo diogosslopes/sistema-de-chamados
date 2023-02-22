@@ -71,42 +71,6 @@ export default function Dashboard(){
               <Link to='#' onClick={ () => newClient("new")}> <FiPlus size={25}/> Abrir Chamado</Link>
             </div>
             <TasksTable tasks={tasks}/>
-            {/* <table className="table-tasks">
-              <thead>
-                <tr className="table-head">
-                  <th scope="col">Codigo</th>
-                  <th scope="col">Cliente</th>
-                  <th scope="col">Assunto</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Criado em</th>
-                  <th scope="col">#</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="table-body-line">
-                  <td data-label="Codigo">1</td>
-                  <td data-label="Cliente">Diogo</td>
-                  <td data-label="Assunto">Internet</td>
-                  <td data-label="Status"><span className="status">Aberto</span></td>
-                  <td data-label="Criado em">25/01/2023</td>
-                  <td data-label="#">
-                    <button className="task-btn edit" onClick={()=> newClient('edit', 'Item 1')}><FiEdit2 size={17}/></button>
-                    <button className="task-btn search" onClick={()=> newClient('show', '25/01/2023')}><FiSearch size={17}/></button>
-                  </td>
-                </tr>
-                <tr className="table-body-line">
-                  <td data-label="Codigo">1</td>
-                  <td data-label="Cliente">Diogo</td>
-                  <td data-label="Assunto">Internet</td>
-                  <td data-label="Status"><span className="status">Aberto</span></td>
-                  <td data-label="Criado em">25/01/2023</td>
-                  <td data-label="#">
-                  <button className="task-btn edit" onClick={()=> newClient('edit', 'Item 2')}><FiEdit2 size={17}/></button>
-                    <button className="task-btn search" onClick={()=> newClient('show', 'Item 1')}><FiSearch size={17}/></button>
-                  </td>
-                </tr>
-              </tbody>
-            </table> */}
           </div>
         }
       </div>

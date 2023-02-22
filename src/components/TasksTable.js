@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Title from "../components/Title";
-import { FiEdit2, FiMessageSquare, FiPlus, FiSearch } from "react-icons/fi";
+import { FiEdit2, FiSearch, FiDelete, FiTrash } from "react-icons/fi";
 import { Link } from 'react-router-dom'
 import Modal from "../components/Modal";
 import firebase from '../services/firebaseConnection';
 
 
-export default function TasksTable({tasks}) {
+export default function TasksTable({ tasks }) {
 
-    
+
     const [task, setTask] = useState('')
     const [type, setType] = useState('')
     const [showModal, setShowModal] = useState(false)
@@ -26,6 +26,19 @@ export default function TasksTable({tasks}) {
         } else {
             setTask(item)
         }
+    }
+
+
+    async function deleteTask() {
+
+
+        await firebase.firestore().collection('tasks').doc(task.id).delete(task.id)
+            .catch(() => {
+                alert('Chamado apagado')
+            })
+            .catch((error) => {
+                alert(error)
+            })
     }
 
 
@@ -48,7 +61,7 @@ export default function TasksTable({tasks}) {
 
                         return (
                             <tr className="table-body-line" key={task.id}>
-                                <td data-label="Codigo">1</td>
+                                <td data-label="Codigo">{task.id}</td>
                                 <td data-label="Cliente">{task.client}</td>
                                 <td data-label="Assunto">{task.subject}</td>
                                 <td data-label="Status"><span className="status">{task.status}</span></td>
@@ -56,6 +69,7 @@ export default function TasksTable({tasks}) {
                                 <td data-label="#">
                                     <button className="task-btn edit" onClick={() => editClient('edit', task)}><FiEdit2 size={17} /></button>
                                     <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
+                                    <button className="task-btn delete" onClick={() => deleteTask(task)}><FiTrash size={17} /></button>
                                 </td>
                             </tr>
                         )
