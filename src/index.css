@@ -20,6 +20,18 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
+.modal-new div input,
+.modal-new div textarea,
+select{
+  border: none;
+  padding: 3px;
+  height: 25px;
+  border-radius: 5px;
+  width: 80%;
+}
+
+
+
 * {
   margin: 0;
   padding: 0;
@@ -452,14 +464,7 @@ table td  svg{
   margin-bottom: 12px ;
 }
 
-.modal-new div input,
-.modal-new div textarea{
-  border: none;
-  padding: 3px;
-  height: 25px;
-  border-radius: 5px;
-  width: 80%;
-}
+
 
 .modal div textarea{
   margin-top: 38px;
@@ -470,6 +475,7 @@ table td  svg{
   align-items: center;
   margin: 60px auto 0;
 }
+
 
 
 

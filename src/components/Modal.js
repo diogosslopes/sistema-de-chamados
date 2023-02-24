@@ -7,41 +7,72 @@ export default function Modal({ tipo, close, item }) {
   const [task, setTask] = useState(item)
   const [newTask, setNewTask] = useState({})
   const [client, setClient] = useState(item.client)
-  const [subject, setSubject] = useState(item.subject)
+  const [clients, setClients] = useState([])
+  const [subject, setSubject] = useState('Sistema')
   const [status, setStatus] = useState(item.status)
   const [created, setCreated] = useState(item.created)
   const [obs, setObs] = useState(item.obs)
+  const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet',])
+  const [ disable, setDisable] = useState(false)
 
-  console.log(tipo)
 
-  let disable = false
+  // let disable = false
 
-  if(tipo ==='show'){
-    disable = true
-  }
-
+  
   useEffect(() => {
+    
+    async function loadClients() {
+      await firebase.firestore().collection('clients').get()
+      .then((snapshot) => {
+        let list = []
+        
+          snapshot.forEach((doc) => {
+            list.push({
+              id: doc.id,
+              client: doc.data().name
+            })
+          })
+          setClients(list)
+          
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+        
+      }
+      
+      loadClients()
+      
+      if (tipo === 'show') {
+        setDisable(true)
+        setSubject(item.subject)
+        return
+      }
+      
+      if (!created) {
+        const data = new Date()
+        const day = String(data.getDate()).padStart(2, '0')
+        const month = String(data.getMonth() + 1).padStart(2, '0')
+        const year = String(data.getFullYear())
+        const hour = String(data.getHours())
+        const minutes = String(data.getMinutes())
+        
+        const fullDate = `${day}/${month}/${year} - ${hour}:${minutes}`
+        setCreated(fullDate)
+        console.log(created)
+      }
+      
+      
+    }, [])
+    
+    
+    async function saveTask(e) {
+      e.preventDefault()
+      console.log(subject)
+    console.log(client)
 
-    if (!created) {
-      const data = new Date()
-      const day = String(data.getDate()).padStart(2, '0')
-      const month = String(data.getMonth() + 1).padStart(2, '0')
-      const year = String(data.getFullYear())
-      const hour = String(data.getHours())
-      const minutes = String(data.getMinutes())
 
-      const fullDate = `${day}/${month}/${year} - ${hour}:${minutes}`
-      setCreated(fullDate)
-      console.log(created)
-    }
-
-  }, [])
-
-
-  async function saveTask(e) {
-    e.preventDefault()
-
-    if(tipo === 'new'){
+    if (tipo === 'new') {
       setNewTask({
         client: client,
         subject: subject,
@@ -63,7 +94,7 @@ export default function Modal({ tipo, close, item }) {
         .catch((error) => {
           console.log(error)
         })
-    }else if( tipo === 'edit'){
+    } else if (tipo === 'edit') {
       console.log(item.id)
       await firebase.firestore().collection('tasks').doc(item.id).update({
         client: client,
@@ -71,26 +102,37 @@ export default function Modal({ tipo, close, item }) {
         status: status,
         obs: obs
       })
-      .then(()=>{
-        alert('Editou')
+        .then(() => {
+          alert('Editou')
+        })
+        .catch((error) => {
+          alert(error)
+        })
+    }
+
+  }
+
+  function changeClient(e) {
+    e.preventDefault()
+    setClient(e.target.value)
+    console.log(client)
+  }
+  function changeSubject(e) {
+    e.preventDefault()
+    setClient(e.target.value)
+    console.log(client)
+  }
+
+  async function deleteTask(e) {
+    e.preventDefault()
+
+    await firebase.firestore().collection('tasks').doc(item.id).delete()
+      .catch(() => {
+        alert('Chamado apagado')
       })
-      .catch((error)=>{
+      .catch((error) => {
         alert(error)
       })
-    } 
-    
-  }
-  
-  async function deleteTask(e){
-    e.preventDefault()
-    
-    await firebase.firestore().collection('tasks').doc(item.id).delete()
-    .catch(()=>{
-      alert('Chamado apagado')
-    })
-    .catch((error)=>{
-      alert(error)
-    })
   }
   return (
     <div className="modal">
@@ -99,15 +141,29 @@ export default function Modal({ tipo, close, item }) {
         <form onSubmit={(e) => { saveTask(e) }} className="form-modal" >
           <div>
             <label>Cliente</label>
-            <input value={client} onChange={(e) => setClient(e.target.value)} disabled={disable} placeholder="Cliente" />
+            <select disabled={disable} value={client} onChange={changeClient}>
+
+              {clients.map((c, index) => {
+                return (
+                  <option value={c.client} key={c.id}>{c.client}</option>
+                )
+              })}
+            </select>
           </div>
           <div>
             <label>Assunto</label>
-            <input value={subject} onChange={(e) => setSubject(e.target.value)} disabled={disable} placeholder="Assunto" />
+            <select disabled={disable} value={subject} onChange={(e)=>{setSubject(e.target.value)}}>
+
+              {subjects.map((s, index) => {
+                return (
+                  <option value={s} key={index}>{s}</option>
+                )
+              })}
+            </select>
           </div>
-          <div>
+          <div >
             <label>Status</label>
-            <input value={status} onChange={(e) => setStatus(e.target.value)} disabled={disable} placeholder="Status" />
+            <input  name="radio" value='Aberto' onChange={(e) => setStatus(e.target.value)} disabled={disable}  />
           </div>
           <div>
             <label>Criando em</label>

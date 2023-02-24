@@ -29,11 +29,12 @@ export default function TasksTable({ tasks }) {
     }
 
 
-    async function deleteTask() {
+    async function deleteTask(task) {
+        
+        
 
-
-        await firebase.firestore().collection('tasks').doc(task.id).delete(task.id)
-            .catch(() => {
+        await firebase.firestore().collection('tasks').doc(task.id).delete()
+            .then(() => {
                 alert('Chamado apagado')
             })
             .catch((error) => {
