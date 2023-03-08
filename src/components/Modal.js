@@ -13,19 +13,19 @@ export default function Modal({ tipo, close, item }) {
   const [created, setCreated] = useState(item.created)
   const [obs, setObs] = useState(item.obs)
   const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet',])
-  const [ disable, setDisable] = useState(false)
+  const [disable, setDisable] = useState(false)
 
 
   // let disable = false
 
-  
+
   useEffect(() => {
-    
+
     async function loadClients() {
       await firebase.firestore().collection('clients').get()
-      .then((snapshot) => {
-        let list = []
-        
+        .then((snapshot) => {
+          let list = []
+
           snapshot.forEach((doc) => {
             list.push({
               id: doc.id,
@@ -33,42 +33,42 @@ export default function Modal({ tipo, close, item }) {
             })
           })
           setClients(list)
-          
+
         })
         .catch((error) => {
           console.log(error)
         })
-        
-      }
-      
-      loadClients()
-      
-      if (tipo === 'show') {
-        setDisable(true)
-        setSubject(item.subject)
-        return
-      }
-      
-      if (!created) {
-        const data = new Date()
-        const day = String(data.getDate()).padStart(2, '0')
-        const month = String(data.getMonth() + 1).padStart(2, '0')
-        const year = String(data.getFullYear())
-        const hour = String(data.getHours())
-        const minutes = String(data.getMinutes())
-        
-        const fullDate = `${day}/${month}/${year} - ${hour}:${minutes}`
-        setCreated(fullDate)
-        console.log(created)
-      }
-      
-      
-    }, [])
-    
-    
-    async function saveTask(e) {
-      e.preventDefault()
-      console.log(subject)
+
+    }
+
+    loadClients()
+
+    if (tipo === 'show') {
+      setDisable(true)
+      setSubject(item.subject)
+      return
+    }
+
+    if (!created) {
+      const data = new Date()
+      const day = String(data.getDate()).padStart(2, '0')
+      const month = String(data.getMonth() + 1).padStart(2, '0')
+      const year = String(data.getFullYear())
+      const hour = String(data.getHours())
+      const minutes = String(data.getMinutes())
+
+      const fullDate = `${day}/${month}/${year} - ${hour}:${minutes}`
+      setCreated(fullDate)
+      console.log(created)
+    }
+
+
+  }, [])
+
+
+  async function saveTask(e) {
+    e.preventDefault()
+    console.log(subject)
     console.log(client)
 
 
@@ -152,7 +152,7 @@ export default function Modal({ tipo, close, item }) {
           </div>
           <div>
             <label>Assunto</label>
-            <select disabled={disable} value={subject} onChange={(e)=>{setSubject(e.target.value)}}>
+            <select disabled={disable} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
 
               {subjects.map((s, index) => {
                 return (
@@ -161,9 +161,27 @@ export default function Modal({ tipo, close, item }) {
               })}
             </select>
           </div>
-          <div >
+          <div className="radio-status">
             <label>Status</label>
-            <input  name="radio" value='Aberto' onChange={(e) => setStatus(e.target.value)} disabled={disable}  />
+            <div className="radio-buttons">
+              <input type="radio" name="radio" value='Aberto' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
+              <span>Aberto</span>
+              <input type="radio" name="radio" value='Em andamento' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
+              <span>Em andamento</span>
+              <input type="radio" name="radio" value='Enviado p/ tecnico' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
+              <span>Enviado p/ tecnico</span>
+              <input type="radio" name="radio" value='Fechado' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
+              <span>Fechado</span>
+            </div>
+          </div>
+          <div className="status_select">
+            <label>Status</label>
+            <select disabled={disable} value={client} onChange={changeClient}>
+              <option>Aberto</option>
+              <option>Em andamento</option>
+              <option>Enviado p/ tecnico</option>
+              <option>Fechado</option>
+            </select>
           </div>
           <div>
             <label>Criando em</label>

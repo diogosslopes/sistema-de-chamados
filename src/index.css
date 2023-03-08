@@ -361,7 +361,6 @@ button {
 }
 
 table{
-  background-color: #A1B4C4;
   width: 100%;
   text-align: center;
   border: 1px solid black;
@@ -374,10 +373,12 @@ table{
 th{
   border: 1px solid black;
   padding: 10px ;
+  background-color: #A1B4C4
 }
 td{
   border: 1px solid black;
   padding: 0 10px ;
+  background-color: #A1B4C4
 }
 
 table td .task-btn{
@@ -476,6 +477,28 @@ table td  svg{
   margin: 60px auto 0;
 }
 
+.radio-buttons{
+  margin-left: 50px;
+  display: flex;  
+  justify-content: flex-start;
+  align-items: start;
+}
+
+.modal .radio-buttons input{
+  font-size: 10px;
+  width: 15%;
+  height: 14px;
+}
+
+.radio-buttons span{
+  font-size: 12px;
+  margin-left: -30px ;
+}
+
+.status_select{
+  display: none !important;
+}
+
 
 
 
@@ -511,9 +534,83 @@ table td  svg{
   .container-profile {
     margin-left: 0;
   }
+
+  .status_select{
+    display: flex !important;
+  }
+
+  .radio-status{
+    display: none !important;
+  }
+
+  .modal-new{
+    width: 90%;
+  }
+
+  table{
+    border: 0;
+    background-color: #202529;
+  }
+
+  table caption{
+    font-size: 1.3em;
+  }
+
+  table thead{
+    border:none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+
+  table tr{
+    border-bottom: 3px solid #ddd;
+    display: block;
+    margin-bottom: .65em;
+  }
+
+  table td{
+    border-bottom: 1px solid #DDD;
+    display: block;
+    font-size: .8em;
+    text-align: right;
+    padding: 4px 10px;
+    
+  }
+
+  table td::before{
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  table td:last-child{
+    border-bottom: 0;
+  }
+
+  .status{
+    padding: 2px;
+  }
+
+  table td  svg{
+    width: 12px;
+    vertical-align: middle;
+  }
+
+  table td .task-btn{
+    height: 20px;
+  }
+
+
 }
 
 @media screen and (max-width: 460px) {
+
   .sidebar svg {
     display: none;
   }
@@ -522,4 +619,14 @@ table td  svg{
     font-size: 1em;
 
   }
+
+  .status_select{
+    display: flex !important;
+  }
+
+  .radio-status{
+    display: none !important;
+  }
+
+  
 }
