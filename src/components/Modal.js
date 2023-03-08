@@ -197,8 +197,6 @@ export default function Modal({ tipo, close, item }) {
           </div>
         </form>
       </div>
-
-
     </div>
   )
 }
