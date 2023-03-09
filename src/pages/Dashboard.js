@@ -15,6 +15,7 @@ export default function Dashboard(){
   const [task, setTask] = useState('')
   const [type, setType] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const [ loading, setLoading] = useState(true)
 
   useEffect(()=>{
 
@@ -33,6 +34,7 @@ export default function Dashboard(){
         }) 
       })
       setTasks(list)
+      setLoading(false)
     }
     loadTasks()
     console.log(tasks)
@@ -61,10 +63,15 @@ export default function Dashboard(){
       </div>
       <div className="container-profile">
         {tasks.length === 0 ?
+        <>
           <div className="new-task">
             <span>Não existem chamados registrados...</span>
               <Link to='#' onClick={ () => newClient("new")}> <FiPlus size={25}/> Abrir Chamado</Link>
           </div>
+            <div className="new-task title">
+              <span>Carregando chamados !</span>
+            </div>        
+        </>
           :
           <div>
             <div className="new-task more-task">
