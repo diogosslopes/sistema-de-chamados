@@ -2,28 +2,43 @@ import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Title from "../components/Title";
 import { FiEdit2, FiMessageSquare, FiPlus, FiSearch } from "react-icons/fi";
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Modal from "../components/Modal";
 import firebase from '../services/firebaseConnection';
 import TasksTable from "../components/TasksTable"
+import { collection, getDocs, orderBy, limit, startAfter, query, } from 'firebase/firestore'
 
 
-export default function Dashboard(){
+export default function Dashboard() {
 
-  const [tasks, setTasks ] = useState([])
+  const [tasks, setTasks] = useState([])
   let list = []
+  let newList = []
   const [task, setTask] = useState('')
   const [type, setType] = useState('')
   const [showModal, setShowModal] = useState(false)
-  const [ loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
+  const [lastTask, setLastTask] = useState()
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [isEmpty, setIsEmpty] = useState(false)
 
-  useEffect(()=>{
 
-    async function loadTasks(){
+  useEffect(() => {
+    async function getDocs() {
+      const docs = await firebase.firestore().collection('tasks').orderBy('created').limit('2').get()
+      await loadTasks(docs)
 
-      const docs = await firebase.firestore().collection('tasks').get()
-      
-      docs.forEach((doc)=>{
+    }
+    getDocs()
+
+  }, [])
+
+  async function loadTasks(docs) {
+
+    const isTaksEmpty = docs.size === 0
+
+    if(!isTaksEmpty){
+      docs.forEach((doc) => {
         list.push({
           id: doc.id,
           client: doc.data().client,
@@ -31,31 +46,67 @@ export default function Dashboard(){
           obs: doc.data().obs,
           status: doc.data().status,
           subject: doc.data().subject
-        }) 
+        })
       })
-      setTasks(list)
+  
+      const lastDoc = docs.docs[docs.docs.length - 1]
+      setLastTask(lastDoc)
+      setTasks(tasks => [...tasks, ...list])
       setLoading(false)
+      
+    }else{
+      setIsEmpty(true)
+      
     }
-    loadTasks()
-    console.log(tasks)
-  },[])
+    setLoadingMore(false)
+    
 
-  function newClient(t , item){
+  }
+
+  async function moreTasks() {
+
+    setLoadingMore(true)
+    const newDocs = await firebase.firestore().collection('tasks').orderBy('created').limit('2').startAfter(lastTask).get()
+
+    await loadTasks(newDocs)
+
+  }
+  function newClient(t, item) {
     setType(t)
     setShowModal(!showModal)
-    if(t === 'new'){
+    if (t === 'new') {
       console.log('Aqui 1')
       setTask('')
-    }else{
+    } else {
       setTask('25/01/2023')
     }
   }
 
 
+  if (loading) {
+    return (
 
-  return(
+      <div className="rigth-container">
+        <Sidebar />
+        <div className="title">
+          <Title name="Chamados">
+            <FiMessageSquare size={22} />
+          </Title>
+          <div className="new-task title">
+            <span>Carregando chamados !</span>
+          </div>
+        </div>
+
+      </div>
+
+
+
+    )
+  }
+
+  return (
     <div className="rigth-container">
-      <Sidebar/>
+      <Sidebar />
       <div className="title">
         <Title name="Chamados">
           <FiMessageSquare size={22} />
@@ -63,26 +114,28 @@ export default function Dashboard(){
       </div>
       <div className="container-profile">
         {tasks.length === 0 ?
-        <>
-          <div className="new-task">
-            <span>Não existem chamados registrados...</span>
-              <Link to='#' onClick={ () => newClient("new")}> <FiPlus size={25}/> Abrir Chamado</Link>
-          </div>
-            <div className="new-task title">
-              <span>Carregando chamados !</span>
-            </div>        
-        </>
+          <>
+            <div className="new-task">
+              <span>Não existem chamados registrados...</span>
+              <Link to='#' onClick={() => newClient("new")}> <FiPlus size={25} /> Abrir Chamado</Link>
+            </div>
+
+          </>
           :
           <div>
             <div className="new-task more-task">
-              <Link to='#' onClick={ () => newClient("new")}> <FiPlus size={25}/> Abrir Chamado</Link>
+              <Link to='#' onClick={() => newClient("new")}> <FiPlus size={25} /> Abrir Chamado</Link>
             </div>
-            <TasksTable tasks={tasks}/>
+            <TasksTable tasks={tasks} />
+            {loadingMore && <h3>Carregando...</h3>}
+
+            {!loadingMore && !isEmpty && <button onClick={moreTasks}>Carregar Mais</button> }
+            
           </div>
         }
       </div>
       {showModal && (
-        <Modal tipo={type} close={newClient} item={task}  />        
+        <Modal tipo={type} close={newClient} item={task} />
       )}
     </div>
   )
