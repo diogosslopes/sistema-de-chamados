@@ -176,7 +176,7 @@ export default function Modal({ tipo, close, item }) {
           </div>
           <div className="status_select">
             <label>Status</label>
-            <select disabled={disable} value={client} onChange={(e) => setStatus(e.target.value)}>
+            <select disabled={disable} value={status} onChange={(e) => setStatus(e.target.value)}>
               <option>Aberto</option>
               <option>Em andamento</option>
               <option>Enviado p/ tecnico</option>
