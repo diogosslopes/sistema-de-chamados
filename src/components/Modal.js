@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import firebase from '../services/firebaseConnection';
 import '../index.css'
+import { format } from 'date-fns'
 
 export default function Modal({ tipo, close, item }) {
 
@@ -50,14 +51,8 @@ export default function Modal({ tipo, close, item }) {
     }
 
     if (!created) {
-      const data = new Date()
-      const day = String(data.getDate()).padStart(2, '0')
-      const month = String(data.getMonth() + 1).padStart(2, '0')
-      const year = String(data.getFullYear())
-      const hour = String(data.getHours())
-      const minutes = String(data.getMinutes())
-
-      const fullDate = `${day}/${month}/${year} - ${hour}:${minutes}`
+      
+      const fullDate = format(new Date(), "dd/MM/yyyy hh:mm")
       setCreated(fullDate)
       console.log(created)
     }
