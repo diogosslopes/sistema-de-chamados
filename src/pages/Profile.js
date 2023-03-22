@@ -6,6 +6,11 @@ import { AuthContext } from "../context/auth";
 import avatar from '../images/avatar.png'
 import firebase from '../services/firebaseConnection';
 
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from "yup"
+import { toast } from 'react-toastify'
+
 
 export default function Profile() {
 
@@ -14,6 +19,20 @@ export default function Profile() {
     const [email, setEmail] = useState(user && user.email)
     const [avatarUrl, setAvatarUrl] = useState(user && user.avatar)
     const [newAvatar, setNewAvatar] = useState(null)
+
+
+    const validationLogin = yup.object().shape({
+        login: yup.string().name("Digite um email válido").required("Digite seu email"),
+        password: yup.string().required("Digite sua senha")
+      })
+    
+      const { register, handleSubmit, formState: { errors }} = useForm({
+        resolver: yupResolver(validationLogin)
+      })
+    
+      const handleLogin = (value) =>{
+        editLogin(value)
+      }
 
 
     function preview(e){
@@ -31,6 +50,9 @@ export default function Profile() {
     }
 
     async function upload(){
+
+
+
         await firebase.storage().ref(`images/${user.id}/${newAvatar.name}`)
         .put(newAvatar)
         .then(async()=>{
@@ -60,7 +82,7 @@ export default function Profile() {
         })
     }
 
-    async function handleEdit(e){
+    async function editLogin(e){
         e.preventDefault()
         alert('Salvo')
         await firebase.firestore().collection('users')
@@ -91,7 +113,7 @@ export default function Profile() {
             </div>
 
             <div className="container-profile">
-                <form className="form-profile" onSubmit={handleEdit}>
+                <form className="form-profile" onSubmit={handleSubmit(handleLogin)}>
                     <label className="avatar-label">
                         <FiUpload color="#FFF" size={25}  />
                         <input type='file' accept='image/*' onChange={preview} />
@@ -103,7 +125,7 @@ export default function Profile() {
                         }
                     </label>
                     <label>Nome</label>
-                    <input type='text' value={name} onChange={(e)=> setName(e.target.value)}/>
+                    <input type='text' name="name" {...register("name")} value={name} onChange={(e)=> setName(e.target.value)}/>
                     <label>E-mail</label>
                     <input disabled={true} type='text' value={email}/>
 
