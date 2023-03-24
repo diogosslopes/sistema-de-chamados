@@ -20,19 +20,11 @@ export default function Profile() {
     const [avatarUrl, setAvatarUrl] = useState(user && user.avatar)
     const [newAvatar, setNewAvatar] = useState(null)
 
+    const {register, handleSubmit, formState:{errors} } = useForm()
 
-    const validationLogin = yup.object().shape({
-        login: yup.string().name("Digite um email válido").required("Digite seu email"),
-        password: yup.string().required("Digite sua senha")
-      })
-    
-      const { register, handleSubmit, formState: { errors }} = useForm({
-        resolver: yupResolver(validationLogin)
-      })
-    
-      const handleLogin = (value) =>{
-        editLogin(value)
-      }
+    const editLogin = data => {
+        handleLogin(data)
+    }
 
 
     function preview(e){
@@ -82,8 +74,8 @@ export default function Profile() {
         })
     }
 
-    async function editLogin(e){
-        e.preventDefault()
+    async function handleLogin(e){
+        // e.preventDefault()
         alert('Salvo')
         await firebase.firestore().collection('users')
         .doc(user.id)
@@ -113,7 +105,7 @@ export default function Profile() {
             </div>
 
             <div className="container-profile">
-                <form className="form-profile" onSubmit={handleSubmit(handleLogin)}>
+                <form className="form-profile" onSubmit={handleSubmit(editLogin)}>
                     <label className="avatar-label">
                         <FiUpload color="#FFF" size={25}  />
                         <input type='file' accept='image/*' onChange={preview} />
@@ -125,7 +117,7 @@ export default function Profile() {
                         }
                     </label>
                     <label>Nome</label>
-                    <input type='text' name="name" {...register("name")} value={name} onChange={(e)=> setName(e.target.value)}/>
+                    <input type='text' name="name" {...register("nome")} value={name} onChange={(e)=> setName(e.target.value)}/>
                     <label>E-mail</label>
                     <input disabled={true} type='text' value={email}/>
 
