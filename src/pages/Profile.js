@@ -12,15 +12,23 @@ import * as yup from "yup"
 import { toast } from 'react-toastify'
 
 
-export default function Profile() {
 
+export default function Profile() {
+    
     const { user, storage, setUser } = useContext(AuthContext)
     const [name, setName] = useState(user && user.name)
+    const [editingName, setEditingName] = useState(user && user.name)
     const [email, setEmail] = useState(user && user.email)
     const [avatarUrl, setAvatarUrl] = useState(user && user.avatar)
     const [newAvatar, setNewAvatar] = useState(null)
+    
+    const validation = yup.object().shape({
+        name: yup.string().required("Nome é obrigatorio")
+    })
 
-    const {register, handleSubmit, formState:{errors} } = useForm()
+    const {register, handleSubmit, formState: {errors} } = useForm({
+        resolver: yupResolver(validation)
+    })
 
     const editLogin = data => {
         handleLogin(data)
@@ -117,7 +125,8 @@ export default function Profile() {
                         }
                     </label>
                     <label>Nome</label>
-                    <input type='text' name="name" {...register("nome")} value={name} onChange={(e)=> setName(e.target.value)}/>
+                    <input type='text' name="name" {...register("name")} value={editingName} onChange={(e)=> setEditingName(e.target.value)}/>
+                    <span>{errors.name?.message}</span>
                     <label>E-mail</label>
                     <input disabled={true} type='text' value={email}/>
 

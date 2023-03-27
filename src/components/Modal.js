@@ -3,6 +3,21 @@ import firebase from '../services/firebaseConnection';
 import '../index.css'
 import { format } from 'date-fns'
 
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from "yup"
+import { toast } from 'react-toastify'
+
+const validation = yup.object().shape({
+  client: yup.string().required("Unidade obrigatoria"),
+  subject: yup.string().required("Assunto obrigatorio").min(5,"Minimo de 5 caracteres").max(15, "Maximo de 15 caracteres"),
+  status: yup.string().required(),
+  obs: yup.string().min(10, "Minimo de 10 caracteres").max(100, "Maximo de 100 caracteres")
+})
+
+
+
+
 export default function Modal({ tipo, close, item }) {
 
   const [task, setTask] = useState(item)
@@ -16,9 +31,12 @@ export default function Modal({ tipo, close, item }) {
   const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet',])
   const [disable, setDisable] = useState(false)
 
+  const { register, handleSubmit, formState: {errors} } = useForm({
+    resolver: yupResolver(validation)
+  })
 
-  // let disable = false
 
+  const save = data => console.log(data)
 
   useEffect(() => {
 
@@ -107,6 +125,7 @@ export default function Modal({ tipo, close, item }) {
 
   }
 
+
   function changeClient(e) {
     e.preventDefault()
     setClient(e.target.value)
@@ -133,10 +152,10 @@ export default function Modal({ tipo, close, item }) {
     <div className="modal">
       <div className="modal-new">
         <h1>Cadastro de Chamado</h1>
-        <form onSubmit={(e) => { saveTask(e) }} className="form-modal" >
+        <form onSubmit={handleSubmit(save)} className="form-modal" >
           <div>
             <label>Cliente</label>
-            <select disabled={disable} value={client} onChange={changeClient}>
+            <select disabled={disable} name="client" {...register("client")} value={client} onChange={changeClient}>
 
               {clients.map((c, index) => {
                 return (
@@ -145,9 +164,10 @@ export default function Modal({ tipo, close, item }) {
               })}
             </select>
           </div>
+            <span>{errors.client?.message}</span>
           <div>
             <label>Assunto</label>
-            <select disabled={disable} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
+            <select disabled={disable} name="subject" {...register("subject")} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
 
               {subjects.map((s, index) => {
                 return (
@@ -156,36 +176,40 @@ export default function Modal({ tipo, close, item }) {
               })}
             </select>
           </div>
+            {errors.subject?.message}
           <div className="radio-status">
             <label>Status</label>
             <div className="radio-buttons">
-              <input type="radio" name="radio" value='Aberto' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
+              <input type="radio" name="radio" {...register("radio")} value='Aberto' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
               <span>Aberto</span>
-              <input type="radio" name="radio" value='Em andamento' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
+              <input type="radio" name="radio" {...register("radio")} value='Em andamento' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
               <span>Em andamento</span>
-              <input type="radio" name="radio" value='Enviado p/ tecnico' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
+              <input type="radio" name="radio" {...register("radio")} value='Enviado p/ tecnico' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
               <span>Enviado p/ tecnico</span>
-              <input type="radio" name="radio" value='Fechado' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
+              <input type="radio" name="radio" {...register("radio")} value='Fechado' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
               <span>Fechado</span>
             </div>
           </div>
+            {errors.status?.message}
           <div className="status_select">
             <label>Status</label>
-            <select disabled={disable} value={status} onChange={(e) => setStatus(e.target.value)}>
+            <select disabled={disable} name="status" {...register("status")} value={status} onChange={(e) => setStatus(e.target.value)}>
               <option>Aberto</option>
               <option>Em andamento</option>
               <option>Enviado p/ tecnico</option>
               <option>Fechado</option>
             </select>
           </div>
+            {errors.status?.message}
           <div>
             <label>Criando em</label>
-            <input value={created} onChange={(e) => setCreated(e.target.value)} disabled={true} placeholder="Criado em" />
+            <input value={created} name="created" {...register("created")} onChange={(e) => setCreated(e.target.value)} disabled={true} placeholder="Criado em" />
           </div>
           <div>
             <label>Observações</label>
-            <textarea value={obs} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
+            <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
           </div>
+            {errors.obs?.message}
           <div className="buttons">
             <button type='submit' >Salvar</button>
             <button onClick={close}>Cancelar</button>
