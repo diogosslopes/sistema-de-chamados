@@ -70,10 +70,10 @@ export default function Modal({ tipo, close, item }) {
 
     if (!created) {
       
-      const fullDate = format(new Date(), "dd/MM/yyyy hh:mm")
+      const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
       setCreated(fullDate)
-      console.log(created)
     }
+    
 
 
   }, [])
@@ -180,13 +180,13 @@ export default function Modal({ tipo, close, item }) {
           <div className="radio-status">
             <label>Status</label>
             <div className="radio-buttons">
-              <input type="radio" name="radio" {...register("radio")} value='Aberto' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
+              <input type="radio" name="radio" {...register("radio")} value='Aberto' onChange={(e) => setStatus(e.target.value)} disabled={disable} checked={ status === 'Aberto' } />
               <span>Aberto</span>
-              <input type="radio" name="radio" {...register("radio")} value='Em andamento' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
+              <input type="radio" name="radio" {...register("radio")} value='Em andamento' onChange={(e) => setStatus(e.target.value)} disabled={disable} checked={ status === 'Em andamento' } />
               <span>Em andamento</span>
-              <input type="radio" name="radio" {...register("radio")} value='Enviado p/ tecnico' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
+              <input type="radio" name="radio" {...register("radio")} value='Enviado p/ tecnico' onChange={(e) => setStatus(e.target.value)} disabled={disable} checked={ status === 'Enviado p/ tecnico' } />
               <span>Enviado p/ tecnico</span>
-              <input type="radio" name="radio" {...register("radio")} value='Fechado' onChange={(e) => setStatus(e.target.value)} disabled={disable} />
+              <input type="radio" name="radio" {...register("radio")} value='Fechado' onChange={(e) => setStatus(e.target.value)} disabled={disable} checked={ status === 'Fechado' } />
               <span>Fechado</span>
             </div>
           </div>

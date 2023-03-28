@@ -39,6 +39,8 @@ export default function Profile() {
 
         const image = e.target.files[0]
 
+        console.log(newAvatar.name)
+        setNewAvatar(image)
         if(image.type === 'image/jpeg' || image.type === 'image/png'){
             setNewAvatar(image)
             setAvatarUrl(URL.createObjectURL(image))
@@ -49,19 +51,38 @@ export default function Profile() {
         }
     }
 
-    async function upload(){
+    async function handleLogin(e){
+        e.preventDefault()
+        alert('Salvo')
+        await firebase.firestore().collection('users')
+        .doc(user.id)
+        .update({
+            name: name
+        })
+        .then(()=>{
+            let userData ={
+                ...user,
+                name: name
+            }
+            setUser(userData)
+            storage(userData)
+            upload(user)
+        })
 
+    async function upload(user){
 
+        setNewAvatar(avatar)
+        console.log(user)   
 
         await firebase.storage().ref(`images/${user.id}/${newAvatar.name}`)
         .put(newAvatar)
         .then(async()=>{
             alert('Foto enviada')
-
+            
             await firebase.storage().ref(`images/${user.id}`)
             .child(newAvatar.name).getDownloadURL()
             .then( async (url)=>{
-
+                
                 await firebase.firestore().collection('users')
                 .doc(user.id)
                 .update({
@@ -74,7 +95,7 @@ export default function Profile() {
                         avatar: url,
                         name: name
                     }
-
+                    
                     setUser(userData)
                     storage(userData)
                 })
@@ -82,23 +103,7 @@ export default function Profile() {
         })
     }
 
-    async function handleLogin(e){
-        // e.preventDefault()
-        alert('Salvo')
-        await firebase.firestore().collection('users')
-        .doc(user.id)
-        .update({
-            name: name
-        })
-        .then(()=>{
-            let userData ={
-                ...user,
-                name: name
-            }
-            upload()
-            setUser(userData)
-            storage(userData)
-        })
+
 
 
     }
@@ -113,7 +118,7 @@ export default function Profile() {
             </div>
 
             <div className="container-profile">
-                <form className="form-profile" onSubmit={handleSubmit(editLogin)}>
+                <form className="form-profile" onSubmit={handleLogin}>
                     <label className="avatar-label">
                         <FiUpload color="#FFF" size={25}  />
                         <input type='file' accept='image/*' onChange={preview} />
@@ -125,7 +130,7 @@ export default function Profile() {
                         }
                     </label>
                     <label>Nome</label>
-                    <input type='text' name="name" {...register("name")} value={editingName} onChange={(e)=> setEditingName(e.target.value)}/>
+                    <input type='text' value={name} onChange={(e)=> setName(e.target.value)}/>
                     <span>{errors.name?.message}</span>
                     <label>E-mail</label>
                     <input disabled={true} type='text' value={email}/>
