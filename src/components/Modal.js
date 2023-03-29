@@ -11,8 +11,8 @@ import { toast } from 'react-toastify'
 const validation = yup.object().shape({
   client: yup.string().required("Unidade obrigatoria"),
   subject: yup.string().required("Assunto obrigatorio").min(5,"Minimo de 5 caracteres").max(15, "Maximo de 15 caracteres"),
-  status: yup.string().required(),
-  obs: yup.string().min(10, "Minimo de 10 caracteres").max(100, "Maximo de 100 caracteres")
+  status: yup.string().required('Status é obrigatorio'),
+  obs: yup.string().required('Descrição é obrigatorio').min(10,'Minimo de 10 caracteres').max(100, 'Maximo de 100 caracteres'),
 })
 
 
@@ -20,70 +20,72 @@ const validation = yup.object().shape({
 
 export default function Modal({ tipo, close, item }) {
 
+
+
   const [task, setTask] = useState(item)
   const [newTask, setNewTask] = useState({})
   const [client, setClient] = useState(item.client)
   const [clients, setClients] = useState([])
-  const [subject, setSubject] = useState('Sistema')
-  const [status, setStatus] = useState(item.status)
+  const [subject, setSubject] = useState(item.subject)
+  const [status, setStatus] = useState( item.status)
   const [created, setCreated] = useState(item.created)
   const [obs, setObs] = useState(item.obs)
-  const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet',])
+  const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
   const [disable, setDisable] = useState(false)
 
+  
   const { register, handleSubmit, formState: {errors} } = useForm({
     resolver: yupResolver(validation)
   })
-
-
-  const save = data => console.log(data)
-
+  
+  
+  
   useEffect(() => {
-
+    
     async function loadClients() {
       await firebase.firestore().collection('clients').get()
-        .then((snapshot) => {
-          let list = []
-
-          snapshot.forEach((doc) => {
-            list.push({
-              id: doc.id,
-              client: doc.data().name
-            })
+      .then((snapshot) => {
+        let list = []
+        
+        snapshot.forEach((doc) => {
+          list.push({
+            id: doc.id,
+            client: doc.data().name
           })
-          setClients(list)
-
         })
-        .catch((error) => {
-          console.log(error)
-        })
-
+        setClients(list)
+        
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+      
     }
-
+    
     loadClients()
-
+    if (tipo === 'new') {
+      
+       
+      const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
+      setCreated(fullDate)
+    }
+    
     if (tipo === 'show') {
       setDisable(true)
       setSubject(item.subject)
       return
     }
-
-    if (!created) {
-      
-      const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
-      setCreated(fullDate)
-    }
-    
-
-
+        
   }, [])
-
-
+  
+  const save = data => {
+    saveTask()
+  }
+  console.log(created)
+  
+  
   async function saveTask(e) {
-    e.preventDefault()
-    console.log(subject)
-    console.log(client)
-
+    // e.preventDefault()
 
     if (tipo === 'new') {
       setNewTask({
@@ -108,7 +110,6 @@ export default function Modal({ tipo, close, item }) {
           console.log(error)
         })
     } else if (tipo === 'edit') {
-      console.log(item.id)
       await firebase.firestore().collection('tasks').doc(item.id).update({
         client: client,
         subject: subject,
@@ -129,12 +130,10 @@ export default function Modal({ tipo, close, item }) {
   function changeClient(e) {
     e.preventDefault()
     setClient(e.target.value)
-    console.log(client)
   }
   function changeSubject(e) {
     e.preventDefault()
     setClient(e.target.value)
-    console.log(client)
   }
 
   async function deleteTask(e) {
@@ -152,10 +151,11 @@ export default function Modal({ tipo, close, item }) {
     <div className="modal">
       <div className="modal-new">
         <h1>Cadastro de Chamado</h1>
-        <form onSubmit={handleSubmit(save)} className="form-modal" >
+        <form onSubmit={handleSubmit(saveTask)} className="form-modal" >
           <div>
             <label>Cliente</label>
-            <select disabled={disable} name="client" {...register("client")} value={client} onChange={changeClient}>
+            <select disabled={disable} name="client" {...register("client")} value={client}  onChange={(e) => { setClient(e.target.value) }} >
+              <option value={''}>Selecione a unidade</option>
 
               {clients.map((c, index) => {
                 return (
@@ -164,52 +164,43 @@ export default function Modal({ tipo, close, item }) {
               })}
             </select>
           </div>
-            <span>{errors.client?.message}</span>
-          <div>
+          <div>   
             <label>Assunto</label>
-            <select disabled={disable} name="subject" {...register("subject")} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
-
+            <select  disabled={disable} name="subject" {...register("subject")} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
+              <option value={''} >Selecione o assunto</option>
               {subjects.map((s, index) => {
                 return (
-                  <option value={s} key={index}>{s}</option>
-                )
-              })}
+                  <option  value={s} key={index}>{s}</option>
+                  )
+                })}
             </select>
           </div>
-            {errors.subject?.message}
-          <div className="radio-status">
-            <label>Status</label>
-            <div className="radio-buttons">
-              <input type="radio" name="radio" {...register("radio")} value='Aberto' onChange={(e) => setStatus(e.target.value)} disabled={disable} checked={ status === 'Aberto' } />
-              <span>Aberto</span>
-              <input type="radio" name="radio" {...register("radio")} value='Em andamento' onChange={(e) => setStatus(e.target.value)} disabled={disable} checked={ status === 'Em andamento' } />
-              <span>Em andamento</span>
-              <input type="radio" name="radio" {...register("radio")} value='Enviado p/ tecnico' onChange={(e) => setStatus(e.target.value)} disabled={disable} checked={ status === 'Enviado p/ tecnico' } />
-              <span>Enviado p/ tecnico</span>
-              <input type="radio" name="radio" {...register("radio")} value='Fechado' onChange={(e) => setStatus(e.target.value)} disabled={disable} checked={ status === 'Fechado' } />
-              <span>Fechado</span>
-            </div>
-          </div>
-            {errors.status?.message}
+
           <div className="status_select">
             <label>Status</label>
             <select disabled={disable} name="status" {...register("status")} value={status} onChange={(e) => setStatus(e.target.value)}>
+              <option value={''}>Selecione o status</option>
               <option>Aberto</option>
               <option>Em andamento</option>
               <option>Enviado p/ tecnico</option>
               <option>Fechado</option>
             </select>
           </div>
-            {errors.status?.message}
           <div>
             <label>Criando em</label>
-            <input value={created} name="created" {...register("created")} onChange={(e) => setCreated(e.target.value)} disabled={true} placeholder="Criado em" />
+            <input value={created} name="created" {...register("created")} onChange={(e) => setCreated(e.target.value)} disabled={disable} placeholder="Criado em" />
           </div>
-          <div>
+          <div id="obs">
             <label>Observações</label>
             <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
           </div>
-            {errors.obs?.message}
+
+            <article  className="error-message">
+            <p>{errors.client?.message}</p>
+            <p>{errors.subject?.message}</p>
+            <p>{errors.status?.message}</p>
+            <p>{errors.obs?.message}</p>
+            </article>
           <div className="buttons">
             <button type='submit' >Salvar</button>
             <button onClick={close}>Cancelar</button>

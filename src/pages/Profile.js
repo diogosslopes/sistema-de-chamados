@@ -31,6 +31,7 @@ export default function Profile() {
     })
 
     const editLogin = data => {
+
         handleLogin(data)
     }
 
@@ -39,7 +40,6 @@ export default function Profile() {
 
         const image = e.target.files[0]
 
-        console.log(newAvatar.name)
         setNewAvatar(image)
         if(image.type === 'image/jpeg' || image.type === 'image/png'){
             setNewAvatar(image)
@@ -51,28 +51,31 @@ export default function Profile() {
         }
     }
 
-    async function handleLogin(e){
-        e.preventDefault()
+    async function handleLogin(){
+        
         alert('Salvo')
-        await firebase.firestore().collection('users')
-        .doc(user.id)
-        .update({
-            name: name
-        })
-        .then(()=>{
-            let userData ={
-                ...user,
+        if(newAvatar === null && name !== ''){
+            await firebase.firestore().collection('users')
+            .doc(user.id)
+            .update({
                 name: name
-            }
-            setUser(userData)
-            storage(userData)
-            upload(user)
-        })
+            })
+            .then(()=>{
+                let userData ={
+                    ...user,
+                    name: name
+                }
+                setUser(userData)
+                storage(userData)
+            })
+            
+        }else if(name !== '' && newAvatar !== null){
+            upload()
+        }
+        
 
-    async function upload(user){
+    async function upload(){
 
-        setNewAvatar(avatar)
-        console.log(user)   
 
         await firebase.storage().ref(`images/${user.id}/${newAvatar.name}`)
         .put(newAvatar)
@@ -102,11 +105,10 @@ export default function Profile() {
             })
         })
     }
+   
+    
+}
 
-
-
-
-    }
     
     return (
         <div className="rigth-container">
@@ -118,7 +120,7 @@ export default function Profile() {
             </div>
 
             <div className="container-profile">
-                <form className="form-profile" onSubmit={handleLogin}>
+                <form className="form-profile" onSubmit={handleSubmit(editLogin)}>
                     <label className="avatar-label">
                         <FiUpload color="#FFF" size={25}  />
                         <input type='file' accept='image/*' onChange={preview} />
@@ -130,8 +132,8 @@ export default function Profile() {
                         }
                     </label>
                     <label>Nome</label>
-                    <input type='text' value={name} onChange={(e)=> setName(e.target.value)}/>
-                    <span>{errors.name?.message}</span>
+                    <input id="inputname" type='text' name="name" {...register("name")} value={name} onChange={(e)=> setName(e.target.value)}/>
+                    <p className="error-message" >{errors.name?.message}</p>
                     <label>E-mail</label>
                     <input disabled={true} type='text' value={email}/>
 

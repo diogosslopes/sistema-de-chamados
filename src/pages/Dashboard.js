@@ -75,7 +75,6 @@ export default function Dashboard() {
     setType(t)
     setShowModal(!showModal)
     if (t === 'new') {
-      console.log('Aqui 1')
       setTask('')
     } else {
       setTask('25/01/2023')

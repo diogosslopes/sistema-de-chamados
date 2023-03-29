@@ -13,15 +13,11 @@ export default function TasksTable({ tasks }) {
     const [task, setTask] = useState('')
     const [type, setType] = useState('')
     const [showModal, setShowModal] = useState(false)
-    console.log(tasks)
 
     function editClient(t, item) {
-        console.log(t)
         setType(t)
-        console.log(type)
         setShowModal(!showModal)
         if (t === 'edit') {
-            console.log('Aqui 1')
             setTask(item)
         } else {
             setTask(item)

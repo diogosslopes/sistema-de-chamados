@@ -438,7 +438,7 @@ table td  svg{
   display: flex;
   flex-direction: column;
   width: 45%;
-  height: 60%;
+  height: 65%;
   border-radius: 5px;
   margin: 50px auto;
   justify-content: space-around;
@@ -449,6 +449,8 @@ table td  svg{
   text-align: center;
   
 }
+
+
 
 .modal-new div{
   display: flex;
@@ -468,13 +470,11 @@ table td  svg{
 
 
 .modal div textarea{
-  margin-top: 38px;
   height: 70px;
 }
 
 .form-modal .buttons{
   align-items: center;
-  margin: 60px auto 0;
 }
 
 .radio-buttons{
@@ -495,8 +495,21 @@ table td  svg{
   margin-left: -30px ;
 }
 
-.status_select{
-  display: none !important;
+#obs{
+  height: 70px;
+}
+
+.error-message{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin: 15px 10px;
+  color: red;
+}
+
+.error-message p{
+  margin-bottom: 4px;
 }
 
 
