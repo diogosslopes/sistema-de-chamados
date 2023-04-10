@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Title from "../components/Title";
 import { FiEdit2, FiMessageSquare, FiPlus, FiSearch } from "react-icons/fi";
@@ -7,13 +7,14 @@ import Modal from "../components/Modal";
 import firebase from '../services/firebaseConnection';
 import TasksTable from "../components/TasksTable"
 import { collection, getDocs, orderBy, limit, startAfter, query, } from 'firebase/firestore'
+import { AuthContext } from "../context/auth";
 
 
 export default function Dashboard() {
 
+  const {user} = useContext(AuthContext)
   const [tasks, setTasks] = useState([])
   let list = []
-  let newList = []
   const [task, setTask] = useState('')
   const [type, setType] = useState('')
   const [showModal, setShowModal] = useState(false)
@@ -25,8 +26,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function getDocs() {
-      const docs = await firebase.firestore().collection('tasks').orderBy('created').limit('2').get()
+      const docs = await firebase.firestore().collection('tasks').orderBy('created').where("userId", "==", user.id).limit('2').get()
       await loadTasks(docs)
+      console.log(docs)
 
     }
     getDocs()
@@ -35,7 +37,9 @@ export default function Dashboard() {
 
   async function loadTasks(docs) {
 
+    console.log(docs.size)
     const isTaksEmpty = docs.size === 0
+    console.log(isTaksEmpty)
 
     if(!isTaksEmpty){
       docs.forEach((doc) => {
@@ -45,7 +49,8 @@ export default function Dashboard() {
           created: doc.data().created,
           obs: doc.data().obs,
           status: doc.data().status,
-          subject: doc.data().subject
+          subject: doc.data().subject,
+          userId: doc.data().userId
         })
       })
   
@@ -56,6 +61,7 @@ export default function Dashboard() {
       
     }else{
       setIsEmpty(true)
+      setLoading(false)
       
     }
     setLoadingMore(false)
@@ -66,7 +72,7 @@ export default function Dashboard() {
   async function moreTasks() {
 
     setLoadingMore(true)
-    const newDocs = await firebase.firestore().collection('tasks').orderBy('created').limit('2').startAfter(lastTask).get()
+    const newDocs = await firebase.firestore().collection('tasks').orderBy('created').where("userId", "==", user.id).limit('2').startAfter(lastTask).get()
 
     await loadTasks(newDocs)
 

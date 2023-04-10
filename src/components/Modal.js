@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import firebase from '../services/firebaseConnection';
 import '../index.css'
 import { format } from 'date-fns'
@@ -7,6 +7,9 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from "yup"
 import { toast } from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css";
+import { AuthContext } from "../context/auth";
+
 
 const validation = yup.object().shape({
   client: yup.string().required("Unidade obrigatoria"),
@@ -21,7 +24,7 @@ const validation = yup.object().shape({
 export default function Modal({ tipo, close, item }) {
 
 
-
+  const {user} = useContext(AuthContext)
   const [task, setTask] = useState(item)
   const [newTask, setNewTask] = useState({})
   const [client, setClient] = useState(item.client)
@@ -93,17 +96,20 @@ export default function Modal({ tipo, close, item }) {
         subject: subject,
         status: status,
         created: created,
-        obs: obs
+        obs: obs,
+        userId: user.id
       })
       await firebase.firestore().collection('tasks').doc().set({
         client: client,
         subject: subject,
         status: status,
         created: created,
-        obs: obs
+        obs: obs,
+        userId: user.id
       })
         .then(() => {
           console.log('Salvo')
+          toast.success("Chamado registrado !")
           close()
         })
         .catch((error) => {
@@ -118,6 +124,7 @@ export default function Modal({ tipo, close, item }) {
       })
         .then(() => {
           alert('Editou')
+          close()
         })
         .catch((error) => {
           alert(error)
@@ -127,14 +134,7 @@ export default function Modal({ tipo, close, item }) {
   }
 
 
-  function changeClient(e) {
-    e.preventDefault()
-    setClient(e.target.value)
-  }
-  function changeSubject(e) {
-    e.preventDefault()
-    setClient(e.target.value)
-  }
+
 
   async function deleteTask(e) {
     e.preventDefault()
