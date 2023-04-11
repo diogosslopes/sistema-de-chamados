@@ -1,4 +1,4 @@
-import { FiSettings, FiUsers } from "react-icons/fi";
+import { FiSettings, FiUsers, FiTrash, FiEdit2 } from "react-icons/fi";
 import Sidebar from "../components/Sidebar";
 import Title from "../components/Title";
 import { useEffect, useState } from "react";
@@ -93,8 +93,11 @@ export default function Clients() {
                 toast.error("Erro ao cadastrar cliente")
                 console.log(error)
             })
+    }
 
-
+    async function deleteClient(id){
+        console.log(id)
+        toast.success("Deletado com sucesso")
     }
 
 
@@ -134,6 +137,10 @@ export default function Clients() {
                             <label>Nome: {c.name}</label>
                             <label>Endereço: {c.adress} </label>
                             <label>E-mail: {c.email}</label>
+                            <div className="icons">
+                                <FiEdit2 className="client-btn edit"/>
+                                <FiTrash className="client-btn delete" onClick={() => deleteClient(c.id)}/>
+                            </div>
                         </div>
                     )
                 })}

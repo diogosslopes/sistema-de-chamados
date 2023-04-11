@@ -329,6 +329,23 @@ button {
   padding: 8px;
 }
 
+.clients-list .icons{
+  display: flex;
+  gap: 10px;
+  margin: 6px 0 0 6px;;
+}
+
+.client-btn {
+  border: 0;
+  height: 23px;
+  width: 23px;
+  align-items: center;
+  display: inline-block;
+  border-radius: 4px;
+  padding: 2px;
+  cursor: pointer;
+}
+
 /* Dashboard */
 
 .new-task {

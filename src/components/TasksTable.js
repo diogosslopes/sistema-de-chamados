@@ -5,6 +5,8 @@ import { FiEdit2, FiSearch, FiDelete, FiTrash } from "react-icons/fi";
 import { Link } from 'react-router-dom'
 import Modal from "../components/Modal";
 import firebase from '../services/firebaseConnection';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 export default function TasksTable({ tasks }) {
@@ -31,10 +33,11 @@ export default function TasksTable({ tasks }) {
 
         await firebase.firestore().collection('tasks').doc(task.id).delete()
             .then(() => {
-                alert('Chamado apagado')
+                toast.success('Chamado apagado com sucesso!')
             })
             .catch((error) => {
-                alert(error)
+                toast.error("Erro ao apagar chamado")
+                console.log(error)
             })
     }
 
