@@ -19,8 +19,6 @@ const validation = yup.object().shape({
 })
 
 
-
-
 export default function Modal({ tipo, close, item }) {
 
 
@@ -84,7 +82,7 @@ export default function Modal({ tipo, close, item }) {
   const save = data => {
     saveTask()
   }
-  console.log(created)
+  
   
   
   async function saveTask(e) {
@@ -108,43 +106,43 @@ export default function Modal({ tipo, close, item }) {
         userId: user.id
       })
         .then(() => {
-          console.log('Salvo')
           toast.success("Chamado registrado !")
           close()
         })
         .catch((error) => {
+          toast.error("Erro ao registrar chamado !")
           console.log(error)
         })
-    } else if (tipo === 'edit') {
-      await firebase.firestore().collection('tasks').doc(item.id).update({
-        client: client,
-        subject: subject,
-        status: status,
-        obs: obs
-      })
+      } else if (tipo === 'edit') {
+        await firebase.firestore().collection('tasks').doc(item.id).update({
+          client: client,
+          subject: subject,
+          status: status,
+          obs: obs
+        })
         .then(() => {
-          alert('Editou')
+          toast.success("Edição realizada com sucesso !")
           close()
         })
         .catch((error) => {
-          alert(error)
+          toast.error("Erro ao realizar edição !")
+          console.log(error)
         })
+      }
+      
     }
-
-  }
-
-
-
-
-  async function deleteTask(e) {
-    e.preventDefault()
-
-    await firebase.firestore().collection('tasks').doc(item.id).delete()
+    
+     
+    async function deleteTask(e) {
+      e.preventDefault()
+      
+      await firebase.firestore().collection('tasks').doc(item.id).delete()
       .catch(() => {
-        alert('Chamado apagado')
+        toast.success("Chamado excluido com sucesso !")
       })
       .catch((error) => {
-        alert(error)
+        toast.error("Erro ao excluir chamado !")
+        console.log(error)
       })
   }
   return (
@@ -194,7 +192,6 @@ export default function Modal({ tipo, close, item }) {
             <label>Observações</label>
             <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
           </div>
-
             <article  className="error-message">
             <p>{errors.client?.message}</p>
             <p>{errors.subject?.message}</p>
