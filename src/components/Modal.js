@@ -137,7 +137,7 @@ export default function Modal({ tipo, close, item }) {
       e.preventDefault()
       
       await firebase.firestore().collection('tasks').doc(item.id).delete()
-      .catch(() => {
+      .then(() => {
         toast.success("Chamado excluido com sucesso !")
       })
       .catch((error) => {

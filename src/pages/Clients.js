@@ -10,6 +10,7 @@ import * as yup from "yup"
 import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../context/auth";
+import DeleteModal from "../components/DeleteModal";
 
 
 
@@ -17,7 +18,7 @@ import { AuthContext } from "../context/auth";
 export default function Clients() {
 
     const validation = yup.object().shape({
-        name: yup.string().required("Nome é obrigatório").min(6,"Nome deve conter mínimo 6 caracteres"),
+        name: yup.string().required("Nome é obrigatório").min(6, "Nome deve conter mínimo 6 caracteres"),
         email: yup.string().required("Email é obrigatório").email("Digitie um e-mail válido")
     })
 
@@ -26,6 +27,10 @@ export default function Clients() {
     const [adress, setAdress] = useState('')
     const [email, setEmail] = useState('')
     const [clientList, setClientList] = useState([])
+    const [disable, setDisable] = useState(false)
+    const [editing, setEditing] = useState()
+    const [showModal, setShowModal] = useState(false)
+    const [unitId, setUnitId] = useState()
 
     const elementForm = document.querySelector('.form-client')
     let list = []
@@ -36,7 +41,12 @@ export default function Clients() {
     })
 
     const save = data => {
-        newClient()
+        if (editing === true) {
+
+            editClient()
+        } else {
+            newClient()
+        }
     }
 
 
@@ -60,7 +70,7 @@ export default function Clients() {
             setClientList(list)
         }
         loadClients()
-    }, [])
+    }, [newClient])
 
 
     function showForm() {
@@ -95,9 +105,35 @@ export default function Clients() {
             })
     }
 
-    async function deleteClient(id){
-        console.log(id)
-        toast.success("Deletado com sucesso")
+    // async function deleteClient(id) {
+
+    //     await firebase.firestore().collection('clients').doc(id).delete()
+    //         .then(() => {
+    //             // alert("Excluido")
+    //             toast.success("Deletado com sucesso")
+    //         })
+    //         .catch((error) => {
+    //             toast.error("Erro ao excluir unidade !")
+    //             console.log(error)
+    //         })
+    // }
+    async function editClient() {
+        // console.log()
+        toast.success("Editado com sucesso")
+    }
+    function editingClient(c) {
+        setEditing(true)
+        setName(c.name)
+        setAdress(c.adress)
+        setEmail(c.email)
+        showForm()
+        console.log(email)
+        // toast.success("Editado com sucesso")
+    }
+
+    function deleteItem(id) {
+        setShowModal(!showModal)
+        setUnitId(id)
     }
 
 
@@ -119,11 +155,11 @@ export default function Clients() {
                         <label>Endereço</label>
                         <input type='text' name="adress" {...register("adress")} value={adress} onChange={(e) => setAdress(e.target.value)} />
                         <label>E-mail</label>
-                        <input type='text' name="email" {...register("email")} value={email} onChange={(e) => setEmail(e.target.value)} />
-                    <div className="buttons">
-                        <button type="submit">Salvar</button>
-                        <button type="button" onClick={showForm}>Cancelar</button>
-                    </div>
+                        <input type='text' name="email" disabled={disable}  {...register("email")} value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <div className="buttons">
+                            <button type="submit">Salvar</button>
+                            <button type="button" onClick={showForm}>Cancelar</button>
+                        </div>
                     </div>
 
                     <article className="error-message">
@@ -138,13 +174,16 @@ export default function Clients() {
                             <label>Endereço: {c.adress} </label>
                             <label>E-mail: {c.email}</label>
                             <div className="icons">
-                                <FiEdit2 className="client-btn edit"/>
-                                <FiTrash className="client-btn delete" onClick={() => deleteClient(c.id)}/>
+                                <FiEdit2 className="client-btn edit" onClick={() => editingClient(c)} />
+                                <FiTrash className="client-btn delete" onClick={() => deleteItem(c.id)} />
                             </div>
                         </div>
                     )
                 })}
             </div>
+            {showModal && (
+                <DeleteModal close={deleteItem} id={unitId} bd={"clients"} />
+            )}
         </div>
     )
 }

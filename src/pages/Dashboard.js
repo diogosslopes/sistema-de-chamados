@@ -25,6 +25,7 @@ export default function Dashboard() {
 
 
   useEffect(() => {
+
     async function getDocs() {
       const docs = await firebase.firestore().collection('tasks').orderBy('created').where("userId", "==", user.id).limit('2').get()
       await loadTasks(docs)

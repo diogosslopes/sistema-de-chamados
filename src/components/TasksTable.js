@@ -7,14 +7,18 @@ import Modal from "../components/Modal";
 import firebase from '../services/firebaseConnection';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DeleteModal from "./DeleteModal";
 
 
 export default function TasksTable({ tasks }) {
 
 
     const [task, setTask] = useState('')
+    const [taskId, setTaskId] = useState('')
     const [type, setType] = useState('')
     const [showModal, setShowModal] = useState(false)
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    
 
     function editClient(t, item) {
         setType(t)
@@ -27,18 +31,10 @@ export default function TasksTable({ tasks }) {
     }
 
 
-    async function deleteTask(task) {
-        
-        
+    async function deleteTask(id) {
+        setTaskId(id)
+        setShowDeleteModal(!showDeleteModal)
 
-        await firebase.firestore().collection('tasks').doc(task.id).delete()
-            .then(() => {
-                toast.success('Chamado apagado com sucesso!')
-            })
-            .catch((error) => {
-                toast.error("Erro ao apagar chamado")
-                console.log(error)
-            })
     }
 
 
@@ -69,7 +65,7 @@ export default function TasksTable({ tasks }) {
                                 <td data-label="#">
                                     <button className="task-btn edit" onClick={() => editClient('edit', task)}><FiEdit2 size={17} /></button>
                                     <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
-                                    <button className="task-btn delete" onClick={() => deleteTask(task)}><FiTrash size={17} /></button>
+                                    <button className="task-btn delete" onClick={() => deleteTask(task.id)}><FiTrash size={17} /></button>
                                 </td>
                             </tr>
                         )
@@ -79,6 +75,9 @@ export default function TasksTable({ tasks }) {
             </table>
             {showModal && (
                 <Modal tipo={type} close={editClient} item={task} />
+            )}
+            {showDeleteModal && (
+                <DeleteModal  id={taskId} close={deleteTask} bd={"tasks"}/>
             )}
 
         </>
