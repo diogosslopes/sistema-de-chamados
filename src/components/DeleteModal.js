@@ -19,27 +19,34 @@ export default function DeleteModal({ id, close, bd }) {
 
 
 
-async function deleteItem() {
+  async function deleteItem() {
 
-  await firebase.firestore().collection(bd).doc(id).delete()
+    await firebase.firestore().collection(bd).doc(id).delete()
       .then(() => {
-          // alert("Excluido")
-          toast.success("Deletado com sucesso")
-          close()
+        // alert("Excluido")
+        toast.success("Deletado com sucesso")
+        close()
       })
       .catch((error) => {
-          toast.error("Erro ao excluir !")
-          console.log(error)
+        toast.error("Erro ao excluir !")
+        console.log(error)
       })
-}
+
+      if(bd === 'tasks'){
+        window.location.reload(false)
+      }
+  }
 
 
   return (
     <div className="modal">
-     <div className="buttons">
-            <button onClick={deleteItem} >Excluir</button>
-            <button onClick={close}>Cancelar</button>
-          </div>
-   </div>
+      <div className="delete-modal">
+        <h3>Tem certeza que deseja excluir?</h3>
+        <div className="buttons">
+          <button onClick={deleteItem} >Sim</button>
+          <button onClick={close}>Não</button>
+        </div>
+      </div>
+    </div>
   )
 }
