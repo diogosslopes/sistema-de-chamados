@@ -18,7 +18,7 @@ function SignUp() {
   const validationLogin = yup.object().shape({
     name: yup.string().required("Digite seu nome"),
     login: yup.string().email("Digite um email válido").required("Digite seu email"),
-    password: yup.string().required("Digite sua senha")
+    password: yup.string().required("Digite sua senha").min(6, "A senha deve conter mais de 6 caracteres")
   })
 
   const { register, handleSubmit, formState: { errors }} = useForm({

@@ -25,7 +25,7 @@ export default function Sidebar() {
                 </Link>
                 <Link to='/clients'>
                     <FiUsers />
-                    Clientes
+                    Unidades
                 </Link>
                 <Link to='/profile'>
                     <FiSettings />

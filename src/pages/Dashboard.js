@@ -119,6 +119,26 @@ export default function Dashboard() {
         </Title>
       </div>
       <div className="container-profile">
+      <form className="form-profile form-client " >
+
+<div>
+    <label>Nome</label>
+    <input type='text' name="name"  />
+    <label>Endereço</label>
+    <input type='text' name="adress"  />
+    <label>E-mail</label>
+    <input type='text' name="email"   />
+    <div className="buttons">
+        <button type="submit">Salvar</button>
+        <button type="button" >Cancelar</button>
+    </div>
+</div>
+
+<article className="error-message">
+    {/* <p>{errors.name?.message}</p>
+    <p>{errors.email?.message}</p> */}
+</article>
+</form>
         {tasks.length === 0 ?
           <>
             <div className="new-task">
