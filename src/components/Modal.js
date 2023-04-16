@@ -129,8 +129,6 @@ export default function Modal({ tipo, close, item }) {
           console.log(error)
         })
       }
-
-      window.location.reload(false)
       
     }
     
