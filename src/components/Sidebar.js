@@ -10,7 +10,7 @@ export default function Sidebar() {
 
     const { user, signOut } = useContext(AuthContext)
 
-    
+
 
     return (
         <div className='sidebar'>
@@ -31,7 +31,7 @@ export default function Sidebar() {
                     <FiSettings />
                     Configurações
                 </Link>
-                <a href=""onClick={signOut}><FiLogOut/>Sair</a>
+                <a href="" onClick={signOut}><FiLogOut />Sair</a>
             </div>
         </div>
     )

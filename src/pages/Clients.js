@@ -1,4 +1,4 @@
-import { FiSettings, FiUsers, FiTrash, FiEdit2 } from "react-icons/fi";
+import { FiUsers, FiTrash, FiEdit2 } from "react-icons/fi";
 import Sidebar from "../components/Sidebar";
 import Title from "../components/Title";
 import { useEffect, useState } from "react";
@@ -9,7 +9,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from "yup"
 import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
-import { AuthContext } from "../context/auth";
 import DeleteModal from "../components/DeleteModal";
 
 
@@ -107,7 +106,6 @@ export default function Clients() {
 
 
     async function editClient() {
-        // console.log()
         toast.success("Editado com sucesso")
     }
     function editingClient(c) {
@@ -116,7 +114,6 @@ export default function Clients() {
         setAdress(c.adress)
         setEmail(c.email)
         showForm()
-        console.log(email)
         // toast.success("Editado com sucesso")
     }
 
@@ -130,11 +127,11 @@ export default function Clients() {
         <div className="rigth-container">
             <Sidebar />
             <div className="title">
-                <Title name="Clientes">
+                <Title name="Unidades">
                     <FiUsers size={22} />
                 </Title>
             </div>
-            <button onClick={showForm} className="new">Novo Cliente</button>
+            <button onClick={showForm} className="new">Nova Unidade</button>
             <div className="container-profile ">
                 <form className="form-profile form-client hide" onSubmit={handleSubmit(save)}>
 

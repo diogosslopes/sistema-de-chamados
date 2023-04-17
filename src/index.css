@@ -153,12 +153,13 @@ button.button-hover {
 
 .avatar {
   padding: 10px;
+  display: flex;
+  justify-content: center;
 }
 
 .avatar img {
-  width: 100px;
+  width: 90px;
   height: 90px;
-  padding-left: 10px;
   border-radius: 50%;
 }
 

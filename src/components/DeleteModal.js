@@ -37,11 +37,11 @@ export default function DeleteModal({ id, close, bd }) {
 
   return (
     <div className="modal">
-      <div  className="delete-modal">
+      <div className="delete-modal">
         <h3>Tem certeza que deseja excluir?</h3>
         <div className="buttons">
-          <button  onClick={deleteItem} >Sim</button>
-          <button  onClick={close}>Não</button>
+          <button onClick={deleteItem} >Sim</button>
+          <button onClick={close}>Não</button>
         </div>
       </div>
     </div>

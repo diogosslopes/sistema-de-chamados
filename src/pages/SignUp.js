@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useContext} from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import logo from '../images/Logo.png'
+import logoEngrenagem from '../images/logo-engrenagem.png'
 import { AuthContext } from "../context/auth";
-
-import { signInWithEmailAndPassword } from "firebase/auth"
-import firebase from '../services/firebaseConnection'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from "yup"
-import { toast } from 'react-toastify'
 
 
 function SignUp() {
@@ -21,11 +18,11 @@ function SignUp() {
     password: yup.string().required("Digite sua senha").min(6, "A senha deve conter mais de 6 caracteres")
   })
 
-  const { register, handleSubmit, formState: { errors }} = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(validationLogin)
   })
 
-  const signUp = (value) =>{
+  const signUp = (value) => {
     registerUser(value)
   }
 
@@ -33,7 +30,7 @@ function SignUp() {
   return (
     <div className="main-container">
       <div className="logo">
-        <img src={logo}/>
+        <img src={logo} />
       </div>
       <div className="container-login">
         <h1>Cadastro de usuario</h1>
@@ -44,7 +41,7 @@ function SignUp() {
           <p>{errors.login?.message}</p>
           <input type='password' name="password" {...register("password")} placeholder="Digite sua senha"></input>
           <p>{errors.password?.message}</p>
-          <button  type="submit">{loadingAuth ? 'Carregando...' : 'Cadastrar' }</button>
+          <button type="submit">{loadingAuth ? 'Carregando...' : 'Cadastrar'}</button>
         </form>
         <Link to='/'>Já possui cadastro? Clique aqui</Link>
       </div>

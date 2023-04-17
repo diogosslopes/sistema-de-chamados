@@ -6,14 +6,14 @@ import { Link } from 'react-router-dom'
 import Modal from "../components/Modal";
 import firebase from '../services/firebaseConnection';
 import TasksTable from "../components/TasksTable"
-import { collection, getDocs, orderBy, limit, startAfter, query, } from 'firebase/firestore'
+
 import { AuthContext } from "../context/auth";
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from "yup"
 import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
-import { func } from "prop-types";
+import { format } from 'date-fns'
 
 
 const validation = yup.object().shape({
@@ -60,41 +60,40 @@ export default function Dashboard() {
 
     async function loadClients() {
       await firebase.firestore().collection('clients').get()
-      .then((snapshot) => {
-        let list = []
-        
-        snapshot.forEach((doc) => {
-          list.push({
-            id: doc.id,
-            client: doc.data().name
+        .then((snapshot) => {
+          let list = []
+
+          snapshot.forEach((doc) => {
+            list.push({
+              id: doc.id,
+              client: doc.data().name
+            })
           })
+          setClients(list)
+
         })
-        setClients(list)
-        
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-      
+        .catch((error) => {
+          console.log(error)
+        })
+
     }
-    
+
     loadClients()
 
     getDocs()
-    
+
   }, [])
-  
+
   async function getDocs() {
-    const docs = await firebase.firestore().collection('tasks').orderBy('created').where("userId", "==", user.id).limit('2').get()
+    const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("userId", "==", user.id).limit('2').get()
     await loadTasks(docs)
     console.log(docs)
 
   }
   async function loadTasks(docs) {
 
-    console.log(docs.size)
     const isTaksEmpty = docs.size === 0
-    console.log(isTaksEmpty)
+
 
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
@@ -120,49 +119,45 @@ export default function Dashboard() {
 
     }
     setLoadingMore(false)
-
-
   }
 
 
   const save = data => {
     saveTask()
   }
-  
-  
+
+
   async function saveTask(e) {
-    // e.preventDefault()
 
-
-      setNewTask({
-        client: client,
-        subject: subject,
-        status: status,
-        created: created,
-        obs: obs,
-        userId: user.id
+    setNewTask({
+      client: client,
+      subject: subject,
+      status: status,
+      created: created,
+      obs: obs,
+      userId: user.id
+    })
+    await firebase.firestore().collection('tasks').doc().set({
+      client: client,
+      subject: subject,
+      status: status,
+      created: created,
+      obs: obs,
+      userId: user.id
+    })
+      .then(() => {
+        toast.success("Chamado registrado !")
+        setTasks('')
+        closeForm()
+        getDocs()
       })
-      await firebase.firestore().collection('tasks').doc().set({
-        client: client,
-        subject: subject,
-        status: status,
-        created: created,
-        obs: obs,
-        userId: user.id
+      .catch((error) => {
+        toast.error("Erro ao registrar chamado !")
+        console.log(error)
       })
-        .then(() => {
-          toast.success("Chamado registrado !")
-          setTasks('')
-          closeForm()
-          getDocs()
-        })
-        .catch((error) => {
-          toast.error("Erro ao registrar chamado !")
-          console.log(error)
-        })
 
-      
-    }
+
+  }
 
   async function moreTasks() {
 
@@ -185,6 +180,9 @@ export default function Dashboard() {
   function showForm(e) {
     e.preventDefault()
 
+    const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
+    setCreated(fullDate)
+
     const elementForm = document.querySelector('.form-task')
     const elementButton = document.querySelector('.new')
 
@@ -198,10 +196,10 @@ export default function Dashboard() {
     }
   }
 
-  function closeForm(){
+  function closeForm() {
     const elementForm = document.querySelector('.form-task')
     const elementButton = document.querySelector('.new')
-    if(!elementForm.classList.contains('hide')){
+    if (!elementForm.classList.contains('hide')) {
       elementForm.classList.add('hide')
       elementButton.classList.remove('hide')
     }
@@ -221,11 +219,7 @@ export default function Dashboard() {
             <span>Carregando chamados !</span>
           </div>
         </div>
-
       </div>
-
-
-
     )
   }
 
@@ -276,25 +270,17 @@ export default function Dashboard() {
             </div>
             <div>
               <label>Criando em</label>
-              <input value={created} name="created" {...register("created")} onChange={(e) => setCreated(e.target.value)} disabled={disable} placeholder="Criado em" />
+              <input value={created} name="created" disabled = {true} {...register("created")} onChange={(e) => setCreated(e.target.value)} placeholder="Criado em" />
             </div>
             <div id="obs">
               <label>Observações</label>
               <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
             </div>
-            {/* <article className="error-message">
-              <p>{errors.client?.message}</p>
-              <p>{errors.subject?.message}</p>
-              <p>{errors.status?.message}</p>
-              <p>{errors.obs?.message}</p>
-            </article> */}
             <div className="buttons">
               <button type='submit' >Salvar</button>
               <button onClick={(e) => showForm(e)}>Cancelar</button>
             </div>
-
           </div>
-
           <article className="error-message">
             <p>{errors.client?.message}</p>
             <p>{errors.subject?.message}</p>

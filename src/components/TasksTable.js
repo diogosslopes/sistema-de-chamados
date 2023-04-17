@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Title from "../components/Title";
 import { FiEdit2, FiSearch, FiDelete, FiTrash } from "react-icons/fi";
-import { Link } from 'react-router-dom'
 import Modal from "../components/Modal";
-import firebase from '../services/firebaseConnection';
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import DeleteModal from "./DeleteModal";
 
 
@@ -18,7 +12,7 @@ export default function TasksTable({ tasks }) {
     const [type, setType] = useState('')
     const [showModal, setShowModal] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
-    
+
 
     function editClient(t, item) {
         setType(t)
@@ -77,7 +71,7 @@ export default function TasksTable({ tasks }) {
                 <Modal tipo={type} close={editClient} item={task} />
             )}
             {showDeleteModal && (
-                <DeleteModal  id={taskId} close={deleteTask} bd={"tasks"}/>
+                <DeleteModal id={taskId} close={deleteTask} bd={"tasks"} />
             )}
 
         </>

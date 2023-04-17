@@ -28,75 +28,71 @@ function AuthProvider({ children }) {
 
     async function registerUser(value) {
         setLoadingAuth(true)
-        
-           
+
+
         await firebase.auth().createUserWithEmailAndPassword(value.login, value.password)
-                .then(async (data) => {
-                    let uid = data.user.uid
-                    await firebase.firestore().collection("users")
+            .then(async (data) => {
+                let uid = data.user.uid
+                await firebase.firestore().collection("users")
                     .doc(uid).set({
                         id: uid,
                         name: value.name,
                         email: data.user.email,
                         avatar: null
                     })
-                        .then(() => {
-                            let userData = {
-                                id: uid,
-                                name: value.name,
-                                email: value.login,
-                                avatar: null
-                            }
+                    .then(() => {
+                        let userData = {
+                            id: uid,
+                            name: value.name,
+                            email: value.login,
+                            avatar: null
+                        }
 
-                            setUser(userData)
-                            storage(userData)
-                            setLoadingAuth(false)
-                        })
+                        setUser(userData)
+                        storage(userData)
+                        setLoadingAuth(false)
+                    })
 
-                }).catch((error)=>{
-                    console.log(error)
-                    setLoadingAuth(true)
-                })
-        
+            }).catch((error) => {
+                console.log(error)
+                setLoadingAuth(true)
+            })
+
 
     }
 
-    async function logIn(value){
+    async function logIn(value) {
         setLoadingAuth(true)
-        console.log(value.login)
         await firebase.auth().signInWithEmailAndPassword(value.login, value.password)
-        .then(async(data)=>{
-            let uid = data.user.uid
+            .then(async (data) => {
+                let uid = data.user.uid
 
-            const userProfile = await firebase.firestore().collection('users').doc(uid).get()
+                const userProfile = await firebase.firestore().collection('users').doc(uid).get()
 
-            console.log(userProfile)
-
-            let userData = {
-                id: uid,
-                name: userProfile.data().name,
-                email: value.login,
-                avatar: userProfile.data().avatar
-            }
-            setUser(userData)
-            storage(userData)   
-            setLoadingAuth(false)
-            console.log(userData)
-        })
-        .catch((error)=>{
-            console.log(error)
-            toast.error("Usuario ou senha invalido!")
-            alert("Erro")
-            setLoadingAuth(false)
-        })
+                let userData = {
+                    id: uid,
+                    name: userProfile.data().name,
+                    email: value.login,
+                    avatar: userProfile.data().avatar
+                }
+                setUser(userData)
+                storage(userData)
+                setLoadingAuth(false)
+            })
+            .catch((error) => {
+                console.log(error)
+                toast.error("Usuario ou senha invalido!")
+                alert("Erro")
+                setLoadingAuth(false)
+            })
 
     }
 
-    function storage(userData){
+    function storage(userData) {
         localStorage.setItem('activeUser', JSON.stringify(userData))
     }
 
-    async function signOut(){
+    async function signOut() {
         await firebase.auth().signOut()
         localStorage.removeItem('activeUser')
         setUser(null)

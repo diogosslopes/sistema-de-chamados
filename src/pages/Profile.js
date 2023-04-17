@@ -9,24 +9,23 @@ import firebase from '../services/firebaseConnection';
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from "yup"
-import { toast } from 'react-toastify'
 
 
 
 export default function Profile() {
-    
+
     const { user, storage, setUser } = useContext(AuthContext)
     const [name, setName] = useState(user && user.name)
     const [editingName, setEditingName] = useState(user && user.name)
     const [email, setEmail] = useState(user && user.email)
     const [avatarUrl, setAvatarUrl] = useState(user && user.avatar)
     const [newAvatar, setNewAvatar] = useState(null)
-    
+
     const validation = yup.object().shape({
         name: yup.string().required("Nome é obrigatorio")
     })
 
-    const {register, handleSubmit, formState: {errors} } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(validation)
     })
 
@@ -36,12 +35,12 @@ export default function Profile() {
     }
 
 
-    function preview(e){
+    function preview(e) {
 
         const image = e.target.files[0]
 
         setNewAvatar(image)
-        if(image.type === 'image/jpeg' || image.type === 'image/png'){
+        if (image.type === 'image/jpeg' || image.type === 'image/png') {
             setNewAvatar(image)
             setAvatarUrl(URL.createObjectURL(image))
         } else {
@@ -51,65 +50,65 @@ export default function Profile() {
         }
     }
 
-    async function handleLogin(){
-        
+    async function handleLogin() {
+
         alert('Salvo')
-        if(newAvatar === null && name !== ''){
+        if (newAvatar === null && name !== '') {
             await firebase.firestore().collection('users')
-            .doc(user.id)
-            .update({
-                name: name
-            })
-            .then(()=>{
-                let userData ={
-                    ...user,
-                    name: name
-                }
-                setUser(userData)
-                storage(userData)
-            })
-            
-        }else if(name !== '' && newAvatar !== null){
-            upload()
-        }
-        
-
-    async function upload(){
-
-
-        await firebase.storage().ref(`images/${user.id}/${newAvatar.name}`)
-        .put(newAvatar)
-        .then(async()=>{
-            alert('Foto enviada')
-            
-            await firebase.storage().ref(`images/${user.id}`)
-            .child(newAvatar.name).getDownloadURL()
-            .then( async (url)=>{
-                
-                await firebase.firestore().collection('users')
                 .doc(user.id)
                 .update({
-                    avatar: url,
                     name: name
                 })
-                .then(()=>{
-                    let userData={
+                .then(() => {
+                    let userData = {
                         ...user,
-                        avatar: url,
                         name: name
                     }
-                    
                     setUser(userData)
                     storage(userData)
                 })
-            })
-        })
-    }
-   
-    
-}
 
-    
+        } else if (name !== '' && newAvatar !== null) {
+            upload()
+        }
+
+
+        async function upload() {
+
+
+            await firebase.storage().ref(`images/${user.id}/${newAvatar.name}`)
+                .put(newAvatar)
+                .then(async () => {
+                    alert('Foto enviada')
+
+                    await firebase.storage().ref(`images/${user.id}`)
+                        .child(newAvatar.name).getDownloadURL()
+                        .then(async (url) => {
+
+                            await firebase.firestore().collection('users')
+                                .doc(user.id)
+                                .update({
+                                    avatar: url,
+                                    name: name
+                                })
+                                .then(() => {
+                                    let userData = {
+                                        ...user,
+                                        avatar: url,
+                                        name: name
+                                    }
+
+                                    setUser(userData)
+                                    storage(userData)
+                                })
+                        })
+                })
+        }
+
+
+    }
+
+
     return (
         <div className="rigth-container">
             <Sidebar />
@@ -122,22 +121,22 @@ export default function Profile() {
             <div className="container-profile">
                 <form className="form-profile" onSubmit={handleSubmit(editLogin)}>
                     <label className="avatar-label">
-                        <FiUpload color="#FFF" size={25}  />
+                        <FiUpload color="#FFF" size={25} />
                         <input type='file' accept='image/*' onChange={preview} />
 
                         {avatarUrl == null ?
-                            <img src={avatar} alt="Foto do usuario"/>
+                            <img src={avatar} alt="Foto do usuario" />
                             :
-                            <img src={avatarUrl} alt="Foto do usuario"/>
+                            <img src={avatarUrl} alt="Foto do usuario" />
                         }
                     </label>
                     <label>Nome</label>
-                    <input id="inputname" type='text' name="name" {...register("name")} value={name} onChange={(e)=> setName(e.target.value)}/>
+                    <input id="inputname" type='text' name="name" {...register("name")} value={name} onChange={(e) => setName(e.target.value)} />
                     <p className="error-message" >{errors.name?.message}</p>
                     <label>E-mail</label>
-                    <input disabled={true} type='text' value={email}/>
+                    <input disabled={true} type='text' value={email} />
 
-                    <button  type="submit">Salvar</button>
+                    <button type="submit">Salvar</button>
                 </form>
             </div>
         </div>
