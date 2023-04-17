@@ -199,8 +199,8 @@ export default function Modal({ tipo, close, item }) {
             <p>{errors.obs?.message}</p>
             </article>
           <div className="buttons">
-            <button type='submit' >Salvar</button>
-            <button onClick={close}>Cancelar</button>
+            <button  type='submit' >Salvar</button>
+            <button  onClick={close}>Cancelar</button>
           </div>
         </form>
       </div>

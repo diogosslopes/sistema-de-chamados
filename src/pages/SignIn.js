@@ -40,7 +40,7 @@ function SignIn() {
           <input type='text' name="login" placeholder="Digite seu Login" {...register("login")} ></input>
           <p>{errors.login?.message}</p>
           <input type='password' name="password" {...register("password")} placeholder="Digite sua senha"></input>
-          <button type="submit">{loadingAuth ? 'Carregando...' : 'Logar' }</button>
+          <button  type="submit">{loadingAuth ? 'Carregando...' : 'Logar' }</button>
         </form>
         <Link to='/register'>Cadastrar</Link>
       </div>

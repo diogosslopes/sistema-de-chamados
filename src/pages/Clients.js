@@ -105,18 +105,7 @@ export default function Clients() {
             })
     }
 
-    // async function deleteClient(id) {
 
-    //     await firebase.firestore().collection('clients').doc(id).delete()
-    //         .then(() => {
-    //             // alert("Excluido")
-    //             toast.success("Deletado com sucesso")
-    //         })
-    //         .catch((error) => {
-    //             toast.error("Erro ao excluir unidade !")
-    //             console.log(error)
-    //         })
-    // }
     async function editClient() {
         // console.log()
         toast.success("Editado com sucesso")
@@ -157,8 +146,8 @@ export default function Clients() {
                         <label>E-mail</label>
                         <input type='text' name="email" disabled={disable}  {...register("email")} value={email} onChange={(e) => setEmail(e.target.value)} />
                         <div className="buttons">
-                            <button type="submit">Salvar</button>
-                            <button type="button" onClick={showForm}>Cancelar</button>
+                            <button  type="submit">Salvar</button>
+                            <button  type="button" onClick={showForm}>Cancelar</button>
                         </div>
                     </div>
 

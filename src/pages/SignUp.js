@@ -44,7 +44,7 @@ function SignUp() {
           <p>{errors.login?.message}</p>
           <input type='password' name="password" {...register("password")} placeholder="Digite sua senha"></input>
           <p>{errors.password?.message}</p>
-          <button type="submit">{loadingAuth ? 'Carregando...' : 'Cadastrar' }</button>
+          <button  type="submit">{loadingAuth ? 'Carregando...' : 'Cadastrar' }</button>
         </form>
         <Link to='/'>Já possui cadastro? Clique aqui</Link>
       </div>

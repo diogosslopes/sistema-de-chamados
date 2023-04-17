@@ -62,6 +62,13 @@ ul {
   list-style: none;
 }
 
+.button-hover:hover, button:hover{
+  opacity: .7;
+  transition: all ease-in-out .3s;
+  
+  
+}
+
 .hide {
   display: none !important;
   height: 0;
@@ -76,6 +83,12 @@ button {
   border-radius: 5px;
   border: none;
   max-width: 600px;
+}
+
+button.button-hover {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 7px;
 }
 
 /* Login e Cadastro */
@@ -348,6 +361,57 @@ button {
 
 /* Dashboard */
 
+.form-task {
+  background-color: #A1B4C4;
+  display: flex;
+  justify-content: flex-start;
+  margin: 1em 0;
+  border-radius: 5px;
+  padding: .8em;
+  height: 300px;
+}
+
+.form-task div{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 60%;
+}
+
+.form-task div div{
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+  justify-content: space-between;
+  width: 90%;
+}
+
+.form-task input, .form-task textarea{
+  border: none;
+  padding: 8px;
+  border-radius: 5px;
+  color: #32383D;
+  max-width: 600px;  
+
+  border: none;
+  padding: 3px;
+  height: 25px;
+  border-radius: 5px;
+  width: 80%;
+}
+
+.form-task div textarea{
+  height: 70px;
+}
+
+
+
+.form-task .buttons{
+  display: flex;
+  flex-direction: row;
+}
+
+
 .new-task {
   background-color: #A1B4C4;
   display: flex;
@@ -389,6 +453,18 @@ button {
   border-radius: 5px;
   padding: .8em;
 
+}
+
+.more-tasks{
+  cursor: pointer;
+  height: 35px;
+  margin: 10px 0;
+  color: #32383D;
+  font-size: 12px;
+  padding: 7px;
+  border-radius: 5px;
+  border: none;
+  max-width: 600px;
 }
 
 .more-task a{
@@ -451,6 +527,18 @@ table td  svg{
   color: #fff;
   padding: 3px 5px;
   border-radius: 5px;
+}
+
+.delete-modal{
+  background-color: #a1b4c4;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin: 180px auto;
+  padding: 15px;
+  width: 45%;
+  text-align: center;
 }
 
 /* Modal */

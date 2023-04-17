@@ -137,7 +137,7 @@ export default function Profile() {
                     <label>E-mail</label>
                     <input disabled={true} type='text' value={email}/>
 
-                    <button type="submit">Salvar</button>
+                    <button  type="submit">Salvar</button>
                 </form>
             </div>
         </div>

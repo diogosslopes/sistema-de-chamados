@@ -13,18 +13,20 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from "yup"
 import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
+import { func } from "prop-types";
 
 
 const validation = yup.object().shape({
   client: yup.string().required("Unidade obrigatoria"),
-  subject: yup.string().required("Assunto obrigatorio").min(5,"Minimo de 5 caracteres").max(15, "Maximo de 15 caracteres"),
+  subject: yup.string().required("Assunto obrigatorio").min(5, "Minimo de 5 caracteres").max(15, "Maximo de 15 caracteres"),
   status: yup.string().required('Status é obrigatorio'),
-  obs: yup.string().required('Descrição é obrigatorio').min(10,'Minimo de 10 caracteres').max(100, 'Maximo de 100 caracteres'),
+  obs: yup.string().required('Descrição é obrigatorio').min(10, 'Minimo de 10 caracteres').max(100, 'Maximo de 100 caracteres'),
 })
 
 
+
 export default function Dashboard() {
-  
+
   const { user } = useContext(AuthContext)
   const [tasks, setTasks] = useState([])
   let list = []
@@ -47,26 +49,47 @@ export default function Dashboard() {
   const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
   const [disable, setDisable] = useState(false)
 
-  
-  const { register, handleSubmit, formState: {errors} } = useForm({
+
+
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(validation)
   })
-  
-  
+
+
   useEffect(() => {
-    
-    
-    
-    async function getDocs() {
-      const docs = await firebase.firestore().collection('tasks').orderBy('created').where("userId", "==", user.id).limit('2').get()
-      await loadTasks(docs)
-      console.log(docs)
 
+    async function loadClients() {
+      await firebase.firestore().collection('clients').get()
+      .then((snapshot) => {
+        let list = []
+        
+        snapshot.forEach((doc) => {
+          list.push({
+            id: doc.id,
+            client: doc.data().name
+          })
+        })
+        setClients(list)
+        
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+      
     }
+    
+    loadClients()
+
     getDocs()
-
+    
   }, [])
+  
+  async function getDocs() {
+    const docs = await firebase.firestore().collection('tasks').orderBy('created').where("userId", "==", user.id).limit('2').get()
+    await loadTasks(docs)
+    console.log(docs)
 
+  }
   async function loadTasks(docs) {
 
     console.log(docs.size)
@@ -85,7 +108,7 @@ export default function Dashboard() {
           userId: doc.data().userId
         })
       })
-      
+
       const lastDoc = docs.docs[docs.docs.length - 1]
       setLastTask(lastDoc)
       setTasks(tasks => [...tasks, ...list])
@@ -101,9 +124,45 @@ export default function Dashboard() {
 
   }
 
-  
 
+  const save = data => {
+    saveTask()
+  }
   
+  
+  async function saveTask(e) {
+    // e.preventDefault()
+
+
+      setNewTask({
+        client: client,
+        subject: subject,
+        status: status,
+        created: created,
+        obs: obs,
+        userId: user.id
+      })
+      await firebase.firestore().collection('tasks').doc().set({
+        client: client,
+        subject: subject,
+        status: status,
+        created: created,
+        obs: obs,
+        userId: user.id
+      })
+        .then(() => {
+          toast.success("Chamado registrado !")
+          setTasks('')
+          closeForm()
+          getDocs()
+        })
+        .catch((error) => {
+          toast.error("Erro ao registrar chamado !")
+          console.log(error)
+        })
+
+      
+    }
 
   async function moreTasks() {
 
@@ -125,8 +184,10 @@ export default function Dashboard() {
 
   function showForm(e) {
     e.preventDefault()
-    const elementForm = document.querySelector('.form-client')
+
+    const elementForm = document.querySelector('.form-task')
     const elementButton = document.querySelector('.new')
+
     if (elementForm.classList.contains('hide')) {
       elementButton.classList.add('hide')
       elementForm.classList.remove('hide')
@@ -134,6 +195,15 @@ export default function Dashboard() {
       elementForm.classList.add('hide')
       elementButton.classList.remove('hide')
 
+    }
+  }
+
+  function closeForm(){
+    const elementForm = document.querySelector('.form-task')
+    const elementButton = document.querySelector('.new')
+    if(!elementForm.classList.contains('hide')){
+      elementForm.classList.add('hide')
+      elementButton.classList.remove('hide')
     }
   }
 
@@ -168,7 +238,7 @@ export default function Dashboard() {
         </Title>
       </div>
       <div className="container-profile">
-        <form className="form-profile form-client hide" >
+        <form className="form-task hide" onSubmit={handleSubmit(save)}>
           <div>
             <div>
               <label>Cliente</label>
@@ -212,50 +282,44 @@ export default function Dashboard() {
               <label>Observações</label>
               <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
             </div>
-            <article className="error-message">
+            {/* <article className="error-message">
               <p>{errors.client?.message}</p>
               <p>{errors.subject?.message}</p>
               <p>{errors.status?.message}</p>
               <p>{errors.obs?.message}</p>
-            </article>
+            </article> */}
             <div className="buttons">
               <button type='submit' >Salvar</button>
-              <button onClick={(e)=>showForm(e)}>Cancelar</button>
+              <button onClick={(e) => showForm(e)}>Cancelar</button>
             </div>
-            {/* <label>Nome</label>
-    <input type='text' name="name"  />
-    <label>Endereço</label>
-    <input type='text' name="adress"  />
-    <label>E-mail</label>
-    <input type='text' name="email"   />
-    <div className="buttons">
-        <button type="submit">Salvar</button>
-        <button type="button" >Cancelar</button>
-    </div> */}
+
           </div>
 
           <article className="error-message">
-
+            <p>{errors.client?.message}</p>
+            <p>{errors.subject?.message}</p>
+            <p>{errors.status?.message}</p>
+            <p>{errors.obs?.message}</p>
           </article>
         </form>
         {tasks.length === 0 ?
           <>
             <div className="new-task">
               <span>Não existem chamados registrados...</span>
-              
-              <Link to='#' className= "new" onClick={showForm}> <FiPlus size={25} /> Abrir Chamado</Link>
+
+              <Link to='#' className="new button-hover" onClick={showForm}> <FiPlus size={25} /> Abrir Chamado</Link>
             </div>
 
           </>
           :
           <div>
             <div className="new-task more-task">
-              <Link to='#' className="new" onClick={showForm}> <FiPlus size={25} /> Abrir Chamado</Link>
+              <Link to='#' className="new button-hover" onClick={showForm}> <FiPlus size={25} /> Abrir Chamado</Link>
             </div>
             <TasksTable tasks={tasks} />
             {loadingMore && <h3>Carregando...</h3>}
 
-            {!loadingMore && !isEmpty && <button onClick={moreTasks}>Carregar Mais</button>}
+            {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Carregar Mais</button>}
 
           </div>
         }
