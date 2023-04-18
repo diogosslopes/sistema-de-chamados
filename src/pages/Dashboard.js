@@ -17,9 +17,8 @@ import { format } from 'date-fns'
 
 
 const validation = yup.object().shape({
-  client: yup.string().required("Unidade obrigatoria"),
+  client: yup.string(),
   subject: yup.string().required("Assunto obrigatorio").min(5, "Minimo de 5 caracteres").max(15, "Maximo de 15 caracteres"),
-  status: yup.string().required('Status é obrigatorio'),
   obs: yup.string().required('Descrição é obrigatorio').min(10, 'Minimo de 10 caracteres').max(100, 'Maximo de 100 caracteres'),
 })
 
@@ -37,17 +36,21 @@ export default function Dashboard() {
   const [lastTask, setLastTask] = useState()
   const [loadingMore, setLoadingMore] = useState(false)
   const [isEmpty, setIsEmpty] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
 
 
   const [newTask, setNewTask] = useState({})
-  const [client, setClient] = useState()
+  const [client, setClient] = useState(user.name)
   const [clients, setClients] = useState([])
+  const [priority, setPriority] = useState()
   const [subject, setSubject] = useState()
-  const [status, setStatus] = useState()
+  const [status, setStatus] = useState('Criado')
   const [created, setCreated] = useState()
   const [obs, setObs] = useState()
+  const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
   const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
-  const [disable, setDisable] = useState(false)
+  const [stats, setStats] = useState(['Criado', 'Aberto', 'Em andamento', 'Enviado p/ tec', 'Aguardando liberação', 'Fechado'])
+  const [disable, setDisable] = useState(true)
 
 
 
@@ -79,15 +82,26 @@ export default function Dashboard() {
     }
 
     loadClients()
-
     getDocs()
+
+    if(user.group === 'admin'){
+      setIsAdmin(true)
+      setDisable(false)
+    }
 
   }, [])
 
   async function getDocs() {
-    const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("userId", "==", user.id).limit('2').get()
-    await loadTasks(docs)
-    console.log(docs)
+    console.log(user)
+    if(user.group === "admin"){
+      const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('2').get()
+      console.log(docs) 
+      await loadTasks(docs)
+    }else{
+      const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("userId", "==", user.id).limit('2').get()
+      await loadTasks(docs)
+    }
+    
 
   }
   async function loadTasks(docs) {
@@ -162,7 +176,7 @@ export default function Dashboard() {
   async function moreTasks() {
 
     setLoadingMore(true)
-    const newDocs = await firebase.firestore().collection('tasks').orderBy('created').where("userId", "==", user.id).limit('2').startAfter(lastTask).get()
+    const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("userId", "==", user.id).limit('2').startAfter(lastTask).get()
 
     await loadTasks(newDocs)
 
@@ -234,21 +248,9 @@ export default function Dashboard() {
       <div className="container-profile">
         <form className="form-task hide" onSubmit={handleSubmit(save)}>
           <div>
-            <div>
-              <label>Cliente</label>
-              <select disabled={disable} name="client" {...register("client")} value={client} onChange={(e) => { setClient(e.target.value) }} >
-                <option value={''}>Selecione a unidade</option>
-
-                {clients.map((c, index) => {
-                  return (
-                    <option value={c.client} key={c.id}>{c.client}</option>
-                  )
-                })}
-              </select>
-            </div>
-            <div>
+            <div className="subject_select">
               <label>Assunto</label>
-              <select disabled={disable} name="subject" {...register("subject")} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
+              <select name="subject" {...register("subject")} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
                 <option value={''} >Selecione o assunto</option>
                 {subjects.map((s, index) => {
                   return (
@@ -257,15 +259,26 @@ export default function Dashboard() {
                 })}
               </select>
             </div>
-
+            <div className="priority_select">
+              <label>Prioridade</label>
+              <select name="priority" {...register("priority")} value={priority} onChange={(e) => { setPriority(e.target.value) }}>
+                <option value={''} >Selecione a prioridade</option>
+                {prioritys.map((p, index) => {
+                  return (
+                    <option value={p} key={index}>{p}</option>
+                  )
+                })}
+              </select>
+            </div>
             <div className="status_select">
               <label>Status</label>
-              <select disabled={disable} name="status" {...register("status")} value={status} onChange={(e) => setStatus(e.target.value)}>
-                <option value={''}>Selecione o status</option>
-                <option>Aberto</option>
-                <option>Em andamento</option>
-                <option>Enviado p/ tecnico</option>
-                <option>Fechado</option>
+              <select disabled={disable} name="status" {...register("status")} value={status} onChange={(e) => { setStatus(e.target.value) }}>
+                <option value={''} >Selecione o status</option>
+                {stats.map((s, index) => {
+                  return (
+                    <option value={s} key={index}>{s}</option>
+                  )
+                })}
               </select>
             </div>
             <div>
@@ -274,7 +287,7 @@ export default function Dashboard() {
             </div>
             <div id="obs">
               <label>Observações</label>
-              <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
+              <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} placeholder="Observações" />
             </div>
             <div className="buttons">
               <button type='submit' >Salvar</button>

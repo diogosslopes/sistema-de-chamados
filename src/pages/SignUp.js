@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import logo from '../images/Logo.png'
 import logoEngrenagem from '../images/logo-engrenagem.png'
 import { AuthContext } from "../context/auth";
@@ -25,6 +25,8 @@ function SignUp() {
   const signUp = (value) => {
     registerUser(value)
   }
+
+  
 
 
   return (

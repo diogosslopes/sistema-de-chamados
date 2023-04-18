@@ -2,6 +2,7 @@ import { useState, createContext, useEffect } from 'react'
 import firebase from '../services/firebaseConnection'
 import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
+import { useHistory } from 'react-router-dom'
 
 export const AuthContext = createContext({})
 
@@ -9,6 +10,7 @@ function AuthProvider({ children }) {
     const [user, setUser] = useState(null)
     const [loadingAuth, setLoadingAuth] = useState(false)
     const [loading, setLoading] = useState(true)
+    const navigate = useHistory()
 
     useEffect(() => {
 
@@ -25,9 +27,12 @@ function AuthProvider({ children }) {
         userLoged()
     }, [])
 
+   
+
 
     async function registerUser(value) {
         setLoadingAuth(true)
+
 
 
         await firebase.auth().createUserWithEmailAndPassword(value.login, value.password)
@@ -38,17 +43,19 @@ function AuthProvider({ children }) {
                         id: uid,
                         name: value.name,
                         email: data.user.email,
-                        avatar: null
+                        avatar: null,
+                        group: null
                     })
                     .then(() => {
                         let userData = {
                             id: uid,
                             name: value.name,
                             email: value.login,
-                            avatar: null
+                            avatar: null,
+                            group: null
                         }
 
-                        setUser(userData)
+                        // setUser(userData)
                         storage(userData)
                         setLoadingAuth(false)
                     })
@@ -73,7 +80,8 @@ function AuthProvider({ children }) {
                     id: uid,
                     name: userProfile.data().name,
                     email: value.login,
-                    avatar: userProfile.data().avatar
+                    avatar: userProfile.data().avatar,
+                    group: userProfile.data().group,
                 }
                 setUser(userData)
                 storage(userData)

@@ -1,7 +1,7 @@
 import { FiUsers, FiTrash, FiEdit2 } from "react-icons/fi";
 import Sidebar from "../components/Sidebar";
 import Title from "../components/Title";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import firebase from '../services/firebaseConnection';
 
 import { useForm } from 'react-hook-form'
@@ -10,6 +10,7 @@ import * as yup from "yup"
 import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import DeleteModal from "../components/DeleteModal";
+import { AuthContext } from "../context/auth";
 
 
 
@@ -18,13 +19,15 @@ export default function Clients() {
 
     const validation = yup.object().shape({
         name: yup.string().required("Nome é obrigatório").min(6, "Nome deve conter mínimo 6 caracteres"),
-        email: yup.string().required("Email é obrigatório").email("Digitie um e-mail válido")
+        login: yup.string().required("Email é obrigatório").email("Digitie um e-mail válido")
     })
 
+    const { registerUser } = useContext(AuthContext)
     const [name, setName] = useState('')
     const [cnpj, setCnpj] = useState('')
     const [adress, setAdress] = useState('')
-    const [email, setEmail] = useState('')
+    const [login, setLogin] = useState('')
+    const [password, setPassword] = useState('')
     const [clientList, setClientList] = useState([])
     const [disable, setDisable] = useState(false)
     const [editing, setEditing] = useState()
@@ -39,12 +42,34 @@ export default function Clients() {
         resolver: yupResolver(validation)
     })
 
-    const save = data => {
-        if (editing === true) {
+    const save = value => {
 
+
+        if (editing === true) {
             editClient()
         } else {
-            newClient()
+            // firebase.auth().createUserWithEmailAndPassword(value.login, value.password)
+            // .then(() => {
+            //     console.log("Sucesso")
+            //     })
+            //     .catch((error) => {
+            //         console.log(error)
+            //     })
+            firebase.auth().createUserWithEmailAndPassword(value.login, value.password)
+                .then(async (data) => {
+                    let uid = data.user.uid
+                    newClient()
+                    await firebase.firestore().collection("users")
+                        .doc(uid).set({
+                            id: uid,
+                            name: value.name,
+                            email: data.user.email,
+                            avatar: null,
+                            group: null
+                        })
+                }).catch((error) => {
+                    console.log(error)
+                })
         }
     }
 
@@ -81,8 +106,9 @@ export default function Clients() {
             elementButton.classList.remove('hide')
             setAdress('')
             setCnpj('')
-            setEmail('')
+            setLogin('')
             setName('')
+            setPassword('')
         }
     }
 
@@ -92,7 +118,7 @@ export default function Clients() {
             name: name,
             cnpj: cnpj,
             adress: adress,
-            email: email
+            email: login
         })
             .then(() => {
                 toast.success("Cliente cadastrado com sucesso !")
@@ -112,7 +138,7 @@ export default function Clients() {
         setEditing(true)
         setName(c.name)
         setAdress(c.adress)
-        setEmail(c.email)
+        setLogin(c.email)
         showForm()
         // toast.success("Editado com sucesso")
     }
@@ -141,16 +167,18 @@ export default function Clients() {
                         <label>Endereço</label>
                         <input type='text' name="adress" {...register("adress")} value={adress} onChange={(e) => setAdress(e.target.value)} />
                         <label>E-mail</label>
-                        <input type='text' name="email" disabled={disable}  {...register("email")} value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <input type='text' name="login" disabled={disable}  {...register("login")} value={login} onChange={(e) => setLogin(e.target.value)} />
+                        <label>Senha</label>
+                        <input type='password' name="password" disabled={disable}  {...register("password")} value={password} onChange={(e) => setPassword(e.target.value)} />
                         <div className="buttons">
-                            <button  type="submit">Salvar</button>
-                            <button  type="button" onClick={showForm}>Cancelar</button>
+                            <button type="submit">Salvar</button>
+                            <button type="button" onClick={showForm}>Cancelar</button>
                         </div>
                     </div>
 
                     <article className="error-message">
                         <p>{errors.name?.message}</p>
-                        <p>{errors.email?.message}</p>
+                        <p>{errors.login?.message}</p>
                     </article>
                 </form>
                 {clientList.map((c) => {

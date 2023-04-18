@@ -33,6 +33,11 @@ export default function Modal({ tipo, close, item }) {
   const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
   const [disable, setDisable] = useState(false)
 
+  const [priority, setPriority] = useState()
+  const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
+  const [stats, setStats] = useState(['Criado', 'Aberto', 'Em andamento', 'Enviado p/ tec', 'Aguardando liberação', 'Fechado'])
+
+
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(validation)
@@ -148,6 +153,9 @@ export default function Modal({ tipo, close, item }) {
       <div className="modal-new">
         <h1>Cadastro de Chamado</h1>
         <form onSubmit={handleSubmit(saveTask)} className="form-modal" >
+    
+
+
           <div>
             <label>Cliente</label>
             <select disabled={disable} name="client" {...register("client")} value={client} onChange={(e) => { setClient(e.target.value) }} >

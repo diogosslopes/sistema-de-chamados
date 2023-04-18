@@ -23,10 +23,12 @@ export default function Sidebar() {
                     <FiHome />
                     Chamados
                 </Link>
+                {user.group === "admin" ? 
                 <Link to='/clients'>
                     <FiUsers />
                     Unidades
-                </Link>
+                </Link> : <></>
+                }
                 <Link to='/profile'>
                     <FiSettings />
                     Configurações

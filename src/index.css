@@ -329,6 +329,14 @@ button.button-hover {
   
 }
 
+.form-client label{
+  font-size: 1em;
+}
+.form-client input{
+  padding: 6px;
+  margin-top: 6px;
+}
+
 .clients-list {
   background-color: #A1B4C4;
   display: flex;
