@@ -28,12 +28,13 @@ export default function Modal({ tipo, close, item }) {
   const [clients, setClients] = useState([])
   const [subject, setSubject] = useState(item.subject)
   const [status, setStatus] = useState(item.status)
+  const [taskType, setTaskType] = useState(item.type)
   const [created, setCreated] = useState(item.created)
   const [obs, setObs] = useState(item.obs)
   const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
   const [disable, setDisable] = useState(false)
 
-  const [priority, setPriority] = useState()
+  const [priority, setPriority] = useState(item.priority)
   const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
   const [stats, setStats] = useState(['Criado', 'Aberto', 'Em andamento', 'Enviado p/ tec', 'Aguardando liberação', 'Fechado'])
 
@@ -91,47 +92,51 @@ export default function Modal({ tipo, close, item }) {
 
   async function saveTask(e) {
 
-    if (tipo === 'new') {
-      setNewTask({
-        client: client,
-        subject: subject,
-        status: status,
-        created: created,
-        obs: obs,
-        userId: user.id
+    console.log(priority)
+
+    // if (tipo === 'new') {
+    //   setNewTask({
+    //     client: client,
+    //     subject: subject,
+    //     status: status,
+    //     created: created,
+    //     obs: obs,
+    //     userId: user.id
+    //   })
+    //   await firebase.firestore().collection('tasks').doc().set({
+    //     client: client,
+    //     subject: subject,
+    //     status: status,
+    //     created: created,
+    //     obs: obs,
+    //     userId: user.id
+    //   })
+    //     .then(() => {
+    //       toast.success("Chamado registrado !")
+    //       close()
+    //     })
+    //     .catch((error) => {
+    //       toast.error("Erro ao registrar chamado !")
+    //       console.log(error)
+    //     })
+    // } else if (tipo === 'edit') {
+    await firebase.firestore().collection('tasks').doc(item.id).update({
+      client: client,
+      priority: priority,
+      subject: subject,
+      status: status,
+      type: taskType,
+      obs: obs
+    })
+      .then(() => {
+        toast.success("Edição realizada com sucesso !")
+        close()
       })
-      await firebase.firestore().collection('tasks').doc().set({
-        client: client,
-        subject: subject,
-        status: status,
-        created: created,
-        obs: obs,
-        userId: user.id
+      .catch((error) => {
+        toast.error("Erro ao realizar edição !")
+        console.log(error)
       })
-        .then(() => {
-          toast.success("Chamado registrado !")
-          close()
-        })
-        .catch((error) => {
-          toast.error("Erro ao registrar chamado !")
-          console.log(error)
-        })
-    } else if (tipo === 'edit') {
-      await firebase.firestore().collection('tasks').doc(item.id).update({
-        client: client,
-        subject: subject,
-        status: status,
-        obs: obs
-      })
-        .then(() => {
-          toast.success("Edição realizada com sucesso !")
-          close()
-        })
-        .catch((error) => {
-          toast.error("Erro ao realizar edição !")
-          console.log(error)
-        })
-    }
+    // }
 
   }
 
@@ -153,9 +158,6 @@ export default function Modal({ tipo, close, item }) {
       <div className="modal-new">
         <h1>Cadastro de Chamado</h1>
         <form onSubmit={handleSubmit(saveTask)} className="form-modal" >
-    
-
-
           <div>
             <label>Cliente</label>
             <select disabled={disable} name="client" {...register("client")} value={client} onChange={(e) => { setClient(e.target.value) }} >
@@ -164,6 +166,17 @@ export default function Modal({ tipo, close, item }) {
               {clients.map((c, index) => {
                 return (
                   <option value={c.client} key={c.id}>{c.client}</option>
+                )
+              })}
+            </select>
+          </div>
+          <div>
+            <label>Prioridade</label>
+            <select disabled={disable} name="priority" {...register("priority")} value={priority} onChange={(e) => { setPriority(e.target.value) }}>
+              <option value={''} >Selecione o assunto</option>
+              {prioritys.map((p, index) => {
+                return (
+                  <option value={p} key={index}>{p}</option>
                 )
               })}
             </select>
@@ -179,15 +192,24 @@ export default function Modal({ tipo, close, item }) {
               })}
             </select>
           </div>
-
           <div className="status_select">
             <label>Status</label>
             <select disabled={disable} name="status" {...register("status")} value={status} onChange={(e) => setStatus(e.target.value)}>
               <option value={''}>Selecione o status</option>
-              <option>Aberto</option>
-              <option>Em andamento</option>
-              <option>Enviado p/ tecnico</option>
-              <option>Fechado</option>
+              {stats.map((s, index) => {
+                return (
+                  <option value={s} key={index}>{s}</option>
+                )
+              })}
+            </select>
+          </div>
+          <div className="type_select">
+            <label>Tipo</label>
+            <select disabled={disable} name="taskType" {...register("taskType")} value={taskType} onChange={(e) => setTaskType(e.target.value)}>
+              <option value={''}>Selecione o tipo de chamado</option>
+              <option>TI</option>
+              <option>Estrutura</option>
+
             </select>
           </div>
           <div>

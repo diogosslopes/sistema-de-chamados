@@ -38,9 +38,9 @@ export default function TasksTable({ tasks }) {
             <table className="table-tasks">
                 <thead>
                     <tr className="table-head">
-                        <th scope="col">Codigo</th>
                         <th scope="col">Cliente</th>
                         <th scope="col">Assunto</th>
+                        <th scope="col">Prioridade</th>
                         <th scope="col">Status</th>
                         <th scope="col">Criado em</th>
                         <th scope="col">#</th>
@@ -51,9 +51,9 @@ export default function TasksTable({ tasks }) {
 
                         return (
                             <tr className="table-body-line" key={task.id}>
-                                <td data-label="Codigo">{task.id}</td>
                                 <td data-label="Cliente">{task.client}</td>
                                 <td data-label="Assunto">{task.subject}</td>
+                                <td data-label="Prioridade">{task.priority}</td>
                                 <td data-label="Status"><span className="status">{task.status}</span></td>
                                 <td data-label="Criado em">{task.created}</td>
                                 <td data-label="#">

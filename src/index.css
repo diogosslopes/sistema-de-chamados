@@ -251,6 +251,7 @@ button.button-hover {
 }
 
 .avatar-label {
+  position: absolute;
   width: 280px;
   height: 280px;
   display: flex;
@@ -377,7 +378,18 @@ button.button-hover {
   margin: 1em 0;
   border-radius: 5px;
   padding: .8em;
-  height: 300px;
+  height: 320px;
+}
+
+.filter-select{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #1BC6B4;
+  margin-top: 12px;
+  width: 25%;
+  max-width: 278px;
+
 }
 
 .form-task div{
@@ -390,6 +402,7 @@ button.button-hover {
 .form-task div div{
   display: flex;
   flex-direction: row;
+  align-items: center;
   margin-bottom: 10px;
   justify-content: space-between;
   width: 90%;
@@ -643,6 +656,69 @@ table td  svg{
 .error-message p{
   margin-bottom: 4px;
 }
+
+
+
+
+
+
+
+.imageCard {
+  text-align: center;
+}
+
+.imageCard img {
+  width: 600px;
+}
+
+
+
+.crop-container {
+  display: flex;
+  width: 100%;
+  bottom: 80px;
+  flex-direction: column;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  width: 25%;
+  justify-content: center
+}
+
+.controls-upper-area {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider {
+  width: 50%;
+}
+
+.button-area {
+  display: flex;
+  text-align: center;
+  
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.reactEasyCrop_Container {
+position: relative !important;
+width: 280px;
+height: 280px;
+
+}
+
+
+
+
+
+
 
 
 @media screen and (max-width: 700px) {

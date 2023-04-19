@@ -26,6 +26,8 @@ const validation = yup.object().shape({
 
 export default function Dashboard() {
 
+  const resolveAfter3Sec = new Promise(resolve => setTimeout(resolve, 3000))
+
   const { user } = useContext(AuthContext)
   const [tasks, setTasks] = useState([])
   let list = []
@@ -44,6 +46,8 @@ export default function Dashboard() {
   const [clients, setClients] = useState([])
   const [priority, setPriority] = useState()
   const [subject, setSubject] = useState()
+  const [taskType, setTaskType] = useState(["TI", "Estrutura"])
+  const [selectedType, setSelectedType] = useState('')
   const [status, setStatus] = useState('Criado')
   const [created, setCreated] = useState()
   const [obs, setObs] = useState()
@@ -84,7 +88,7 @@ export default function Dashboard() {
     loadClients()
     getDocs()
 
-    if(user.group === 'admin'){
+    if (user.group === 'admin') {
       setIsAdmin(true)
       setDisable(false)
     }
@@ -92,22 +96,20 @@ export default function Dashboard() {
   }, [])
 
   async function getDocs() {
-    console.log(user)
-    if(user.group === "admin"){
+    if (user.group === "admin") {
       const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('2').get()
-      console.log(docs) 
       await loadTasks(docs)
-    }else{
-      const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("userId", "==", user.id).limit('2').get()
+    } else {
+      const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name).limit('2').get()
       await loadTasks(docs)
+      
     }
-    
+
 
   }
   async function loadTasks(docs) {
 
     const isTaksEmpty = docs.size === 0
-
 
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
@@ -116,7 +118,9 @@ export default function Dashboard() {
           client: doc.data().client,
           created: doc.data().created,
           obs: doc.data().obs,
+          priority: doc.data().priority,
           status: doc.data().status,
+          type: doc.data().type,
           subject: doc.data().subject,
           userId: doc.data().userId
         })
@@ -147,6 +151,8 @@ export default function Dashboard() {
       client: client,
       subject: subject,
       status: status,
+      priority: priority,
+      type: taskType,
       created: created,
       obs: obs,
       userId: user.id
@@ -154,7 +160,9 @@ export default function Dashboard() {
     await firebase.firestore().collection('tasks').doc().set({
       client: client,
       subject: subject,
+      priority: priority,
       status: status,
+      type: taskType,
       created: created,
       obs: obs,
       userId: user.id
@@ -176,9 +184,26 @@ export default function Dashboard() {
   async function moreTasks() {
 
     setLoadingMore(true)
-    const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("userId", "==", user.id).limit('2').startAfter(lastTask).get()
 
-    await loadTasks(newDocs)
+    if(selectedType !== "" && isAdmin === false){
+      console.log(selectedType)
+      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
+      .where("type", "==", selectedType).limit('2').startAfter(lastTask).get()
+      await loadTasks(newDocs)
+    }else if(selectedType === "" && isAdmin === false){
+      console.log(selectedType)
+     const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
+     .limit('2').startAfter(lastTask).get()
+      await loadTasks(newDocs)
+    }else if(selectedType !== "" && isAdmin === true){
+      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("type", "==", selectedType)
+      .limit('2').startAfter(lastTask).get()
+      await loadTasks(newDocs)
+    }else if(selectedType === "" && isAdmin === true){
+      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('2').startAfter(lastTask).get()
+      await loadTasks(newDocs)
+    }
+
 
   }
   function newClient(t, item) {
@@ -217,6 +242,28 @@ export default function Dashboard() {
       elementForm.classList.add('hide')
       elementButton.classList.remove('hide')
     }
+  }
+
+  async function filter(e){
+    e.preventDefault()
+    setLoading(true)
+    setTasks('')
+    setSelectedType(e.target.value)
+    let filterDocs = ""
+    
+    if(isAdmin){
+      filterDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("type", "==", e.target.value).limit('2').get()
+    }else{
+      filterDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
+      .where("type", "==", e.target.value).limit('2').get()
+    }
+
+    setIsEmpty(false)
+    setLoadingMore(false)
+    loadTasks(filterDocs)
+
+    
+
   }
 
 
@@ -281,9 +328,17 @@ export default function Dashboard() {
                 })}
               </select>
             </div>
+            <div className="tipo_select">
+              <label>Tipo</label>
+              <select name="taskType" {...register("taskType")} value={taskType} onChange={(e) => { setTaskType(e.target.value) }}>
+                <option value={''} >Selecione o tipo de chamado</option>
+                <option>TI</option>
+                <option>Estrutura</option>
+              </select>
+            </div>
             <div>
               <label>Criando em</label>
-              <input value={created} name="created" disabled = {true} {...register("created")} onChange={(e) => setCreated(e.target.value)} placeholder="Criado em" />
+              <input value={created} name="created" disabled={true} {...register("created")} onChange={(e) => {setCreated(e.target.value)}} placeholder="Criado em" />
             </div>
             <div id="obs">
               <label>Observações</label>
@@ -305,7 +360,6 @@ export default function Dashboard() {
           <>
             <div className="new-task">
               <span>Não existem chamados registrados...</span>
-
               <Link to='#' className="new button-hover" onClick={showForm}> <FiPlus size={25} /> Abrir Chamado</Link>
             </div>
 
@@ -313,7 +367,15 @@ export default function Dashboard() {
           :
           <div>
             <div className="new-task more-task">
-              <Link to='#' className="new button-hover" onClick={showForm}> <FiPlus size={25} /> Abrir Chamado</Link>
+              <Link to='#' className="new button-hover" onClick={showForm}> <FiPlus size={25} /> Abrir Chamado2</Link>
+            <div className="filter-select">
+              <label>Filtrar</label>
+              <select name="taskType" {...register("taskType")} value={selectedType} onChange={(e) => {filter(e)} }>
+                  <option value={''} >Selecione o tipo de chamado</option>
+                  <option value="TI">TI</option>
+                  <option value="Estrutura">Estrutura</option>
+                </select>
+            </div>
             </div>
             <TasksTable tasks={tasks} />
             {loadingMore && <h3>Carregando...</h3>}

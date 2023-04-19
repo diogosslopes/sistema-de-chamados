@@ -5,10 +5,13 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../context/auth";
 import avatar from '../images/avatar.png'
 import firebase from '../services/firebaseConnection';
+import { toast } from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css";
 
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from "yup"
+import ImageCropTool from "../components/ImageCropTool";
 
 
 
@@ -44,7 +47,7 @@ export default function Profile() {
             setNewAvatar(image)
             setAvatarUrl(URL.createObjectURL(image))
         } else {
-            alert('Envia uma imagem do tipo PNG ou JPEG')
+            toast.warning("Envie uma imagem do tipo PNG ou JPEG")
             setNewAvatar(null)
             return null
         }
@@ -52,34 +55,34 @@ export default function Profile() {
 
     async function handleLogin() {
 
-        alert('Salvo')
         if (newAvatar === null && name !== '') {
             await firebase.firestore().collection('users')
-                .doc(user.id)
-                .update({
+            .doc(user.id)
+            .update({
+                name: name
+            })
+            .then(() => {
+                let userData = {
+                    ...user,
                     name: name
-                })
-                .then(() => {
-                    let userData = {
-                        ...user,
-                        name: name
-                    }
+                }
+                    toast.success("Edição realizada com sucesso")
                     setUser(userData)
                     storage(userData)
                 })
-
-        } else if (name !== '' && newAvatar !== null) {
-            upload()
-        }
-
-
-        async function upload() {
-
-
-            await firebase.storage().ref(`images/${user.id}/${newAvatar.name}`)
+                
+            } else if (name !== '' && newAvatar !== null) {
+                upload()
+            }
+            
+            
+            async function upload() {
+                
+                
+                await firebase.storage().ref(`images/${user.id}/${newAvatar.name}`)
                 .put(newAvatar)
                 .then(async () => {
-                    alert('Foto enviada')
+                    toast.success("Foto enviada com sucesso")
 
                     await firebase.storage().ref(`images/${user.id}`)
                         .child(newAvatar.name).getDownloadURL()
@@ -120,14 +123,21 @@ export default function Profile() {
 
             <div className="container-profile">
                 <form className="form-profile" onSubmit={handleSubmit(editLogin)}>
+                    <ImageCropTool onChange={preview} />
                     <label className="avatar-label">
-                        <FiUpload color="#FFF" size={25} />
-                        <input type='file' accept='image/*' onChange={preview} />
+                        {/* <input type='file' accept='image/*' onChange={preview} /> */}
 
                         {avatarUrl == null ?
-                            <img src={avatar} alt="Foto do usuario" />
+                            <div>
+                                <FiUpload color="#FFF" size={25} />
+                                <input type='file' accept='image/*' onChange={preview} />
+                                {/* <img src={avatar} alt="Foto do usuario" /> */}
+                                {/* <ImageCropTool /> */}
+                            </div>
                             :
-                            <img src={avatarUrl} alt="Foto do usuario" />
+                            <div>
+                                <img src={avatarUrl} alt="Foto do usuario" />
+                            </div> 
                         }
                     </label>
                     <label>Nome</label>
