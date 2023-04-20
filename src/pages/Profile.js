@@ -1,7 +1,7 @@
 import { FiSettings, FiUpload } from "react-icons/fi";
 import Sidebar from "../components/Sidebar";
 import Title from "../components/Title";
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
 import { AuthContext } from "../context/auth";
 import avatar from '../images/avatar.png'
 import firebase from '../services/firebaseConnection';
@@ -13,9 +13,74 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from "yup"
 import ImageCropTool from "../components/ImageCropTool";
 
+import Cropper from "react-easy-crop";
+import Slider from "@mui/material/Slider";
+import Button from "@mui/material/Button";
+
+import { generateDownload } from "../components/cropImage";
+
+
+import { createRoot } from 'react-dom/client';
+import ImgCrop from 'antd-img-crop';
+import { Upload } from 'antd';
+
+const getSrcFromFile = (file) => {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj);
+        reader.onload = () => resolve(reader.result);
+    });
+};
+
 
 
 export default function Profile() {
+    
+    const inputRef = useRef();
+    
+
+    const [fileList, setFileList] = useState([]);
+
+    const onload = ({ fileList: newFileList }) => {
+         setFileList(newFileList);
+         console.log(fileList.length)
+
+
+
+        
+        // const image = fileList[0] 
+        // const  imageType = fileList[0].type
+        // setNewAvatar(image)
+        // if (imageType === 'image/jpeg' || imageType === 'image/png') {
+        //     setNewAvatar(image)
+        //     setAvatarUrl(URL.createObjectURL(image))
+        // } else {
+        //     toast.warning("Envie uma imagem do tipo PNG ou JPEG")
+        //     setNewAvatar(null)
+        //     return null
+        // }
+
+
+
+    };
+    const onPreview = async (file) => {
+        const src = file.url || (await getSrcFromFile(file));
+        const imgWindow = window.open(src);
+        
+        if (imgWindow) {
+            console.log(fileList[0].type)
+            const image = new Image();
+            image.src = src;
+            imgWindow.document.write(image.outerHTML);
+            console.log("AQUI!!!!!!!!!!!!!")
+        } else {
+            window.location.href = src;
+            console.log("AQUI 2!!!!!!!!!!!!!")
+        }
+    };
+
+
+
 
     const { user, storage, setUser } = useContext(AuthContext)
     const [name, setName] = useState(user && user.name)
@@ -38,48 +103,51 @@ export default function Profile() {
     }
 
 
-    function preview(e) {
+    // function preview(file) {
 
-        const image = e.target.files[0]
+    //     console.log(file)
+    //     const image = file
+        
+        
 
-        setNewAvatar(image)
-        if (image.type === 'image/jpeg' || image.type === 'image/png') {
-            setNewAvatar(image)
-            setAvatarUrl(URL.createObjectURL(image))
-        } else {
-            toast.warning("Envie uma imagem do tipo PNG ou JPEG")
-            setNewAvatar(null)
-            return null
-        }
-    }
+    //     setNewAvatar(image)
+    //     if (image.type === 'image/jpeg' || image.type === 'image/png') {
+    //         setNewAvatar(image)
+    //         setAvatarUrl(URL.createObjectURL(image))
+    //     } else {
+    //         toast.warning("Envie uma imagem do tipo PNG ou JPEG")
+    //         setNewAvatar(null)
+    //         return null
+    //     }
+    // }
 
     async function handleLogin() {
 
         if (newAvatar === null && name !== '') {
             await firebase.firestore().collection('users')
-            .doc(user.id)
-            .update({
-                name: name
-            })
-            .then(() => {
-                let userData = {
-                    ...user,
+                .doc(user.id)
+                .update({
                     name: name
-                }
+                })
+                .then(() => {
+                    let userData = {
+                        ...user,
+                        name: name
+                    }
                     toast.success("Edição realizada com sucesso")
                     setUser(userData)
                     storage(userData)
                 })
-                
-            } else if (name !== '' && newAvatar !== null) {
-                upload()
-            }
-            
-            
-            async function upload() {
-                
-                
-                await firebase.storage().ref(`images/${user.id}/${newAvatar.name}`)
+
+        } else if (name !== '' && newAvatar !== null) {
+            upload()
+        }
+
+
+        async function upload() {
+
+
+            await firebase.storage().ref(`images/${user.id}/${newAvatar.name}`)
                 .put(newAvatar)
                 .then(async () => {
                     toast.success("Foto enviada com sucesso")
@@ -121,25 +189,21 @@ export default function Profile() {
                 </Title>
             </div>
 
-            <div className="container-profile">
-                <form className="form-profile" onSubmit={handleSubmit(editLogin)}>
-                    <ImageCropTool onChange={preview} />
-                    <label className="avatar-label">
-                        {/* <input type='file' accept='image/*' onChange={preview} /> */}
 
-                        {avatarUrl == null ?
-                            <div>
-                                <FiUpload color="#FFF" size={25} />
-                                <input type='file' accept='image/*' onChange={preview} />
-                                {/* <img src={avatar} alt="Foto do usuario" /> */}
-                                {/* <ImageCropTool /> */}
-                            </div>
-                            :
-                            <div>
-                                <img src={avatarUrl} alt="Foto do usuario" />
-                            </div> 
-                        }
-                    </label>
+
+            <div className="container-profile">
+                <ImgCrop className="crop" showGrid rotationSlider aspectSlider showReset>
+
+                    <Upload listType="picture-card" onChange={onload} onPreview={onPreview}>
+                        {fileList.length === 0 && <Button>Carregar</Button>}
+                    </Upload>
+                </ImgCrop>
+
+
+
+
+                <form className="form-profile" onSubmit={handleSubmit(editLogin)}>
+
                     <label>Nome</label>
                     <input id="inputname" type='text' name="name" {...register("name")} value={name} onChange={(e) => setName(e.target.value)} />
                     <p className="error-message" >{errors.name?.message}</p>

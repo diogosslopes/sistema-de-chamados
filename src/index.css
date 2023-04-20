@@ -218,8 +218,46 @@ button.button-hover {
 /* Iformações de perfil */
 
 .container-profile {
-  margin-left: 200px;
-  padding: 1px 16px;
+  background-color: #A1B4C4;
+  /* display: flex;
+  flex-direction: column; */
+  margin: 1em 0;
+  border-radius: 5px;
+  padding: .8em;
+  margin-left: 216px;
+  margin-right: 14px;
+}
+
+.ant-tooltip-inner{
+  display: none !important;
+}
+
+.upload-list-item::before{
+  border-radius: 50% !important;
+}
+
+.container-profile span,
+.container-profile div{
+  width: 280px !important;
+  height: 280px !important;
+  border-radius: 50% !important;
+}
+
+.container-profile img{
+  border-radius: 50%;
+}
+
+
+.ant-upload-list-item-actions{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.container-profile .anticon-eye, .container-profile .anticon-delete {
+  width: 16px !important;
+  height: 16px !important;
 }
 
 .form-profile {
@@ -228,7 +266,6 @@ button.button-hover {
   flex-direction: column;
   margin: 1em 0;
   border-radius: 5px;
-  background-color: #A1B4C4;
   padding: .8em;
 }
 
