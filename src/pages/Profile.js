@@ -122,7 +122,10 @@ export default function Profile() {
     // }
 
     async function handleLogin() {
-
+        
+        setNewAvatar(fileList[0])
+        console.log(newAvatar.thumbUrl)
+        
         if (newAvatar === null && name !== '') {
             await firebase.firestore().collection('users')
                 .doc(user.id)
@@ -146,7 +149,6 @@ export default function Profile() {
 
         async function upload() {
 
-
             await firebase.storage().ref(`images/${user.id}/${newAvatar.name}`)
                 .put(newAvatar)
                 .then(async () => {
@@ -159,13 +161,13 @@ export default function Profile() {
                             await firebase.firestore().collection('users')
                                 .doc(user.id)
                                 .update({
-                                    avatar: url,
+                                    avatar: newAvatar.thumbUrl,
                                     name: name
                                 })
                                 .then(() => {
                                     let userData = {
                                         ...user,
-                                        avatar: url,
+                                        avatar: newAvatar.thumbUrl,
                                         name: name
                                     }
 
