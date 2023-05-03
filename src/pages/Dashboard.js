@@ -292,7 +292,7 @@ export default function Dashboard() {
           <FiMessageSquare size={22} />
         </Title>
       </div>
-      <div className="container-profile">
+      <div className="container-task">
         <form className="form-task hide" onSubmit={handleSubmit(save)}>
           <div>
             <div className="subject_select">
@@ -367,7 +367,7 @@ export default function Dashboard() {
           :
           <div>
             <div className="new-task more-task">
-              <Link to='#' className="new button-hover" onClick={showForm}> <FiPlus size={25} /> Abrir Chamado2</Link>
+              <Link to='#' className="new button-hover" onClick={showForm}> <FiPlus size={25} /> Abrir Chamado</Link>
             <div className="filter-select">
               <label>Filtrar</label>
               <select name="taskType" {...register("taskType")} value={selectedType} onChange={(e) => {filter(e)} }>

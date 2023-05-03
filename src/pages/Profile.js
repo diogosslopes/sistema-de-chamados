@@ -36,34 +36,20 @@ const getSrcFromFile = (file) => {
 
 export default function Profile() {
     
-    const inputRef = useRef();
+    // const inputRef = useRef();
     
 
     const [fileList, setFileList] = useState([]);
 
     const onload = ({ fileList: newFileList }) => {
+         setNewAvatar(fileList[0])
          setFileList(newFileList);
-         console.log(fileList.length)
+         console.log(fileList)
+
+       };
 
 
-
-        
-        // const image = fileList[0] 
-        // const  imageType = fileList[0].type
-        // setNewAvatar(image)
-        // if (imageType === 'image/jpeg' || imageType === 'image/png') {
-        //     setNewAvatar(image)
-        //     setAvatarUrl(URL.createObjectURL(image))
-        // } else {
-        //     toast.warning("Envie uma imagem do tipo PNG ou JPEG")
-        //     setNewAvatar(null)
-        //     return null
-        // }
-
-
-
-    };
-    const onPreview = async (file) => {
+   const onPreview = async (file) => {
         const src = file.url || (await getSrcFromFile(file));
         const imgWindow = window.open(src);
         
@@ -123,8 +109,8 @@ export default function Profile() {
 
     async function handleLogin() {
         
-        setNewAvatar(fileList[0])
-        console.log(newAvatar.thumbUrl)
+        
+        console.log(newAvatar)
         
         if (newAvatar === null && name !== '') {
             await firebase.firestore().collection('users')

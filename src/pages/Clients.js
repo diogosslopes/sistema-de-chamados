@@ -158,7 +158,7 @@ export default function Clients() {
                 </Title>
             </div>
             <button onClick={showForm} className="new">Nova Unidade</button>
-            <div className="container-profile ">
+            <div className="container-client ">
                 <form className="form-profile form-client hide" onSubmit={handleSubmit(save)}>
 
                     <div>
