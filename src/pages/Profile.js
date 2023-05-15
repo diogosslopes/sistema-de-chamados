@@ -187,9 +187,6 @@ export default function Profile() {
                     </Upload>
                 </ImgCrop>
 
-
-
-
                 <form className="form-profile" onSubmit={handleSubmit(editLogin)}>
 
                     <label>Nome</label>

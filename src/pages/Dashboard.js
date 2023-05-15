@@ -55,6 +55,7 @@ export default function Dashboard() {
   const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
   const [stats, setStats] = useState(['Criado', 'Aberto', 'Em andamento', 'Enviado p/ tec', 'Aguardando liberação', 'Fechado'])
   const [disable, setDisable] = useState(true)
+  const [images, setImages] = useState([])
 
 
 
@@ -266,6 +267,10 @@ export default function Dashboard() {
 
   }
 
+  async function saveImages(e){
+    console.log(images)
+  }
+
 
   if (loading) {
     return (
@@ -340,12 +345,16 @@ export default function Dashboard() {
               <label>Criando em</label>
               <input value={created} name="created" disabled={true} {...register("created")} onChange={(e) => {setCreated(e.target.value)}} placeholder="Criado em" />
             </div>
+            <div>
+              <label>Anexos</label>
+              <input type="file" multiple='multiple' onChange={(e)=>{setImages(e.target.files)}} />
+            </div>
             <div id="obs">
               <label>Observações</label>
               <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} placeholder="Observações" />
             </div>
             <div className="buttons">
-              <button type='submit' >Salvar</button>
+              <button type='submit' onClick={saveImages} >Salvar</button>
               <button onClick={(e) => showForm(e)}>Cancelar</button>
             </div>
           </div>

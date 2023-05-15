@@ -216,6 +216,10 @@ export default function Modal({ tipo, close, item }) {
             <label>Criando em</label>
             <input value={created} name="created" {...register("created")} onChange={(e) => setCreated(e.target.value)} disabled={true} placeholder="Criado em" />
           </div>
+          <div className="imagesList">
+            <label>Anexos</label>
+            <div className="list"></div>
+          </div>
           <div id="obs">
             <label>Observações</label>
             <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
