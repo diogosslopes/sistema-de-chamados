@@ -685,6 +685,13 @@ table td  svg{
   background-color: #fff;
   width: 80%;
   border-radius: 5px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.list a{
+  color: #32383D;
 }
 
 

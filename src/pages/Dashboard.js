@@ -123,9 +123,12 @@ export default function Dashboard() {
           status: doc.data().status,
           type: doc.data().type,
           subject: doc.data().subject,
-          userId: doc.data().userId
+          userId: doc.data().userId,
+          taskImages: doc.data().taskImages
         })
       })
+
+      console.log(list)
 
       const lastDoc = docs.docs[docs.docs.length - 1]
       setLastTask(lastDoc)
@@ -148,6 +151,27 @@ export default function Dashboard() {
 
   async function saveTask(e) {
 
+    let taskImages = []
+
+    for(let i=0; i<images.length;i++){
+      await firebase.storage().ref(`task-images/${user.id}/${images[i].name}`)
+          .put(images[i])
+          .then(async () => {
+            
+            await firebase.storage().ref(`task-images/${user.id}`)
+                .child(images[i].name).getDownloadURL()
+                .then(async (url) => {
+
+                  console.log(url)
+                  taskImages.push(url)
+ 
+                })
+        })   
+      console.log(images[i].name)
+      console.log(taskImages)
+
+    }
+
     setNewTask({
       client: client,
       subject: subject,
@@ -156,7 +180,8 @@ export default function Dashboard() {
       type: taskType,
       created: created,
       obs: obs,
-      userId: user.id
+      userId: user.id,
+      taskImages: taskImages
     })
     await firebase.firestore().collection('tasks').doc().set({
       client: client,
@@ -166,11 +191,13 @@ export default function Dashboard() {
       type: taskType,
       created: created,
       obs: obs,
-      userId: user.id
+      userId: user.id,
+      taskImages: taskImages
     })
       .then(() => {
         toast.success("Chamado registrado !")
         setTasks('')
+        // saveImages(images)
         closeForm()
         getDocs()
       })
@@ -267,9 +294,29 @@ export default function Dashboard() {
 
   }
 
-  async function saveImages(e){
-    console.log(images)
-  }
+  // async function saveImages(){
+    
+
+  //   for(let i=0; i<images.length;i++){
+  //     await firebase.storage().ref(`task-images/${user.id}/${images[i].name}`)
+  //         .put(images[i])
+  //         .then(async () => {
+  //           toast.success("Foto enviada com sucesso")
+
+  //           await firebase.storage().ref(`task-images/${user.id}`)
+  //               .child(images[i].name).getDownloadURL()
+  //               .then(async (url) => {
+
+  //                 console.log(url)
+ 
+  //               })
+  //       })   
+  //     console.log(images[i].name)
+
+  //   }
+
+    
+  // }
 
 
   if (loading) {
@@ -354,7 +401,7 @@ export default function Dashboard() {
               <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} placeholder="Observações" />
             </div>
             <div className="buttons">
-              <button type='submit' onClick={saveImages} >Salvar</button>
+              <button type='submit' >Salvar</button>
               <button onClick={(e) => showForm(e)}>Cancelar</button>
             </div>
           </div>

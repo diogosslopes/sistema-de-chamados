@@ -31,6 +31,7 @@ export default function Modal({ tipo, close, item }) {
   const [taskType, setTaskType] = useState(item.type)
   const [created, setCreated] = useState(item.created)
   const [obs, setObs] = useState(item.obs)
+  const [taskImages, setTaskImages] = useState(item.taskImages)
   const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
   const [disable, setDisable] = useState(false)
 
@@ -218,7 +219,16 @@ export default function Modal({ tipo, close, item }) {
           </div>
           <div className="imagesList">
             <label>Anexos</label>
-            <div className="list"></div>
+            <div className="list">
+              {
+                
+                taskImages.map((images, index)=>{
+                  return (
+                    <a target="_blank" href={`${images}`}>{`Imagem ${index +1}`}</a>
+                  )
+                })
+              }
+            </div>
           </div>
           <div id="obs">
             <label>Observações</label>
