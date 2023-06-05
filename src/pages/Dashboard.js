@@ -418,6 +418,14 @@ export default function Dashboard() {
               <span>Não existem chamados registrados...</span>
               <Link to='#' className="new button-hover" onClick={showForm}> <FiPlus size={25} /> Abrir Chamado</Link>
             </div>
+            <div className="filter-select">
+              <label>Filtrar</label>
+              <select name="taskType" {...register("taskType")} value={selectedType} onChange={(e) => {filter(e)} }>
+                  <option value={''} >Selecione o tipo de chamado</option>
+                  <option value="TI">TI</option>
+                  <option value="Estrutura">Estrutura</option>
+                </select>
+            </div>
 
           </>
           :
