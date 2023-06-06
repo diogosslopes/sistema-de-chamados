@@ -435,6 +435,8 @@ button.button-hover {
 
 /* Dashboard */
 
+
+
 .form-task {
   background-color: #A1B4C4;
   display: flex;
@@ -470,6 +472,10 @@ button.button-hover {
   margin-bottom: 10px;
   justify-content: space-between;
   width: 90%;
+}
+
+.form-task .created{
+  display: none;
 }
 
 .form-task input, .form-task textarea{
@@ -724,6 +730,7 @@ table td  svg{
 #obs{
   height: 70px;
 }
+
 
 .error-message{
   display: flex;

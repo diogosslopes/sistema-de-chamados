@@ -347,6 +347,14 @@ export default function Dashboard() {
       <div className="container-task">
         <form className="form-task hide" onSubmit={handleSubmit(save)}>
           <div>
+            <div className="tipo_select">
+              <label>Tipo</label>
+              <select name="taskType" {...register("taskType")} value={taskType} onChange={(e) => { setTaskType(e.target.value) }}>
+                <option value={''} >Selecione o tipo de chamado</option>
+                <option>TI</option>
+                <option>Estrutura</option>
+              </select>
+            </div>
             <div className="subject_select">
               <label>Assunto</label>
               <select name="subject" {...register("subject")} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
@@ -380,15 +388,7 @@ export default function Dashboard() {
                 })}
               </select>
             </div>
-            <div className="tipo_select">
-              <label>Tipo</label>
-              <select name="taskType" {...register("taskType")} value={taskType} onChange={(e) => { setTaskType(e.target.value) }}>
-                <option value={''} >Selecione o tipo de chamado</option>
-                <option>TI</option>
-                <option>Estrutura</option>
-              </select>
-            </div>
-            <div>
+            <div className="created">
               <label>Criando em</label>
               <input value={created} name="created" disabled={true} {...register("created")} onChange={(e) => {setCreated(e.target.value)}} placeholder="Criado em" />
             </div>
