@@ -23,10 +23,10 @@ export default function DeleteModal({ id, close, bd }) {
 
     await firebase.firestore().collection(bd).doc(id).delete()
       .then(() => {
-        // alert("Excluido")
+        
         toast.success("Deletado com sucesso")
         close()
-        window.location.reload()
+        // window.location.reload()
       })
       .catch((error) => {
         toast.error("Erro ao excluir !")

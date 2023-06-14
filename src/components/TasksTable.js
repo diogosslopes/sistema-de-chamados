@@ -28,6 +28,7 @@ export default function TasksTable({ tasks }) {
     async function deleteTask(id) {
         setTaskId(id)
         setShowDeleteModal(!showDeleteModal)
+        
 
     }
 
