@@ -483,7 +483,7 @@ button.button-hover {
   padding: 8px;
   border-radius: 5px;
   color: #32383D;
-  max-width: 600px;  
+  max-width: 720px;  
 
   border: none;
   padding: 3px;
@@ -656,7 +656,7 @@ table td  svg{
   height: 65%;
   border-radius: 5px;
   margin: 50px auto;
-  justify-content: space-around;
+  justify-content: space-evenly;
   padding: 8px;
 }
 

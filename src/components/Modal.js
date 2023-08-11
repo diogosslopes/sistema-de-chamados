@@ -9,13 +9,14 @@ import * as yup from "yup"
 import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../context/auth";
+import emailjs, { send } from '@emailjs/browser'
 
 
 const validation = yup.object().shape({
   client: yup.string().required("Unidade obrigatoria"),
   subject: yup.string().required("Assunto obrigatorio").min(5, "Minimo de 5 caracteres").max(15, "Maximo de 15 caracteres"),
   status: yup.string().required('Status é obrigatorio'),
-  obs: yup.string().required('Descrição é obrigatorio').min(10, 'Minimo de 10 caracteres').max(100, 'Maximo de 100 caracteres'),
+  obs: yup.string().required('Descrição é obrigatorio').min(10, 'Minimo de 10 caracteres').max(300, 'Maximo de 300 caracteres'),
 })
 
 
@@ -89,6 +90,20 @@ export default function Modal({ tipo, close, item }) {
     saveTask()
   }
 
+  const templateParams = {
+    unity: client,
+    subject: subject,
+    message: obs,
+    email: "diogobrbm@gmail.com"
+  }
+
+  function sendEmail(){
+    emailjs.send("service_lv8kn8j","template_shcpe8x", templateParams, "BrAq6Nxcac_3F_GXo")
+    .then((response)=>{
+      console.log("Email enviado ", response.status, response.text)
+    })
+  } 
+
 
 
   async function saveTask(e) {
@@ -121,6 +136,7 @@ export default function Modal({ tipo, close, item }) {
     //       console.log(error)
     //     })
     // } else if (tipo === 'edit') {
+
     await firebase.firestore().collection('tasks').doc(item.id).update({
       client: client,
       priority: priority,
@@ -131,6 +147,7 @@ export default function Modal({ tipo, close, item }) {
     })
       .then(() => {
         toast.success("Edição realizada com sucesso !")
+        sendEmail()
         close()
       })
       .catch((error) => {

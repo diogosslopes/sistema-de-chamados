@@ -14,12 +14,13 @@ import * as yup from "yup"
 import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import { format } from 'date-fns'
+import emailjs from '@emailjs/browser'
 
 
 const validation = yup.object().shape({
   client: yup.string(),
   subject: yup.string().required("Assunto obrigatorio").min(5, "Minimo de 5 caracteres").max(15, "Maximo de 15 caracteres"),
-  obs: yup.string().required('Descrição é obrigatorio').min(10, 'Minimo de 10 caracteres').max(100, 'Maximo de 100 caracteres'),
+  obs: yup.string().required('Descrição é obrigatorio').min(10, 'Minimo de 10 caracteres').max(300, 'Maximo de 300 caracteres'),
 })
 
 
@@ -148,6 +149,19 @@ export default function Dashboard() {
     saveTask()
   }
 
+  const templateParams = {
+    unity: client,
+    subject: subject,
+    message: obs
+  }
+
+  function sendEmail(){
+    emailjs.send("service_lv8kn8j","template_a9s048m", templateParams, "BrAq6Nxcac_3F_GXo")
+    .then((response)=>{
+      console.log("Email enviado ", response.status, response.text)
+    })
+  } 
+
 
   async function saveTask(e) {
 
@@ -200,6 +214,7 @@ export default function Dashboard() {
         // saveImages(images)
         closeForm()
         getDocs()
+        sendEmail()
       })
       .catch((error) => {
         toast.error("Erro ao registrar chamado !")
