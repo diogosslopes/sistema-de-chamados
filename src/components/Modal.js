@@ -141,7 +141,7 @@ export default function Modal({ tipo, close, item }) {
       client: client,
       priority: priority,
       subject: subject,
-      status: status,
+      status: status, 
       type: taskType,
       obs: obs
     })
