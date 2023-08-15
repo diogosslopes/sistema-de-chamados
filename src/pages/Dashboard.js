@@ -47,7 +47,7 @@ export default function Dashboard() {
   const [clients, setClients] = useState([])
   const [priority, setPriority] = useState()
   const [subject, setSubject] = useState()
-  const [taskType, setTaskType] = useState(["TI", "Estrutura"])
+  const [taskType, setTaskType] = useState(['TI', 'Estrutura'])
   const [selectedType, setSelectedType] = useState('')
   const [status, setStatus] = useState('Criado')
   const [created, setCreated] = useState()
@@ -104,7 +104,7 @@ export default function Dashboard() {
     } else {
       const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name).limit('2').get()
       await loadTasks(docs)
-      
+
     }
 
 
@@ -155,32 +155,29 @@ export default function Dashboard() {
     message: obs
   }
 
-  function sendEmail(){
-    emailjs.send("service_lv8kn8j","template_a9s048m", templateParams, "BrAq6Nxcac_3F_GXo")
-    .then((response)=>{
-      console.log("Email enviado ", response.status, response.text)
-    })
-  } 
+  function sendEmail() {
+    emailjs.send("service_lv8kn8j", "template_a9s048m", templateParams, "BrAq6Nxcac_3F_GXo")
+      .then((response) => {
+        console.log("Email enviado ", response.status, response.text)
+      })
+  }
 
 
   async function saveTask(e) {
 
     let taskImages = []
 
-    for(let i=0; i<images.length;i++){
+    for (let i = 0; i < images.length; i++) {
       await firebase.storage().ref(`task-images/${user.id}/${images[i].name}`)
-          .put(images[i])
-          .then(async () => {
-            
-            await firebase.storage().ref(`task-images/${user.id}`)
-                .child(images[i].name).getDownloadURL()
-                .then(async (url) => {
-
-                  console.log(url)
-                  taskImages.push(url)
- 
-                })
-        })   
+        .put(images[i])
+        .then(async () => {
+          await firebase.storage().ref(`task-images/${user.id}`)
+            .child(images[i].name).getDownloadURL()
+            .then(async (url) => {
+              console.log(url)
+              taskImages.push(url)
+            })
+        })
       console.log(images[i].name)
       console.log(taskImages)
 
@@ -228,21 +225,21 @@ export default function Dashboard() {
 
     setLoadingMore(true)
 
-    if(selectedType !== "" && isAdmin === false){
+    if (selectedType !== "" && isAdmin === false) {
       console.log(selectedType)
       const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
-      .where("type", "==", selectedType).limit('2').startAfter(lastTask).get()
+        .where("type", "==", selectedType).limit('2').startAfter(lastTask).get()
       await loadTasks(newDocs)
-    }else if(selectedType === "" && isAdmin === false){
+    } else if (selectedType === "" && isAdmin === false) {
       console.log(selectedType)
-     const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
-     .limit('2').startAfter(lastTask).get()
+      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
+        .limit('2').startAfter(lastTask).get()
       await loadTasks(newDocs)
-    }else if(selectedType !== "" && isAdmin === true){
+    } else if (selectedType !== "" && isAdmin === true) {
       const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("type", "==", selectedType)
-      .limit('2').startAfter(lastTask).get()
+        .limit('2').startAfter(lastTask).get()
       await loadTasks(newDocs)
-    }else if(selectedType === "" && isAdmin === true){
+    } else if (selectedType === "" && isAdmin === true) {
       const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('2').startAfter(lastTask).get()
       await loadTasks(newDocs)
     }
@@ -287,51 +284,27 @@ export default function Dashboard() {
     }
   }
 
-  async function filter(e){
+  async function filter(e) {
     e.preventDefault()
     setLoading(true)
     setTasks('')
     setSelectedType(e.target.value)
     let filterDocs = ""
-    
-    if(isAdmin){
+
+    if (isAdmin) {
       filterDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("type", "==", e.target.value).limit('2').get()
-    }else{
+    } else {
       filterDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
-      .where("type", "==", e.target.value).limit('2').get()
+        .where("type", "==", e.target.value).limit('2').get()
     }
 
     setIsEmpty(false)
     setLoadingMore(false)
     loadTasks(filterDocs)
 
-    
+
 
   }
-
-  // async function saveImages(){
-    
-
-  //   for(let i=0; i<images.length;i++){
-  //     await firebase.storage().ref(`task-images/${user.id}/${images[i].name}`)
-  //         .put(images[i])
-  //         .then(async () => {
-  //           toast.success("Foto enviada com sucesso")
-
-  //           await firebase.storage().ref(`task-images/${user.id}`)
-  //               .child(images[i].name).getDownloadURL()
-  //               .then(async (url) => {
-
-  //                 console.log(url)
- 
-  //               })
-  //       })   
-  //     console.log(images[i].name)
-
-  //   }
-
-    
-  // }
 
 
   if (loading) {
@@ -365,15 +338,16 @@ export default function Dashboard() {
             <div className="tipo_select">
               <label>Tipo</label>
               <select name="taskType" {...register("taskType")} value={taskType} onChange={(e) => { setTaskType(e.target.value) }}>
-                <option value={''} >Selecione o tipo de chamado</option>
+                <option hidden value={''} >Selecione o tipo de chamado</option>
                 <option>TI</option>
                 <option>Estrutura</option>
               </select>
+              
             </div>
             <div className="subject_select">
               <label>Assunto</label>
               <select name="subject" {...register("subject")} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
-                <option value={''} >Selecione o assunto</option>
+                <option hidden value={''} >Selecione o assunto</option>
                 {subjects.map((s, index) => {
                   return (
                     <option value={s} key={index}>{s}</option>
@@ -384,7 +358,7 @@ export default function Dashboard() {
             <div className="priority_select">
               <label>Prioridade</label>
               <select name="priority" {...register("priority")} value={priority} onChange={(e) => { setPriority(e.target.value) }}>
-                <option value={''} >Selecione a prioridade</option>
+                <option hidden value={''} >Selecione a prioridade</option>
                 {prioritys.map((p, index) => {
                   return (
                     <option value={p} key={index}>{p}</option>
@@ -395,7 +369,7 @@ export default function Dashboard() {
             <div className="status_select">
               <label>Status</label>
               <select disabled={disable} name="status" {...register("status")} value={status} onChange={(e) => { setStatus(e.target.value) }}>
-                <option value={''} >Selecione o status</option>
+                <option hidden value={''} >Selecione o status</option>
                 {stats.map((s, index) => {
                   return (
                     <option value={s} key={index}>{s}</option>
@@ -405,11 +379,11 @@ export default function Dashboard() {
             </div>
             <div className="created">
               <label>Criando em</label>
-              <input value={created} name="created" disabled={true} {...register("created")} onChange={(e) => {setCreated(e.target.value)}} placeholder="Criado em" />
+              <input value={created} name="created" disabled={true} {...register("created")} onChange={(e) => { setCreated(e.target.value) }} placeholder="Criado em" />
             </div>
             <div>
               <label>Anexos</label>
-              <input type="file" multiple='multiple' onChange={(e)=>{setImages(e.target.files)}} />
+              <input type="file" multiple='multiple' onChange={(e) => { setImages(e.target.files) }} />
             </div>
             <div id="obs">
               <label>Observações</label>
@@ -435,11 +409,11 @@ export default function Dashboard() {
             </div>
             <div className="filter-select">
               <label>Filtrar</label>
-              <select name="taskType" {...register("taskType")} value={selectedType} onChange={(e) => {filter(e)} }>
-                  <option value={''} >Selecione o tipo de chamado</option>
-                  <option value="TI">TI</option>
-                  <option value="Estrutura">Estrutura</option>
-                </select>
+              <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { filter(e) }}>
+                <option hidden value={''} >Selecione o tipo de chamado</option>
+                <option value="TI">TI</option>
+                <option value="Estrutura">Estrutura</option>
+              </select>
             </div>
 
           </>
@@ -447,14 +421,14 @@ export default function Dashboard() {
           <div>
             <div className="new-task more-task">
               <Link to='#' className="new button-hover" onClick={showForm}> <FiPlus size={25} /> Abrir Chamado</Link>
-            <div className="filter-select">
-              <label>Filtrar</label>
-              <select name="taskType" {...register("taskType")} value={selectedType} onChange={(e) => {filter(e)} }>
-                  <option value={''} >Selecione o tipo de chamado</option>
+              <div className="filter-select">
+                <label>Filtrar</label>
+                <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { filter(e) }}>
+                  <option hidden value={''} >Selecione o tipo de chamado</option>
                   <option value="TI">TI</option>
                   <option value="Estrutura">Estrutura</option>
                 </select>
-            </div>
+              </div>
             </div>
             <TasksTable tasks={tasks} />
             {loadingMore && <h3>Carregando...</h3>}

@@ -110,32 +110,6 @@ export default function Modal({ tipo, close, item }) {
 
     console.log(priority)
 
-    // if (tipo === 'new') {
-    //   setNewTask({
-    //     client: client,
-    //     subject: subject,
-    //     status: status,
-    //     created: created,
-    //     obs: obs,
-    //     userId: user.id
-    //   })
-    //   await firebase.firestore().collection('tasks').doc().set({
-    //     client: client,
-    //     subject: subject,
-    //     status: status,
-    //     created: created,
-    //     obs: obs,
-    //     userId: user.id
-    //   })
-    //     .then(() => {
-    //       toast.success("Chamado registrado !")
-    //       close()
-    //     })
-    //     .catch((error) => {
-    //       toast.error("Erro ao registrar chamado !")
-    //       console.log(error)
-    //     })
-    // } else if (tipo === 'edit') {
 
     await firebase.firestore().collection('tasks').doc(item.id).update({
       client: client,
@@ -147,7 +121,7 @@ export default function Modal({ tipo, close, item }) {
     })
       .then(() => {
         toast.success("Edição realizada com sucesso !")
-        sendEmail()
+        // sendEmail()
         close()
       })
       .catch((error) => {
@@ -159,18 +133,6 @@ export default function Modal({ tipo, close, item }) {
   }
 
 
-  // async function deleteTask(e) {
-  //   e.preventDefault()
-
-  //   await firebase.firestore().collection('tasks').doc(item.id).delete()
-  //     .then(() => {
-  //       toast.success("Chamado excluido com sucesso !")
-  //     })
-  //     .catch((error) => {
-  //       toast.error("Erro ao excluir chamado !")
-  //       console.log(error)
-  //     })
-  // }
   return (
     <div className="modal">
       <div className="modal-new">
@@ -179,7 +141,7 @@ export default function Modal({ tipo, close, item }) {
           <div>
             <label>Cliente</label>
             <select disabled={disable} name="client" {...register("client")} value={client} onChange={(e) => { setClient(e.target.value) }} >
-              <option value={''}>Selecione a unidade</option>
+              <option hidden value={''}>Selecione a unidade</option>
 
               {clients.map((c, index) => {
                 return (
@@ -191,7 +153,7 @@ export default function Modal({ tipo, close, item }) {
           <div>
             <label>Prioridade</label>
             <select disabled={disable} name="priority" {...register("priority")} value={priority} onChange={(e) => { setPriority(e.target.value) }}>
-              <option value={''} >Selecione o assunto</option>
+              <option hidden value={''} >Selecione o assunto</option>
               {prioritys.map((p, index) => {
                 return (
                   <option value={p} key={index}>{p}</option>
@@ -202,7 +164,7 @@ export default function Modal({ tipo, close, item }) {
           <div>
             <label>Assunto</label>
             <select disabled={disable} name="subject" {...register("subject")} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
-              <option value={''} >Selecione o assunto</option>
+              <option hidden value={''} >Selecione o assunto</option>
               {subjects.map((s, index) => {
                 return (
                   <option value={s} key={index}>{s}</option>
@@ -213,7 +175,7 @@ export default function Modal({ tipo, close, item }) {
           <div className="status_select">
             <label>Status</label>
             <select disabled={disable} name="status" {...register("status")} value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value={''}>Selecione o status</option>
+              <option hidden value={''}>Selecione o status</option>
               {stats.map((s, index) => {
                 return (
                   <option value={s} key={index}>{s}</option>
@@ -224,7 +186,7 @@ export default function Modal({ tipo, close, item }) {
           <div className="type_select">
             <label>Tipo</label>
             <select disabled={disable} name="taskType" {...register("taskType")} value={taskType} onChange={(e) => setTaskType(e.target.value)}>
-              <option value={''}>Selecione o tipo de chamado</option>
+              <option hidden value={''}>Selecione o tipo de chamado</option>
               <option>TI</option>
               <option>Estrutura</option>
 
