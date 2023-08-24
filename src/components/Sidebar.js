@@ -23,6 +23,10 @@ export default function Sidebar() {
                     <FiHome />
                     Chamados
                 </Link>
+                <Link to='/completedtasks'>
+                    <FiHome />
+                    Chamados Concluidos
+                </Link>
                 {user.group === "admin" ? 
                 <Link to='/clients'>
                     <FiUsers />
