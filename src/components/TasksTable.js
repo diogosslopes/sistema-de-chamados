@@ -26,38 +26,11 @@ export default function TasksTable({ tasks }) {
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [newTask, setNewTask] = useState()
 
+    
 
     async function saveTask(task) {
         
-        // let taskImages = []
-    
-        // for (let i = 0; i < images.length; i++) {
-        //   await firebase.storage().ref(`task-images/${user.id}/${images[i].name}`)
-        //     .put(images[i])
-        //     .then(async () => {
-        //       await firebase.storage().ref(`task-images/${user.id}`)
-        //         .child(images[i].name).getDownloadURL()
-        //         .then(async (url) => {
-        //           console.log(url)
-        //           taskImages.push(url)
-        //         })
-        //     })
-        //   console.log(images[i].name)
-        //   console.log(taskImages)
-    
-        // }
-    
-        // setNewTask({
-        //   client: task.client,
-        //   subject: task.subject,
-        //   status: task.status,
-        //   priority: task.priority,
-        //   type: task.taskType,
-        //   created: task.created,
-        //   obs: task.obs,
-        //   userId: task.user.id,
-        //   taskImages: task.taskImages
-        // })
+  
         await firebase.firestore().collection('completedtasks').doc().set({
           client: task.client,
           subject: task.subject,
@@ -71,10 +44,7 @@ export default function TasksTable({ tasks }) {
         })
           .then(() => {
             toast.success("Chamado registrado !")
-            // setTasks('')
-            // saveImages(images)
-            // closeForm()
-            // getDocs()
+
           })
           .catch((error) => {
             toast.error("Erro ao registrar chamado !")
@@ -112,8 +82,6 @@ export default function TasksTable({ tasks }) {
             .then(() => {
 
                 toast.success("Chamado encerrado")
-                // close()
-                // window.location.reload()
             })
             .catch((error) => {
                 toast.error("Erro ao excluir !")
@@ -152,7 +120,9 @@ export default function TasksTable({ tasks }) {
                                 <td data-label="#">
                                     <button className="task-btn edit" onClick={() => editClient('edit', task)}><FiEdit2 size={17} /></button>
                                     <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
-                                    <button className="task-btn check" onClick={() => completeTask(task)}><FiCheck size={17} /></button>
+                                    {user.group === 'admin' &&(
+                                        <button className="task-btn check" onClick={() => completeTask(task)}><FiCheck size={17} /></button>
+                                    )}
                                     <button className="task-btn delete" onClick={() => deleteTask(task.id)}><FiTrash size={17} /></button>
                                 </td>
                             </tr>

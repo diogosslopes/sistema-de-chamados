@@ -15,6 +15,7 @@ import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import { format } from 'date-fns'
 import emailjs from '@emailjs/browser'
+import TasksReport from "../documents/TasksReport";
 
 
 const validation = yup.object().shape({
@@ -434,6 +435,7 @@ export default function Dashboard() {
             {loadingMore && <h3>Carregando...</h3>}
 
             {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Carregar Mais</button>}
+            <button className="button-hover" onClick={()=> TasksReport(tasks)}>Imprimir</button>
 
           </div>
         }

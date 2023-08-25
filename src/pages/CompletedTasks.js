@@ -238,7 +238,7 @@ export default function CompletedTasks() {
       <div className="rigth-container">
         <Sidebar />
         <div className="title">
-          <Title name="Chamados">
+          <Title name="Chamados Concluidos">
             <FiMessageSquare size={22} />
           </Title>
           <div className="new-task title">
