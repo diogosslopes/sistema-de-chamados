@@ -33,7 +33,7 @@ export default function Sidebar() {
                     Unidades
                 </Link> : <></>
                 }
-                <Link to='/profile'>
+                <Link id='settings' to='/profile'>
                     <FiSettings />
                     Configurações
                 </Link>

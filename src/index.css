@@ -810,6 +810,14 @@ height: 280px;
     position: relative;
   }
 
+  .filter-select{
+    width: 85%;
+  }
+
+  #settings{
+    display: none;
+  }
+
   .container-task{
     margin-left: 0;
   }
@@ -920,10 +928,10 @@ height: 280px;
     display: none;
   }
 
-  .links a {
+  /* .links a {
     font-size: 1em;
 
-  }
+  } */
 
   .status_select{
     display: flex !important;
