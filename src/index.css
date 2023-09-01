@@ -810,6 +810,10 @@ height: 280px;
     position: relative;
   }
 
+  .container-task{
+    margin-left: 0;
+  }
+
   .avatar {
     display: none;
   }
