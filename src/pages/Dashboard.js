@@ -54,7 +54,9 @@ export default function Dashboard() {
   const [created, setCreated] = useState()
   const [obs, setObs] = useState()
   const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
-  const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
+  const [subjectsTi, setSubjectsTi] = useState(['Impressora', 'Sistema', 'Internet'])
+  const [subjectsGeneral, setSubjectsGeneral] = useState(['Eletrica', 'Pintura', 'Ar Condicionado', 'Hidraulico', 'Portas', 'Outros'])
+  const [subjects, setSubjects] = useState([])
   const [stats, setStats] = useState(['Criado', 'Aberto', 'Em andamento', 'Enviado p/ tec', 'Aguardando liberação', 'Fechado'])
   const [disable, setDisable] = useState(true)
   const [images, setImages] = useState([])
@@ -96,7 +98,18 @@ export default function Dashboard() {
       setDisable(false)
     }
 
+ 
   }, [])
+
+  useEffect(() => {
+    
+    if(taskType === "TI"){
+      setSubjects(subjectsTi)
+    }else{
+      setSubjects(subjectsGeneral)
+    }
+
+  }, [taskType])
 
   async function getDocs() {
     if (user.group === "admin") {
@@ -302,9 +315,6 @@ export default function Dashboard() {
     setIsEmpty(false)
     setLoadingMore(false)
     loadTasks(filterDocs)
-
-
-
   }
 
 
@@ -435,7 +445,7 @@ export default function Dashboard() {
             {loadingMore && <h3>Carregando...</h3>}
 
             {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Carregar Mais</button>}
-            <button className="button-hover" onClick={()=> TasksReport(tasks)}>Imprimir</button>
+            <button className="button-hover" onClick={(e)=> TasksReport(tasks)}>Imprimir</button>
 
           </div>
         }

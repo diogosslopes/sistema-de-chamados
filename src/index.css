@@ -30,8 +30,6 @@ select{
   width: 80%;
 }
 
-
-
 * {
   margin: 0;
   padding: 0;
@@ -89,6 +87,7 @@ button.button-hover {
   font-size: 12px;
   font-weight: bold;
   padding: 7px;
+  margin-right: 5px;
 }
 
 /* Login e Cadastro */
