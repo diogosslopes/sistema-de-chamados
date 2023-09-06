@@ -22,6 +22,7 @@ export default function TasksTable({ tasks }) {
     const [task, setTask] = useState('')
     const [taskId, setTaskId] = useState('')
     const [type, setType] = useState('')
+    const [concluded, setConcluded] = useState('')
     const [showModal, setShowModal] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [newTask, setNewTask] = useState()
@@ -30,7 +31,10 @@ export default function TasksTable({ tasks }) {
 
     async function saveTask(task) {
         
-  
+        const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
+        setConcluded(fullDate)
+ 
+
         await firebase.firestore().collection('completedtasks').doc().set({
           client: task.client,
           subject: task.subject,
@@ -38,6 +42,7 @@ export default function TasksTable({ tasks }) {
           status: task.status,
           type: task.type,
           created: task.created,
+          concluded: fullDate,
           obs: task.obs,
           userId: user.id,
           taskImages: task.taskImages
@@ -87,12 +92,7 @@ export default function TasksTable({ tasks }) {
                 toast.error("Erro ao excluir !")
                 console.log(error)
             })
-
-
-
     }
-
-
 
     return (
         <>
@@ -104,6 +104,7 @@ export default function TasksTable({ tasks }) {
                         <th scope="col">Prioridade</th>
                         <th scope="col">Status</th>
                         <th scope="col">Criado em</th>
+                        <th scope="col">Concluido em</th>
                         <th scope="col">#</th>
                     </tr>
                 </thead>
@@ -117,6 +118,7 @@ export default function TasksTable({ tasks }) {
                                 <td data-label="Prioridade">{task.priority}</td>
                                 <td data-label="Status"><span className="status">{task.status}</span></td>
                                 <td data-label="Criado em">{task.created}</td>
+                                <td data-label="Concluido em">{task.concluded}</td>
                                 <td data-label="#">
                                     <button className="task-btn edit" onClick={() => editClient('edit', task)}><FiEdit2 size={17} /></button>
                                     <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>

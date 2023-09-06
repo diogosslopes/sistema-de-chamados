@@ -18,14 +18,12 @@ import emailjs from '@emailjs/browser'
 
 
 const validation = yup.object().shape({
-  client: yup.string(),
-  subject: yup.string().required("Assunto obrigatorio").min(5, "Minimo de 5 caracteres").max(15, "Maximo de 15 caracteres"),
-  obs: yup.string().required('Descrição é obrigatorio').min(10, 'Minimo de 10 caracteres').max(300, 'Maximo de 300 caracteres'),
+
 })
 
 
 
-export default function CompletedTasks() {
+export default function Reports() {
 
   const resolveAfter3Sec = new Promise(resolve => setTimeout(resolve, 3000))
 
@@ -212,22 +210,23 @@ export default function CompletedTasks() {
   }
 
   async function filter(e) {
-    e.preventDefault()
-    setLoading(true)
-    setTasks('')
-    setSelectedType(e.target.value)
-    let filterDocs = ""
+    // e.preventDefault()
+    // setLoading(true)
+    // setTasks('')
+    // setSelectedType(e.target.value)
+    // let filterDocs = ""
 
-    if (isAdmin) {
-      filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("type", "==", e.target.value).limit('2').get()
-    } else {
-      filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .where("type", "==", e.target.value).limit('2').get()
-    }
+    // if (isAdmin) {
+    //   filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("type", "==", e.target.value).limit('2').get()
+    // } else {
+    //   filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
+    //     .where("type", "==", e.target.value).limit('2').get()
+    // }
 
-    setIsEmpty(false)
-    setLoadingMore(false)
-    loadTasks(filterDocs)
+    // setIsEmpty(false)
+    // setLoadingMore(false)
+    // loadTasks(filterDocs)
+    console.log("Filtrou")
   }
 
 
@@ -237,7 +236,7 @@ export default function CompletedTasks() {
       <div className="rigth-container">
         <Sidebar />
         <div className="title">
-          <Title name="Chamados Concluidos">
+          <Title name="Relatorios">
             <FiMessageSquare size={22} />
           </Title>
           <div className="new-task title">
@@ -252,12 +251,12 @@ export default function CompletedTasks() {
     <div className="rigth-container">
       <Sidebar />
       <div className="title">
-        <Title name="Chamados Concluidos">
+        <Title name="Relatorios">
           <FiMessageSquare size={22} />
         </Title>
       </div>
       <div className="container-task">
-        <form className="form-task hide" >
+        <form className="form-task form-filter hide" onSubmit={handleSubmit(filter)} >
           <div>
             <div className="tipo_select">
               <label>Tipo</label>
@@ -309,16 +308,8 @@ export default function CompletedTasks() {
               <label>Concluido em</label>
               <input value={concluded} name="concluded" disabled={true} {...register("concluded")} onChange={(e) => { setConcluded(e.target.value) }} placeholder="Concluido em" />
             </div>
-            <div>
-              <label>Anexos</label>
-              <input type="file" multiple='multiple' onChange={(e) => { setImages(e.target.files) }} />
-            </div>
-            <div id="obs">
-              <label>Observações</label>
-              <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} placeholder="Observações" />
-            </div>
             <div className="buttons">
-              <button type='submit' >Salvar</button>
+              <button type='submit'>Filtrar</button>
               <button onClick={(e) => showForm(e)}>Cancelar</button>
             </div>
           </div>
@@ -341,6 +332,7 @@ export default function CompletedTasks() {
                 <option value="TI">TI</option>
                 <option value="Estrutura">Estrutura</option>
               </select>
+              <button className="new" onClick={showForm}>Filtros</button>
             </div>
 
           </>
@@ -355,6 +347,7 @@ export default function CompletedTasks() {
                   <option value="TI">TI</option>
                   <option value="Estrutura">Estrutura</option>
                 </select>
+               <button className="new" onClick={showForm}>Filtros</button>
               </div>
             </div>
             <TasksTable tasks={tasks} />

@@ -9,6 +9,7 @@ import Dashboard from '../pages/Dashboard';
 import Profile from '../pages/Profile';
 import Clients from '../pages/Clients';
 import CompletedTasks from '../pages/CompletedTasks';
+import Reports from '../pages/Reports';
 
 
 export default function Routes(){
@@ -18,6 +19,7 @@ export default function Routes(){
       <Route exact path="/register" component={SignUp} />
       <Route exact path="/dashboard" component={Dashboard} isPrivate />
       <Route exact path="/completedtasks" component={CompletedTasks} isPrivate />
+      <Route exact path="/reports" component={Reports} isPrivate />
       <Route exact path="/profile" component={Profile} isPrivate />
       <Route exact path="/clients" component={Clients} isPrivate />
       

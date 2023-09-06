@@ -1,5 +1,5 @@
 import '../index.css'
-import { FiHome, FiUser, FiSettings, FiUsers, FiLogOut } from 'react-icons/fi'
+import { FiSettings, FiUsers, FiLogOut, FiFileText, FiTool, FiCheckSquare } from 'react-icons/fi'
 import { AuthContext } from '../context/auth'
 import { useContext } from 'react'
 import { Link } from 'react-router-dom'
@@ -20,18 +20,25 @@ export default function Sidebar() {
 
             <div className="links">
                 <Link to='/dashboard'>
-                    <FiHome />
+                    <FiTool />
                     Chamados
                 </Link>
                 <Link to='/completedtasks'>
-                    <FiHome />
+                    <FiCheckSquare />
                     Chamados Concluidos
                 </Link>
                 {user.group === "admin" ? 
-                <Link to='/clients'>
+                <><Link to='/clients'>
                     <FiUsers />
                     Unidades
-                </Link> : <></>
+                </Link>
+                <Link to='/reports'>
+                    <FiFileText />
+                    Relatorios
+                </Link>
+                </>
+                : 
+                <></>
                 }
                 <Link id='settings' to='/profile'>
                     <FiSettings />
