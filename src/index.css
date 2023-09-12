@@ -800,9 +800,13 @@ height: 280px;
   height: 220px;
 }
 
+.date-filter{
+  width: 24% !important;
+}
 
-
-
+th{
+  cursor: pointer;
+}
 
 
 

@@ -14,7 +14,7 @@ import Modal from "./Modal";
 import DeleteModal from "./DeleteModal";
 
 
-export default function TasksTable({ tasks }) {
+export default function TasksTable({ tasks, order }) {
 
      const { user } = useContext(AuthContext)
     
@@ -99,12 +99,12 @@ export default function TasksTable({ tasks }) {
             <table className="table-tasks">
                 <thead>
                     <tr className="table-head">
-                        <th scope="col">Cliente</th>
-                        <th scope="col">Assunto</th>
-                        <th scope="col">Prioridade</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Criado em</th>
-                        <th scope="col">Concluido em</th>
+                        <th scope="col" onClick={() => order('client')}>Cliente</th>
+                        <th scope="col" onClick={() => order('subject')}>Assunto</th>
+                        <th scope="col" onClick={() => order('priority')}>Prioridade</th>
+                        <th scope="col" onClick={() => order('status')}>Status</th>
+                        <th scope="col" onClick={() => order('created')}>Criado em</th>
+                        <th scope="col" onClick={() => order('concluded')}>Concluido em</th>
                         <th scope="col">#</th>
                     </tr>
                 </thead>
@@ -113,7 +113,7 @@ export default function TasksTable({ tasks }) {
 
                         return (
                             <tr className="table-body-line" key={task.id}>
-                                <td data-label="Cliente">{task.client}</td>
+                                <td data-label="Cliente" >{task.client}</td>
                                 <td data-label="Assunto">{task.subject}</td>
                                 <td data-label="Prioridade">{task.priority}</td>
                                 <td data-label="Status"><span className="status">{task.status}</span></td>

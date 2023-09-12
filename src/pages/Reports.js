@@ -43,11 +43,11 @@ export default function Reports() {
   const [newTask, setNewTask] = useState({})
   const [client, setClient] = useState(user.name)
   const [clients, setClients] = useState([])
-  const [priority, setPriority] = useState()
-  const [subject, setSubject] = useState()
+  const [priority, setPriority] = useState('')
+  const [subject, setSubject] = useState('')
   const [taskType, setTaskType] = useState(['TI', 'Estrutura'])
   const [selectedType, setSelectedType] = useState('')
-  const [status, setStatus] = useState('Criado')
+  const [status, setStatus] = useState('')
   const [created, setCreated] = useState()
   const [concluded, setConcluded] = useState('')
   const [obs, setObs] = useState()
@@ -98,10 +98,10 @@ export default function Reports() {
 
   async function getDocs() {
     if (user.group === "admin") {
-      const docs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').limit('2').get()
+      const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('2').get()
       await loadTasks(docs)
     } else {
-      const docs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name).limit('2').get()
+      const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name).limit('2').get()
       await loadTasks(docs)
 
     }
@@ -118,7 +118,6 @@ export default function Reports() {
           id: doc.id,
           client: doc.data().client,
           created: doc.data().created,
-          concluded: doc.data().concluded,
           obs: doc.data().obs,
           priority: doc.data().priority,
           status: doc.data().status,
@@ -150,27 +149,14 @@ export default function Reports() {
 
     setLoadingMore(true)
 
-    if (selectedType !== "" && isAdmin === false) {
-      console.log(selectedType)
-      const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .where("type", "==", selectedType).limit('2').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    } else if (selectedType === "" && isAdmin === false) {
-      console.log(selectedType)
-      const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .limit('2').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    } else if (selectedType !== "" && isAdmin === true) {
-      const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("type", "==", selectedType)
-        .limit('2').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    } else if (selectedType === "" && isAdmin === true) {
-      const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').limit('2').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    }
+    const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name).limit('2').startAfter(lastTask).get()
+    await loadTasks(newDocs)
+
+
 
 
   }
+
   function newClient(t, item) {
     setType(t)
     setShowModal(!showModal)
@@ -209,24 +195,22 @@ export default function Reports() {
     }
   }
 
-  async function filter(e) {
-    // e.preventDefault()
-    // setLoading(true)
-    // setTasks('')
-    // setSelectedType(e.target.value)
-    // let filterDocs = ""
+  async function filter(value, name) {
 
-    // if (isAdmin) {
-    //   filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("type", "==", e.target.value).limit('2').get()
-    // } else {
-    //   filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
-    //     .where("type", "==", e.target.value).limit('2').get()
-    // }
 
-    // setIsEmpty(false)
-    // setLoadingMore(false)
-    // loadTasks(filterDocs)
-    console.log("Filtrou")
+    console.log(value, name)
+    setTasks('')
+    const docs = await firebase.firestore().collection('tasks').orderBy('created', 'asc').where(name, "==", value).get()
+    await loadTasks(docs)
+
+  }
+
+  async function orderBy(e){
+    const order = e.target.value
+
+    setTasks('')
+    const docs = await firebase.firestore().collection('tasks').orderBy(order, 'asc').get()
+    await loadTasks(docs)
   }
 
 
@@ -260,7 +244,7 @@ export default function Reports() {
           <div>
             <div className="tipo_select">
               <label>Tipo</label>
-              <select name="taskType" {...register("taskType")} value={taskType} onChange={(e) => { setTaskType(e.target.value) }}>
+              <select name="taskType" {...register("taskType")} value={taskType} onChange={(e) => { filter(e.target.value, "type") && setSubject(e.target.value) }}>
                 <option hidden value={''} >Selecione o tipo de chamado</option>
                 <option>TI</option>
                 <option>Estrutura</option>
@@ -269,7 +253,7 @@ export default function Reports() {
             </div>
             <div className="subject_select">
               <label>Assunto</label>
-              <select name="subject" {...register("subject")} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
+              <select name="subject" {...register("subject")} value={subject} onChange={(e) => { filter(e.target.value, e.target.name) && setSubject(e.target.value) }}>
                 <option hidden value={''} >Selecione o assunto</option>
                 {subjects.map((s, index) => {
                   return (
@@ -280,7 +264,7 @@ export default function Reports() {
             </div>
             <div className="priority_select">
               <label>Prioridade</label>
-              <select name="priority" {...register("priority")} value={priority} onChange={(e) => { setPriority(e.target.value) }}>
+              <select name="priority" {...register("priority")} value={priority} onChange={(e) => { filter(e.target.value, e.target.name) && setSubject(e.target.value) }}>
                 <option hidden value={''} >Selecione a prioridade</option>
                 {prioritys.map((p, index) => {
                   return (
@@ -291,7 +275,7 @@ export default function Reports() {
             </div>
             <div className="status_select">
               <label>Status</label>
-              <select disabled={disable} name="status" {...register("status")} value={status} onChange={(e) => { setStatus(e.target.value) }}>
+              <select disabled={disable} name="status" {...register("status")} value={status} onChange={(e) => { filter(e.target.value, e.target.name) && setSubject(e.target.value) }}>
                 <option hidden value={''} >Selecione o status</option>
                 {stats.map((s, index) => {
                   return (
@@ -313,12 +297,7 @@ export default function Reports() {
               <button onClick={(e) => showForm(e)}>Cancelar</button>
             </div>
           </div>
-          <article className="error-message">
-            <p>{errors.client?.message}</p>
-            <p>{errors.subject?.message}</p>
-            <p>{errors.status?.message}</p>
-            <p>{errors.obs?.message}</p>
-          </article>
+
         </form>
         {tasks.length === 0 ?
           <>
@@ -327,10 +306,13 @@ export default function Reports() {
             </div>
             <div className="filter-select">
               <label>Filtrar</label>
-              <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { filter(e) }}>
+              <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { orderBy(e) }}>
                 <option hidden value={''} >Selecione o tipo de chamado</option>
-                <option value="TI">TI</option>
-                <option value="Estrutura">Estrutura</option>
+                <option value="status">Status</option>
+                <option value="type">Tipo</option>
+                <option value="subject">Assunto</option>
+                <option value="priority">Prioridade</option>
+                <option value="client">Unidade</option>
               </select>
               <button className="new" onClick={showForm}>Filtros</button>
             </div>
@@ -342,11 +324,14 @@ export default function Reports() {
               
               <div className="filter-select">
                 <label>Filtrar</label>
-                <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { filter(e) }}>
-                  <option hidden value={''} >Selecione o tipo de chamado</option>
-                  <option value="TI">TI</option>
-                  <option value="Estrutura">Estrutura</option>
-                </select>
+                <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { orderBy(e) }}>
+                <option hidden value={''} >Selecione o tipo de chamado</option>
+                <option value="status">Status</option>
+                <option value="type">Tipo</option>
+                <option value="subject">Assunto</option>
+                <option value="priority">Prioridade</option>
+                <option value="client">Unidade</option>
+              </select>
                <button className="new" onClick={showForm}>Filtros</button>
               </div>
             </div>

@@ -317,6 +317,22 @@ export default function Dashboard() {
     loadTasks(filterDocs)
   }
 
+  async function orderBy(e){
+    setTasks('')
+    
+    if(e === 'concluded'){
+      const order = 'created'
+      const docs = await firebase.firestore().collection('tasks').orderBy(order, 'asc').get()
+      await loadTasks(docs)
+    }else{
+      const order = e      
+      const docs = await firebase.firestore().collection('tasks').orderBy(order, 'asc').get()
+      await loadTasks(docs)
+    }
+
+    console.log(e)
+  }
+
 
   if (loading) {
     return (
@@ -441,7 +457,7 @@ export default function Dashboard() {
                 </select>
               </div>
             </div>
-            <TasksTable tasks={tasks} />
+            <TasksTable tasks={tasks} order={orderBy} />
             {loadingMore && <h3>Carregando...</h3>}
 
             {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Carregar Mais</button>}
