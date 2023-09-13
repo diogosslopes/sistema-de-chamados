@@ -94,6 +94,7 @@ export default function TasksTable({ tasks, order }) {
             })
     }
 
+
     return (
         <>
             <table className="table-tasks">
@@ -137,7 +138,7 @@ export default function TasksTable({ tasks, order }) {
                 <Modal tipo={type} close={editClient} item={task} />
             )}
             {showDeleteModal && (
-                <DeleteModal id={taskId} close={deleteTask} bd={"tasks"} />
+                <DeleteModal id={taskId} close={deleteTask} bd={"tasks"}  />
             )}
 
         </>

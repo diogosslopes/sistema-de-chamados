@@ -12,6 +12,38 @@ function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true)
     const navigate = useHistory()
 
+
+    const [tasks, setTasks] = useState([])
+    let list = []
+    const [task, setTask] = useState('')
+    const [type, setType] = useState('')
+    const [showModal, setShowModal] = useState(false)
+    const [lastTask, setLastTask] = useState()
+    const [loadingMore, setLoadingMore] = useState(false)
+    const [isEmpty, setIsEmpty] = useState(false)
+    const [isAdmin, setIsAdmin] = useState(false)
+    const [isFiltered, setIsFiltered] = useState(false)
+
+
+    const [newTask, setNewTask] = useState({})
+    const [client, setClient] = useState('')
+    const [clients, setClients] = useState([])
+    const [priority, setPriority] = useState()
+    const [subject, setSubject] = useState()
+    const [taskType, setTaskType] = useState(['TI', 'Estrutura'])
+    const [selectedType, setSelectedType] = useState('')
+    const [status, setStatus] = useState('Criado')
+    const [created, setCreated] = useState()
+    const [obs, setObs] = useState()
+    const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
+    const [subjectsTi, setSubjectsTi] = useState(['Impressora', 'Sistema', 'Internet'])
+    const [subjectsGeneral, setSubjectsGeneral] = useState(['Eletrica', 'Pintura', 'Ar Condicionado', 'Hidraulico', 'Portas', 'Outros'])
+    const [subjects, setSubjects] = useState([])
+    const [stats, setStats] = useState(['Criado', 'Aberto', 'Em andamento', 'Enviado p/ tec', 'Aguardando liberação', 'Fechado'])
+    const [disable, setDisable] = useState(true)
+    const [images, setImages] = useState([])
+    let filterDocs = ""
+
     useEffect(() => {
 
         function userLoged() {
@@ -19,6 +51,7 @@ function AuthProvider({ children }) {
 
             if (activeUser) {
                 setUser(JSON.parse(activeUser))
+                setClient(user)
                 setLoading(false)
             }
 
@@ -27,7 +60,7 @@ function AuthProvider({ children }) {
         userLoged()
     }, [])
 
-   
+
 
 
     async function registerUser(value) {
@@ -85,6 +118,7 @@ function AuthProvider({ children }) {
                 }
                 setUser(userData)
                 storage(userData)
+                setClient(user)
                 setLoadingAuth(false)
             })
             .catch((error) => {
@@ -106,8 +140,89 @@ function AuthProvider({ children }) {
         setUser(null)
     }
 
+
+
+
+
+    async function loadClients() {
+        await firebase.firestore().collection('clients').get()
+            .then((snapshot) => {
+                let list = []
+
+                snapshot.forEach((doc) => {
+                    list.push({
+                        id: doc.id,
+                        client: doc.data().name
+                    })
+                })
+                setClients(list)
+
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+
+    }
+
+
+    async function getDocs(bd) {
+        setTasks('')
+        console.log(bd)
+
+        if (user.group === "admin") {
+            const docs = await firebase.firestore().collection(bd).orderBy('created', 'desc').limit('2').get()
+            await loadTasks(docs)
+        } else {
+            const docs = await firebase.firestore().collection(bd).orderBy('created', 'desc').where("client", "==", user.name).limit('2').get()
+            await loadTasks(docs)
+
+        }
+    }
+
+    async function loadTasks(docs) {
+
+        const isTaksEmpty = docs.size === 0
+
+        
+        if (!isTaksEmpty) {
+            docs.forEach((doc) => {
+                console.log(doc.data())
+                list.push({
+                    id: doc.id,
+                    client: doc.data().client,
+                    created: doc.data().created,
+                    obs: doc.data().obs,
+                    priority: doc.data().priority,
+                    status: doc.data().status,
+                    type: doc.data().type,
+                    subject: doc.data().subject,
+                    userId: doc.data().userId,
+                    taskImages: doc.data().taskImages
+                })
+            })
+
+            // console.log(list)
+
+            const lastDoc = docs.docs[docs.docs.length - 1]
+            setLastTask(lastDoc)
+            setTasks(tasks => [...tasks, ...list])
+            setLoading(false)
+
+        } else {
+            setIsEmpty(true)
+            setLoading(false)
+
+        }
+        setLoadingMore(false)
+    }
+
+
+
     return (
-        <AuthContext.Provider value={{ signed: !!user, user, loading, registerUser, signOut, logIn, loadingAuth, storage, setUser }}>
+        <AuthContext.Provider value={{
+            signed: !!user, user, loading, registerUser, signOut, logIn, loadingAuth, storage,
+            setUser, getDocs, loadClients, loadTasks, loading, loadingMore, setLoading, setLoadingMore, tasks, setTasks, clients, setClients, lastTask
+        }}>
             {children}
         </AuthContext.Provider>
     )

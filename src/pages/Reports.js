@@ -27,22 +27,19 @@ export default function Reports() {
 
   const resolveAfter3Sec = new Promise(resolve => setTimeout(resolve, 3000))
 
-  const { user } = useContext(AuthContext)
-  const [tasks, setTasks] = useState([])
   let list = []
   const [task, setTask] = useState('')
   const [type, setType] = useState('')
   const [showModal, setShowModal] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [lastTask, setLastTask] = useState()
-  const [loadingMore, setLoadingMore] = useState(false)
   const [isEmpty, setIsEmpty] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
+
+  const { user, getDocs, loadClients, loadTasks, loading, loadingMore, setLoading, setLoadingMore, tasks, clients, setTasks, lastTask } = useContext(AuthContext)
+
 
 
   const [newTask, setNewTask] = useState({})
   const [client, setClient] = useState(user.name)
-  const [clients, setClients] = useState([])
   const [priority, setPriority] = useState('')
   const [subject, setSubject] = useState('')
   const [taskType, setTaskType] = useState(['TI', 'Estrutura'])
@@ -52,7 +49,7 @@ export default function Reports() {
   const [concluded, setConcluded] = useState('')
   const [obs, setObs] = useState()
   const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
-  const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
+  const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet', 'Eletrica', 'Pintura', 'Ar Condicionado', 'Hidraulico', 'Portas', 'Outros'])
   const [stats, setStats] = useState(['Criado', 'Aberto', 'Em andamento', 'Enviado p/ tec', 'Aguardando liberação', 'Fechado'])
   const [disable, setDisable] = useState(true)
   const [images, setImages] = useState([])
@@ -66,28 +63,8 @@ export default function Reports() {
 
   useEffect(() => {
 
-    async function loadClients() {
-      await firebase.firestore().collection('clients').get()
-        .then((snapshot) => {
-          let list = []
-
-          snapshot.forEach((doc) => {
-            list.push({
-              id: doc.id,
-              client: doc.data().name
-            })
-          })
-          setClients(list)
-
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-
-    }
-
     loadClients()
-    getDocs()
+    getDocs('tasks')
 
     if (user.group === 'admin') {
       setIsAdmin(true)
@@ -96,64 +73,28 @@ export default function Reports() {
 
   }, [])
 
-  async function getDocs() {
-    if (user.group === "admin") {
-      const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('2').get()
-      await loadTasks(docs)
-    } else {
-      const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name).limit('2').get()
-      await loadTasks(docs)
-
-    }
-
-
-  }
-  async function loadTasks(docs) {
-
-    const isTaksEmpty = docs.size === 0
-
-    if (!isTaksEmpty) {
-      docs.forEach((doc) => {
-        list.push({
-          id: doc.id,
-          client: doc.data().client,
-          created: doc.data().created,
-          obs: doc.data().obs,
-          priority: doc.data().priority,
-          status: doc.data().status,
-          type: doc.data().type,
-          subject: doc.data().subject,
-          userId: doc.data().userId,
-          taskImages: doc.data().taskImages
-        })
-      })
-
-      console.log(list)
-
-      const lastDoc = docs.docs[docs.docs.length - 1]
-      setLastTask(lastDoc)
-      setTasks(tasks => [...tasks, ...list])
-      setLoading(false)
-
-    } else {
-      setIsEmpty(true)
-      setLoading(false)
-
-    }
-    setLoadingMore(false)
-  }
-
-
-
   async function moreTasks() {
 
     setLoadingMore(true)
 
-    const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name).limit('2').startAfter(lastTask).get()
-    await loadTasks(newDocs)
-
-
-
+    if (selectedType !== "" && isAdmin === false) {
+      console.log(selectedType)
+      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
+        .where("type", "==", selectedType).limit('2').startAfter(lastTask).get()
+      await loadTasks(newDocs)
+    } else if (selectedType === "" && isAdmin === false) {
+      console.log(selectedType)
+      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
+        .limit('2').startAfter(lastTask).get()
+      await loadTasks(newDocs)
+    } else if (selectedType !== "" && isAdmin === true) {
+      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("type", "==", selectedType)
+        .limit('2').startAfter(lastTask).get()
+      await loadTasks(newDocs)
+    } else if (selectedType === "" && isAdmin === true) {
+      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('2').startAfter(lastTask).get()
+      await loadTasks(newDocs)
+    }
 
   }
 
@@ -305,15 +246,6 @@ export default function Reports() {
               <span>Não existem chamados registrados...</span>
             </div>
             <div className="filter-select">
-              <label>Filtrar</label>
-              <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { orderBy(e) }}>
-                <option hidden value={''} >Selecione o tipo de chamado</option>
-                <option value="status">Status</option>
-                <option value="type">Tipo</option>
-                <option value="subject">Assunto</option>
-                <option value="priority">Prioridade</option>
-                <option value="client">Unidade</option>
-              </select>
               <button className="new" onClick={showForm}>Filtros</button>
             </div>
 
@@ -323,15 +255,6 @@ export default function Reports() {
             <div className="new-task more-task">
               
               <div className="filter-select">
-                <label>Filtrar</label>
-                <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { orderBy(e) }}>
-                <option hidden value={''} >Selecione o tipo de chamado</option>
-                <option value="status">Status</option>
-                <option value="type">Tipo</option>
-                <option value="subject">Assunto</option>
-                <option value="priority">Prioridade</option>
-                <option value="client">Unidade</option>
-              </select>
                <button className="new" onClick={showForm}>Filtros</button>
               </div>
             </div>
