@@ -167,7 +167,6 @@ function AuthProvider({ children }) {
 
     async function getDocs(bd) {
         setTasks('')
-        console.log(bd)
 
         if (user.group === "admin") {
             const docs = await firebase.firestore().collection(bd).orderBy('created', 'desc').limit('2').get()
@@ -216,12 +215,34 @@ function AuthProvider({ children }) {
         setLoadingMore(false)
     }
 
+    async function filter(e) {
+        e.preventDefault()
+        setLoading(true)
+        setTasks('')
+        setSelectedType(e.target.value)
+    
+        if (isAdmin) {
+          filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("type", "==", e.target.value).limit('20').get()
+        } else {
+          filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
+          .where("type", "==", e.target.value).limit('20').get()
+        }
+        
+        setIsEmpty(false)
+        setLoadingMore(false)
+        loadTasks(filterDocs, e)
+        console.log(filterDocs.docs)
+        setIsFiltered(true)
+        
+      }
+
 
 
     return (
         <AuthContext.Provider value={{
             signed: !!user, user, loading, registerUser, signOut, logIn, loadingAuth, storage,
-            setUser, getDocs, loadClients, loadTasks, loading, loadingMore, setLoading, setLoadingMore, tasks, setTasks, clients, setClients, lastTask
+            setUser, getDocs, loadClients, loadTasks, loading, loadingMore, setLoading, setLoadingMore, tasks, setTasks, clients, setClients, lastTask,
+            filter, isFiltered
         }}>
             {children}
         </AuthContext.Provider>
