@@ -8,10 +8,10 @@ import 'react-toastify/dist/ReactToastify.css'
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <ToastContainer autoClose={3000} theme="dark"/>
-        <Routes />
-      </BrowserRouter>
+        <BrowserRouter>
+          <ToastContainer autoClose={3000} theme="dark" />
+          <Routes />
+        </BrowserRouter>
     </AuthProvider>
   );
 }
