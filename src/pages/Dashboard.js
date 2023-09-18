@@ -90,8 +90,8 @@ export default function Dashboard() {
 
     }
 
-    loadClients()
-    getDocs()
+    // loadClients()
+    // getDocs()
 
     if (user.group === 'admin') {
       setIsAdmin(true)
@@ -112,6 +112,7 @@ export default function Dashboard() {
   }, [taskType])
 
   async function getDocs() {
+    setTasks('')
     if (user.group === "admin") {
       const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('2').get()
       await loadTasks(docs)
@@ -361,7 +362,7 @@ export default function Dashboard() {
       </div>
       <div className="container-task">
         <form className="form-task hide" onSubmit={handleSubmit(save)}>
-          <div>
+          <div className="form-div form-div-task">
             <div className="tipo_select">
               <label>Tipo</label>
               <select name="taskType" {...register("taskType")} value={taskType} onChange={(e) => { setTaskType(e.target.value) }}>
@@ -457,7 +458,7 @@ export default function Dashboard() {
                 </select>
               </div>
             </div>
-            <TasksTable tasks={tasks} order={orderBy} />
+            <TasksTable tasks={tasks} order={orderBy} getDoc={getDocs} />
             {loadingMore && <h3>Carregando...</h3>}
 
             {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Carregar Mais</button>}

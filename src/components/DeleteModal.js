@@ -14,7 +14,7 @@ import { AuthContext } from "../context/auth";
 
 
 
-export default function DeleteModal({ id, close, bd }) {
+export default function DeleteModal({ id, close, bd, getDoc }) {
 
 
 
@@ -25,6 +25,7 @@ export default function DeleteModal({ id, close, bd }) {
       .then(() => {
         
         toast.success("Deletado com sucesso")
+        getDoc()
         close()
         // window.location.reload()
       })

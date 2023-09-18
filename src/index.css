@@ -375,21 +375,23 @@ button.button-hover {
 .buttons {
   display: flex;
   width: 100%;
-  max-width: 600px;
+  max-width: 968px;
   justify-content: center;
-  gap: 15px;
+  gap: 15px
 }
 
 .buttons button {
   width: 100%;
-  max-width: 600px;
+  max-width: 300px;
 }
 
 .form-client {
+  background-color: #202529;
   transform: translateX(1.9);
-  height: 310px;
+  height: 335px;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
+  align-items: center;
   
 }
 
@@ -437,9 +439,9 @@ button.button-hover {
 
 
 .form-task {
-  background-color: #A1B4C4;
+  /* background-color: #A1B4C4; */
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   margin: 1em 0;
   border-radius: 5px;
   padding: .8em;
@@ -457,11 +459,26 @@ button.button-hover {
 
 }
 
-.form-task div{
+/* .form-task div{
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 60%;
+} */
+
+.form-div{
+  background-color: #A1B4C4;
+  padding: 15px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row !important;
+  width: 60%;
+  gap: 80px;
+}
+
+.form-div-task{
+  flex-direction: column !important;
+  gap: 0px;
 }
 
 .form-task div div{
@@ -500,6 +517,9 @@ button.button-hover {
 .form-task .buttons{
   display: flex;
   flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 
@@ -652,7 +672,7 @@ table td  svg{
   display: flex;
   flex-direction: column;
   width: 45%;
-  height: 65%;
+  height: 55%;
   border-radius: 5px;
   margin: 50px auto;
   justify-content: space-evenly;
@@ -706,6 +726,7 @@ table td  svg{
 
 .form-modal .buttons{
   align-items: center;
+  justify-content: center;
 }
 
 .radio-buttons{

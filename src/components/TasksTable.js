@@ -14,7 +14,7 @@ import Modal from "./Modal";
 import DeleteModal from "./DeleteModal";
 
 
-export default function TasksTable({ tasks, order }) {
+export default function TasksTable({ tasks, order, getDoc, page }) {
 
      const { user } = useContext(AuthContext)
     
@@ -49,6 +49,7 @@ export default function TasksTable({ tasks, order }) {
         })
           .then(() => {
             toast.success("Chamado registrado !")
+            getDoc()
 
           })
           .catch((error) => {
@@ -120,12 +121,19 @@ export default function TasksTable({ tasks, order }) {
                                 <td data-label="Criado em">{task.created}</td>
                                 <td data-label="Concluido em">{task.concluded}</td>
                                 <td data-label="#">
-                                    <button className="task-btn edit" onClick={() => editClient('edit', task)}><FiEdit2 size={17} /></button>
-                                    <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
-                                    {user.group === 'admin' &&(
-                                        <button className="task-btn check" onClick={() => completeTask(task)}><FiCheck size={17} /></button>
-                                    )}
-                                    <button className="task-btn delete" onClick={() => deleteTask(task.id)}><FiTrash size={17} /></button>
+                                    {page === 'completedtasks' ? 
+                                        <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
+                                        :
+                                        <>
+                                        <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
+                                        <button className="task-btn edit" onClick={() => editClient('edit', task)}><FiEdit2 size={17} /></button>
+                                        {user.group === 'admin' &&(
+                                            <button className="task-btn check" onClick={() => completeTask(task)}><FiCheck size={17} /></button>
+                                        )}
+                                        <button className="task-btn delete" onClick={() => deleteTask(task.id)}><FiTrash size={17} /></button>
+                                        </>
+
+                                     }
                                 </td>
                             </tr>
                         )
@@ -137,7 +145,7 @@ export default function TasksTable({ tasks, order }) {
                 <Modal tipo={type} close={editClient} item={task} />
             )}
             {showDeleteModal && (
-                <DeleteModal id={taskId} close={deleteTask} bd={"tasks"} />
+                <DeleteModal id={taskId} close={deleteTask} bd={"tasks"} getDoc={getDoc} />
             )}
 
         </>

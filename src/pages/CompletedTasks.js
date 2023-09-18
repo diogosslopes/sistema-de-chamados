@@ -107,8 +107,6 @@ export default function CompletedTasks() {
       await loadTasks(docs)
 
     }
-
-
   }
   async function loadTasks(docs) {
 
@@ -366,7 +364,7 @@ export default function CompletedTasks() {
                 </select>
               </div>
             </div>
-            <TasksTable tasks={tasks} order={orderBy} />
+            <TasksTable tasks={tasks} order={orderBy} page={'completedtasks'} />
             {loadingMore && <h3>Carregando...</h3>}
 
             {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Carregar Mais</button>}

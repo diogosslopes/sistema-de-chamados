@@ -32,10 +32,10 @@ export default function Sidebar() {
                     <FiUsers />
                     Unidades
                 </Link>
-                <Link to='/reports'>
+                {/* <Link to='/reports'>
                     <FiFileText />
                     Relatorios
-                </Link>
+                </Link> */}
                 </>
                 : 
                 <></>

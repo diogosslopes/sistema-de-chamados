@@ -160,26 +160,26 @@ export default function Clients() {
             <button onClick={showForm} className="new">Nova Unidade</button>
             <div className="container-client ">
                 <form className="form-profile form-client hide" onSubmit={handleSubmit(save)}>
-
-                    <div>
-                        <label>Nome</label>
-                        <input type='text' name="name" {...register("name")} value={name} onChange={(e) => setName(e.target.value)} />
-                        <label>Endereço</label>
-                        <input type='text' name="adress" {...register("adress")} value={adress} onChange={(e) => setAdress(e.target.value)} />
-                        <label>E-mail</label>
-                        <input type='text' name="login" disabled={disable}  {...register("login")} value={login} onChange={(e) => setLogin(e.target.value)} />
-                        <label>Senha</label>
-                        <input type='password' name="password" disabled={disable}  {...register("password")} value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <div className="buttons">
-                            <button type="submit">Salvar</button>
-                            <button type="button" onClick={showForm}>Cancelar</button>
+                    <div className="form-div">
+                        <div >
+                            <label>Nome</label>
+                            <input type='text' name="name" {...register("name")} value={name} onChange={(e) => setName(e.target.value)} />
+                            <label>Endereço</label>
+                            <input type='text' name="adress" {...register("adress")} value={adress} onChange={(e) => setAdress(e.target.value)} />
+                            <label>E-mail</label>
+                            <input type='text' name="login" disabled={disable}  {...register("login")} value={login} onChange={(e) => setLogin(e.target.value)} />
+                            <label>Senha</label>
+                            <input type='password' name="password" disabled={disable}  {...register("password")} value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <div className="buttons">
+                                <button type="submit">Salvar</button>
+                                <button type="button" onClick={showForm}>Cancelar</button>
+                            </div>
                         </div>
+                        <article className="error-message">
+                            <p>{errors.name?.message}</p>
+                            <p>{errors.login?.message}</p>
+                        </article>
                     </div>
-
-                    <article className="error-message">
-                        <p>{errors.name?.message}</p>
-                        <p>{errors.login?.message}</p>
-                    </article>
                 </form>
                 {clientList.map((c) => {
                     return (
