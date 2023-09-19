@@ -90,8 +90,8 @@ export default function Dashboard() {
 
     }
 
-    // loadClients()
-    // getDocs()
+    loadClients()
+    getDocs()
 
     if (user.group === 'admin') {
       setIsAdmin(true)
@@ -467,9 +467,9 @@ export default function Dashboard() {
           </div>
         }
       </div>
-      {showModal && (
+      {/* {showModal && (
         <Modal tipo={type} close={newClient} item={task} />
-      )}
+      )} */}
     </div>
   )
 }

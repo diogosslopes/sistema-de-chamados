@@ -20,7 +20,7 @@ const validation = yup.object().shape({
 })
 
 
-export default function Modal({ tipo, close, item }) {
+export default function Modal({ tipo, close, item, getDoc }) {
 
 
   const { user } = useContext(AuthContext)
@@ -45,6 +45,8 @@ export default function Modal({ tipo, close, item }) {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(validation)
   })
+
+  console.log(getDoc)
 
 
 
@@ -123,6 +125,7 @@ export default function Modal({ tipo, close, item }) {
         toast.success("Edição realizada com sucesso !")
         // sendEmail()
         close()
+        getDoc()
       })
       .catch((error) => {
         toast.error("Erro ao realizar edição !")
