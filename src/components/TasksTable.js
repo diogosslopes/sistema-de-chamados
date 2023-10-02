@@ -142,7 +142,7 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                 </tbody>
             </table>
             {showModal && (
-                <Modal tipo={type} close={editClient} item={task} getDoc={getDoc} />
+                <Modal tipo={type} close={editClient} item={task} getDoc={getDoc} itens={tasks} />
             )}
             {showDeleteModal && (
                 <DeleteModal id={taskId} close={deleteTask} bd={"tasks"} getDoc={getDoc} />

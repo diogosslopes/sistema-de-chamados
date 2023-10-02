@@ -672,7 +672,7 @@ table td  svg{
   display: flex;
   flex-direction: column;
   width: 45%;
-  height: 55%;
+  height: 90%;
   border-radius: 5px;
   margin: 50px auto;
   justify-content: space-evenly;
@@ -748,7 +748,53 @@ table td  svg{
 }
 
 #obs{
-  height: 70px;
+  height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+.obs-list{
+  height: 260px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: scroll;
+  scrollbar-width: 1px;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.obs{
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  height: 90px !important;
+}
+
+.obs textarea{
+  width: 100% !important;
+  margin-top: 3px;
+}
+
+#obs .new-obs{
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+}
+
+#obs .new-obs textarea{
+  height: 260px;
 }
 
 

@@ -20,7 +20,7 @@ const validation = yup.object().shape({
 })
 
 
-export default function Modal({ tipo, close, item, getDoc }) {
+export default function Modal({ tipo, close, item, getDoc, itens }) {
 
 
   const { user } = useContext(AuthContext)
@@ -31,10 +31,14 @@ export default function Modal({ tipo, close, item, getDoc }) {
   const [status, setStatus] = useState(item.status)
   const [taskType, setTaskType] = useState(item.type)
   const [created, setCreated] = useState(item.created)
-  const [obs, setObs] = useState(item.obs)
+  const [obs, setObs] = useState([])
   const [taskImages, setTaskImages] = useState(item.taskImages)
   const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
   const [disable, setDisable] = useState(false)
+  const [newList, setNewList] = useState(item.obs)
+  let fullDate = ''
+  let obsList = item.obs
+  console.log(obsList)
 
   const [priority, setPriority] = useState(item.priority)
   const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
@@ -70,13 +74,13 @@ export default function Modal({ tipo, close, item, getDoc }) {
           console.log(error)
         })
 
+
+
     }
 
     loadClients()
+    fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
     if (tipo === 'new') {
-
-
-      const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
       setCreated(fullDate)
     }
 
@@ -99,12 +103,12 @@ export default function Modal({ tipo, close, item, getDoc }) {
     email: "diogobrbm@gmail.com"
   }
 
-  function sendEmail(){
-    emailjs.send("service_lv8kn8j","template_shcpe8x", templateParams, "BrAq6Nxcac_3F_GXo")
-    .then((response)=>{
-      console.log("Email enviado ", response.status, response.text)
-    })
-  } 
+  function sendEmail() {
+    emailjs.send("service_lv8kn8j", "template_shcpe8x", templateParams, "BrAq6Nxcac_3F_GXo")
+      .then((response) => {
+        console.log("Email enviado ", response.status, response.text)
+      })
+  }
 
 
 
@@ -117,9 +121,9 @@ export default function Modal({ tipo, close, item, getDoc }) {
       client: client,
       priority: priority,
       subject: subject,
-      status: status, 
+      status: status,
       type: taskType,
-      obs: obs
+      obs: obsList
     })
       .then(() => {
         toast.success("Edição realizada com sucesso !")
@@ -133,6 +137,21 @@ export default function Modal({ tipo, close, item, getDoc }) {
       })
     // }
 
+  }
+
+  function saveObs(newObs) {
+  /*   obsList = item.obs */
+    console.log(obsList)
+    setNewList('')
+    const newOBS = {
+      name: client,
+      obs: newObs,
+      date: fullDate
+    }
+    
+    obsList.push(newOBS)
+    setNewList(obsList)
+    console.log(obsList)
   }
 
 
@@ -203,10 +222,10 @@ export default function Modal({ tipo, close, item, getDoc }) {
             <label>Anexos</label>
             <div className="list">
               {
-                
-                taskImages.map((images, index)=>{
+
+                taskImages.map((images, index) => {
                   return (
-                    <a target="_blank" href={`${images}`}>{`Imagem ${index +1}`}</a>
+                    <a target="_blank" href={`${images}`}>{`Imagem ${index + 1}`}</a>
                   )
                 })
               }
@@ -214,7 +233,33 @@ export default function Modal({ tipo, close, item, getDoc }) {
           </div>
           <div id="obs">
             <label>Observações</label>
-            <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
+            {tipo === 'show' ?
+              <div className="obs-list">
+                {obsList.map((o)=>{
+                  return(
+                <div className="obs">
+                  <label>{`${o.name} - ${o.date}`}</label>
+                  <textarea value={o.obs} name="obs" disabled={disable} placeholder="Observações" />
+                </div>
+                  )
+                })}
+              </div>
+              :
+              <div className="new-obs">
+                <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
+                <button type="button" onClick={(()=>{saveObs(obs)})}>Enviar</button>
+                <div className="obs-list">
+                {newList.map((o)=>{
+                  return(
+                <div className="obs">
+                  <label>{`${o.name} - ${o.date}`}</label>
+                  <textarea value={o.obs} name="obs" disabled='disable' placeholder="Observações" />
+                </div>
+                  )
+                })}
+              </div>
+              </div>
+            }
           </div>
           <article className="error-message">
             <p>{errors.client?.message}</p>
