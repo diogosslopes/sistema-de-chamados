@@ -26,6 +26,7 @@ export default function Modal({ tipo, close, item, getDoc, itens }) {
   const { user } = useContext(AuthContext)
   const [newTask, setNewTask] = useState({})
   const [client, setClient] = useState(item.client)
+  const [task, setTask] = useState()
   const [clients, setClients] = useState([])
   const [subject, setSubject] = useState(item.subject)
   const [status, setStatus] = useState(item.status)
@@ -91,6 +92,18 @@ export default function Modal({ tipo, close, item, getDoc, itens }) {
     }
 
   }, [])
+
+
+  useEffect(()=>{
+    const doc = firebase.firestore().collection('tasks').doc(item.id).onSnapshot((snapshot)=>{
+      snapshot.forEach((doc)=>{
+        console.log(doc.data())
+        listTasks.push(doc.data())
+      })
+      console.log(listTasks)
+      loadTask(listTasks)
+    })
+  },[])
 
   const save = data => {
     saveTask()
