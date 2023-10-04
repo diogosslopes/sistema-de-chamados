@@ -1,0 +1,70 @@
+[33mfe0a7ee[m[33m ([m[1;36mHEAD -> [m[1;32msistema-lab[m[33m, [m[1;31morigin/sistema-lab[m[33m)[m Versão Beta
+[33mab64480[m --
+[33mc2983ad[m onsnapshot
+[33ma2f2b9e[m Versão Beta
+[33m6593c84[m Merge branch 'sistema-lab' of https://github.com/diogosslopes/sistema-chamados into sistema-lab
+[33mf98b0b0[m filtro refeito
+[33m4e8d67b[m FILTROS
+[33meb31737[m Alteração do getdocs
+[33mb2325fb[m filtros e ordenação
+[33m8e9cd1b[m Pagina de filtro
+[33m1f71978[m -
+[33mdbe9165[m correção mobile viewew
+[33m5e3df91[m Sistema finalizado
+[33m97f066e[m reportPdf
+[33m4e51935[m Chamados finalizados
+[33m8f17683[m Ajuste nos selects
+[33m7877a8d[m -
+[33m226c2aa[m Envio de email
+[33mcf6a68e[m .
+[33m4be095c[m hide created
+[33m706d015[m filtro quando sem chamado
+[33m7412944[m ajuste do campo de anexos
+[33mf8d3a7d[m images area
+[33md349f1e[m ajuste de foto de perfil e containers
+[33m134d082[m ferramenta de cortar imagem
+[33m5f460cc[m ferramenta de cortar imagem
+[33mab324d6[m filtro de tipo de chamado e crop de imagem
+[33ma2f3f9a[m Mudança no cadastro de unidade e chamados
+[33mea7ac9d[m efeito botão
+[33m8d497b2[m Ajusete de função para salvar e deletar chamados e modal delete
+[33m94eb7b3[m Alteração de titulo
+[33ma5385d1[m Alteração de titulo para pag homologação
+[33m93dd5a6[m dashboard
+[33m81e9144[m Revert "modal delete"
+[33m7cba6b8[m dashbord novo
+[33m80c56f7[m modal delete
+[33m264cfb7[m modal de confirmação
+[33mf3d8789[m Mensagen de registro e exclusão de client
+[33m19a3ed8[m validação client
+[33m6b64bb7[m chamados por user
+[33m8540eec[m Validações profile e tasks
+[33m644aeca[m -
+[33m1c20768[m validação em andamento
+[33mfdfa48c[m react hook form profile
+[33m51e5f33[m validation profile
+[33m6b5dab7[m Modal foramatação de data
+[33m859f24f[m status modal
+[33m7333004[m Carregando mais chamados
+[33m091f307[m Inserido div de loading
+[33mece64ba[m -
+[33mb6f0368[m -
+[33m3c5773f[m -
+[33m0b9b994[m Alterado input de cliente e assunto
+[33m7106523[m implantando edição
+[33ma750097[m implementado propriedade key
+[33mf4ba71c[m Lista de chamados criada
+[33mfa2724c[m mudança de table para component
+[33m889e17a[m -
+[33m8e26a94[m -
+[33md94a841[m Modal editado
+[33m7d7d1aa[m -
+[33m7a5ccd4[m --
+[33m55f736d[m lista de clientes
+[33m3b682fe[m Ajuste da tela de login
+[33m94b0210[m profile page
+[33mf6d5478[m dashboard
+[33mf529461[m login implementado
+[33maf3b6f0[m login
+[33m1216125[m Tela de login
+[33mcf7fc88[m Initialize project using Create React App

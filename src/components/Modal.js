@@ -26,15 +26,20 @@ export default function Modal({ tipo, close, item, getDoc }) {
   const { user } = useContext(AuthContext)
   const [newTask, setNewTask] = useState({})
   const [client, setClient] = useState(item.client)
+  const [task, setTask] = useState()
   const [clients, setClients] = useState([])
   const [subject, setSubject] = useState(item.subject)
   const [status, setStatus] = useState(item.status)
   const [taskType, setTaskType] = useState(item.type)
   const [created, setCreated] = useState(item.created)
-  const [obs, setObs] = useState(item.obs)
+  const [obs, setObs] = useState([])
   const [taskImages, setTaskImages] = useState(item.taskImages)
   const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
   const [disable, setDisable] = useState(false)
+  const [newList, setNewList] = useState(item.obs)
+  let fullDate = ''
+  let obsList = item.obs
+  console.log(obsList)
 
   const [priority, setPriority] = useState(item.priority)
   const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
@@ -88,6 +93,20 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   }, [])
 
+  
+
+  useEffect(()=>{
+    const doc = firebase.firestore().collection('tasks').doc(item.id).onSnapshot((snapshot)=>{
+      snapshot.forEach((doc)=>{
+        console.log(doc.data())
+        obsList.push(doc.data()) 
+
+      })
+      console.log(obsList)
+   
+    })
+  },[])
+
   const save = data => {
     saveTask()
   }
@@ -117,15 +136,14 @@ export default function Modal({ tipo, close, item, getDoc }) {
       client: client,
       priority: priority,
       subject: subject,
-      status: status, 
+      status: status,
       type: taskType,
-      obs: obs
+      obs: obsList
     })
       .then(() => {
         toast.success("Edição realizada com sucesso !")
         // sendEmail()
         close()
-        getDoc()
       })
       .catch((error) => {
         toast.error("Erro ao realizar edição !")
@@ -134,6 +152,22 @@ export default function Modal({ tipo, close, item, getDoc }) {
     // }
 
   }
+
+  function saveObs(newObs) {
+    /*   obsList = item.obs */
+      console.log(obsList)
+      setNewList('')
+      const newOBS = {
+        name: client,
+        obs: newObs,
+        date: fullDate
+      }
+      
+      obsList.push(newOBS)
+      setNewList(obsList)
+      console.log(obsList)
+    }
+
 
 
   return (
@@ -214,7 +248,33 @@ export default function Modal({ tipo, close, item, getDoc }) {
           </div>
           <div id="obs">
             <label>Observações</label>
-            <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
+            {tipo === 'show' ?
+              <div className="obs-list">
+                {obsList.map((o)=>{
+                  return(
+                <div className="obs">
+                  <label>{`${o.name} - ${o.date}`}</label>
+                  <textarea value={o.obs} name="obs" disabled={disable} placeholder="Observações" />
+                </div>
+                  )
+                })}
+              </div>
+              :
+              <div className="new-obs">
+                <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
+                <button type="button" onClick={(()=>{saveObs(obs)})}>Enviar</button>
+                <div className="obs-list">
+                {newList.map((o)=>{
+                  return(
+                <div className="obs">
+                  <label>{`${o.name} - ${o.date}`}</label>
+                  <textarea value={o.obs} name="obs" disabled='disable' placeholder="Observações" />
+                </div>
+                  )
+                })}
+              </div>
+              </div>
+            }
           </div>
           <article className="error-message">
             <p>{errors.client?.message}</p>
