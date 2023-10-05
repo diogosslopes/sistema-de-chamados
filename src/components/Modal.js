@@ -20,7 +20,7 @@ const validation = yup.object().shape({
 })
 
 
-export default function Modal({ tipo, close, item, getDoc, itens }) {
+export default function Modal({ tipo, close, item, getDoc }) {
 
 
   const { user } = useContext(AuthContext)
@@ -75,13 +75,13 @@ export default function Modal({ tipo, close, item, getDoc, itens }) {
           console.log(error)
         })
 
-
-
     }
 
     loadClients()
-    fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
     if (tipo === 'new') {
+
+
+      const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
       setCreated(fullDate)
     }
 
@@ -93,15 +93,17 @@ export default function Modal({ tipo, close, item, getDoc, itens }) {
 
   }, [])
 
+  
 
   useEffect(()=>{
     const doc = firebase.firestore().collection('tasks').doc(item.id).onSnapshot((snapshot)=>{
       snapshot.forEach((doc)=>{
         console.log(doc.data())
-        listTasks.push(doc.data())
+        obsList.push(doc.data()) 
+
       })
-      console.log(listTasks)
-      loadTask(listTasks)
+      console.log(obsList)
+   
     })
   },[])
 
@@ -116,12 +118,12 @@ export default function Modal({ tipo, close, item, getDoc, itens }) {
     email: "diogobrbm@gmail.com"
   }
 
-  function sendEmail() {
-    emailjs.send("service_lv8kn8j", "template_shcpe8x", templateParams, "BrAq6Nxcac_3F_GXo")
-      .then((response) => {
-        console.log("Email enviado ", response.status, response.text)
-      })
-  }
+  function sendEmail(){
+    emailjs.send("service_lv8kn8j","template_shcpe8x", templateParams, "BrAq6Nxcac_3F_GXo")
+    .then((response)=>{
+      console.log("Email enviado ", response.status, response.text)
+    })
+  } 
 
 
 
@@ -142,7 +144,6 @@ export default function Modal({ tipo, close, item, getDoc, itens }) {
         toast.success("Edição realizada com sucesso !")
         // sendEmail()
         close()
-        getDoc()
       })
       .catch((error) => {
         toast.error("Erro ao realizar edição !")
@@ -153,19 +154,20 @@ export default function Modal({ tipo, close, item, getDoc, itens }) {
   }
 
   function saveObs(newObs) {
-  /*   obsList = item.obs */
-    console.log(obsList)
-    setNewList('')
-    const newOBS = {
-      name: client,
-      obs: newObs,
-      date: fullDate
+    /*   obsList = item.obs */
+      console.log(obsList)
+      setNewList('')
+      const newOBS = {
+        name: client,
+        obs: newObs,
+        date: fullDate
+      }
+      
+      obsList.push(newOBS)
+      setNewList(obsList)
+      console.log(obsList)
     }
-    
-    obsList.push(newOBS)
-    setNewList(obsList)
-    console.log(obsList)
-  }
+
 
 
   return (
@@ -235,10 +237,10 @@ export default function Modal({ tipo, close, item, getDoc, itens }) {
             <label>Anexos</label>
             <div className="list">
               {
-
-                taskImages.map((images, index) => {
+                
+                taskImages.map((images, index)=>{
                   return (
-                    <a target="_blank" href={`${images}`}>{`Imagem ${index + 1}`}</a>
+                    <a target="_blank" href={`${images}`}>{`Imagem ${index +1}`}</a>
                   )
                 })
               }
@@ -289,3 +291,244 @@ export default function Modal({ tipo, close, item, getDoc, itens }) {
     </div>
   )
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
