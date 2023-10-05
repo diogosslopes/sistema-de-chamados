@@ -4,7 +4,6 @@ import Title from "../components/Title";
 import { FiEdit2, FiMessageSquare, FiPlus, FiSearch } from "react-icons/fi";
 import { Link } from 'react-router-dom'
 import Modal from "../components/Modal";
-import { onSnapshot } from "firebase/firestore";
 import firebase from '../services/firebaseConnection';
 import TasksTable from "../components/TasksTable"
 
@@ -114,17 +113,9 @@ export default function Dashboard() {
 
   async function getDocs() {
     setTasks('')
-    let listTasks = []
     if (user.group === "admin") {
-      /* const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('2').get() */
-      const docs = firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('20').onSnapshot((snapshot)=>{
-        snapshot.forEach((doc)=>{
-          console.log(doc.data())
-          listTasks.push(doc.data())
-        })
-        console.log(listTasks)
-        loadTasks(listTasks)
-      })
+      const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('2').get()
+      await loadTasks(docs)
     } else {
       const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name).limit('2').get()
       await loadTasks(docs)
@@ -134,30 +125,28 @@ export default function Dashboard() {
 
   }
   async function loadTasks(docs) {
-    
-    console.log(docs)
-    
+
     const isTaksEmpty = docs.size === 0
 
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
         list.push({
           id: doc.id,
-          client: doc.client,
-          created: doc.created,
-          obs: doc.obs,
-          priority: doc.priority,
-          status: doc.status,
-          type: doc.type,
-          subject: doc.subject,
-          userId: doc.userId,
-          taskImages: doc.taskImages
+          client: doc.data().client,
+          created: doc.data().created,
+          obs: doc.data().obs,
+          priority: doc.data().priority,
+          status: doc.data().status,
+          type: doc.data().type,
+          subject: doc.data().subject,
+          userId: doc.data().userId,
+          taskImages: doc.data().taskImages
         })
       })
 
       console.log(list)
 
-      const lastDoc = docs[docs.length - 1]
+      const lastDoc = docs.docs[docs.docs.length - 1]
       setLastTask(lastDoc)
       setTasks(tasks => [...tasks, ...list])
       setLoading(false)
@@ -216,11 +205,7 @@ export default function Dashboard() {
       priority: priority,
       type: taskType,
       created: created,
-      obs: [{
-        name: client,
-        obs: obs,
-        date: created
-      }],
+      obs: obs,
       userId: user.id,
       taskImages: taskImages
     })
@@ -231,20 +216,17 @@ export default function Dashboard() {
       status: status,
       type: taskType,
       created: created,
-      obs: [{
-        name: client,
-        obs: obs
-      }],
+      obs: obs,
       userId: user.id,
       taskImages: taskImages
     })
       .then(() => {
         toast.success("Chamado registrado !")
-       /*  setTasks('') */
+        setTasks('')
         // saveImages(images)
         closeForm()
-        /* getDocs() */
-        /* sendEmail() */
+        getDocs()
+        sendEmail()
       })
       .catch((error) => {
         toast.error("Erro ao registrar chamado !")
