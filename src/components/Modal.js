@@ -95,7 +95,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   
 
-  useEffect(()=>{
+/*   useEffect(()=>{
     const doc = firebase.firestore().collection('tasks').doc(item.id).onSnapshot((snapshot)=>{
       snapshot.forEach((doc)=>{
         console.log(doc.data())
@@ -105,7 +105,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
       console.log(obsList)
    
     })
-  },[])
+  },[]) */
 
   const save = data => {
     saveTask()
