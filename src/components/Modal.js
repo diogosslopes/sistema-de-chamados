@@ -165,6 +165,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
       
       obsList.push(newOBS)
       setNewList(obsList)
+      saveTask()
       console.log(obsList)
     }
 

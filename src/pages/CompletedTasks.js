@@ -100,10 +100,10 @@ export default function CompletedTasks() {
 
   async function getDocs() {
     if (user.group === "admin") {
-      const docs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').limit('2').get()
+      const docs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').limit('10').get()
       await loadTasks(docs)
     } else {
-      const docs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name).limit('2').get()
+      const docs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name).limit('10').get()
       await loadTasks(docs)
 
     }
@@ -153,19 +153,19 @@ export default function CompletedTasks() {
     if (selectedType !== "" && isAdmin === false) {
       console.log(selectedType)
       const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .where("type", "==", selectedType).limit('2').startAfter(lastTask).get()
+        .where("type", "==", selectedType).limit('10').startAfter(lastTask).get()
       await loadTasks(newDocs)
     } else if (selectedType === "" && isAdmin === false) {
       console.log(selectedType)
       const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .limit('2').startAfter(lastTask).get()
+        .limit('10').startAfter(lastTask).get()
       await loadTasks(newDocs)
     } else if (selectedType !== "" && isAdmin === true) {
       const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("type", "==", selectedType)
-        .limit('2').startAfter(lastTask).get()
+        .limit('10').startAfter(lastTask).get()
       await loadTasks(newDocs)
     } else if (selectedType === "" && isAdmin === true) {
-      const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').limit('2').startAfter(lastTask).get()
+      const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').limit('10').startAfter(lastTask).get()
       await loadTasks(newDocs)
     }
 
@@ -217,10 +217,10 @@ export default function CompletedTasks() {
     let filterDocs = ""
 
     if (isAdmin) {
-      filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("type", "==", e.target.value).limit('2').get()
+      filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("type", "==", e.target.value).limit('10').get()
     } else {
       filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .where("type", "==", e.target.value).limit('2').get()
+        .where("type", "==", e.target.value).limit('10').get()
     }
 
     setIsEmpty(false)
