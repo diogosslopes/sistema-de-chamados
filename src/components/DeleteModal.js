@@ -26,7 +26,7 @@ export default function DeleteModal({ id, close, bd, getDoc }) {
       .then(() => {
         
         toast.success("Deletado com sucesso")
-        getDoc()
+        // getDoc()
         close()
         setTasks('')
         getDocs()

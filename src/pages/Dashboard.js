@@ -52,7 +52,7 @@ export default function Dashboard() {
   const [selectedType, setSelectedType] = useState('')
   const [status, setStatus] = useState('Criado')
   const [created, setCreated] = useState()
-  const [obs, setObs] = useState()
+  const [obs, setObs] = useState([])
   const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
   const [subjectsTi, setSubjectsTi] = useState(['Impressora', 'Sistema', 'Internet'])
   const [subjectsGeneral, setSubjectsGeneral] = useState(['Eletrica', 'Pintura', 'Ar Condicionado', 'Hidraulico', 'Portas', 'Outros'])
@@ -60,6 +60,9 @@ export default function Dashboard() {
   const [stats, setStats] = useState(['Criado', 'Aberto', 'Em andamento', 'Enviado p/ tec', 'Aguardando liberação', 'Fechado'])
   const [disable, setDisable] = useState(true)
   const [images, setImages] = useState([])
+  const [newList, setNewList] = useState([])
+  let fullDate = ''
+  let obsList = []
 
 
 
@@ -71,7 +74,7 @@ export default function Dashboard() {
   useEffect(() => {
 
     async function loadClients() {
-      await firebase.firestore().collection('clients').get()
+      await firebase.firestore().collection('clients').orderBy('name','asc').get()
         .then((snapshot) => {
           let list = []
 
@@ -81,6 +84,7 @@ export default function Dashboard() {
               client: doc.data().name
             })
           })
+          console.log(list)
           setClients(list)
 
         })
@@ -140,7 +144,8 @@ export default function Dashboard() {
           type: doc.data().type,
           subject: doc.data().subject,
           userId: doc.data().userId,
-          taskImages: doc.data().taskImages
+          taskImages: doc.data().taskImages,
+          userEmail: doc.data().userEmail
         })
       })
 
@@ -182,6 +187,8 @@ export default function Dashboard() {
 
     let taskImages = []
 
+    saveObs(obs)
+
     for (let i = 0; i < images.length; i++) {
       await firebase.storage().ref(`task-images/${user.id}/${images[i].name}`)
         .put(images[i])
@@ -205,9 +212,10 @@ export default function Dashboard() {
       priority: priority,
       type: taskType,
       created: created,
-      obs: obs,
+      obs: obsList,
       userId: user.id,
-      taskImages: taskImages
+      taskImages: taskImages,
+      userEmail: user.email
     })
     await firebase.firestore().collection('tasks').doc().set({
       client: client,
@@ -216,9 +224,10 @@ export default function Dashboard() {
       status: status,
       type: taskType,
       created: created,
-      obs: obs,
+      obs: obsList,
       userId: user.id,
-      taskImages: taskImages
+      taskImages: taskImages,
+      userEmail: user.email
     })
       .then(() => {
         toast.success("Chamado registrado !")
@@ -334,6 +343,22 @@ export default function Dashboard() {
     console.log(e)
   }
 
+  function saveObs(newObs) {
+    /*   obsList = item.obs */
+      console.log(obsList)
+      setNewList('')
+      const newOBS = {
+        name: client,
+        obs: newObs,
+        date: fullDate
+      }
+      
+      obsList.push(newOBS)
+      setNewList(obsList)
+      // saveTask()
+      console.log(obsList)
+    }
+
 
   if (loading) {
     return (
@@ -416,6 +441,7 @@ export default function Dashboard() {
             <div id="obs">
               <label>Observações</label>
               <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} placeholder="Observações" />
+              
             </div>
             <div className="buttons">
               <button type='submit' >Salvar</button>

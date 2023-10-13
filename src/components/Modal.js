@@ -58,7 +58,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
   useEffect(() => {
 
     async function loadClients() {
-      await firebase.firestore().collection('clients').get()
+      await firebase.firestore().collection('clients').orderBy('name','asc').get()
         .then((snapshot) => {
           let list = []
 
@@ -112,16 +112,20 @@ export default function Modal({ tipo, close, item, getDoc }) {
   }
 
   const templateParams = {
-    unity: client,
+    unity: user.name,
     subject: subject,
     message: obs,
-    email: "diogobrbm@gmail.com"
+    email: item.userEmail
   }
 
   function sendEmail(){
+    console.log(item)
     emailjs.send("service_lv8kn8j","template_shcpe8x", templateParams, "BrAq6Nxcac_3F_GXo")
     .then((response)=>{
       console.log("Email enviado ", response.status, response.text)
+    })
+    .catch((err)=>{
+      console.log(err)
     })
   } 
 
@@ -142,7 +146,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
     })
       .then(() => {
         toast.success("Edição realizada com sucesso !")
-        // sendEmail()
+        sendEmail()
         close()
       })
       .catch((error) => {
@@ -158,7 +162,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
       console.log(obsList)
       setNewList('')
       const newOBS = {
-        name: client,
+        name: user.name,
         obs: newObs,
         date: fullDate
       }
