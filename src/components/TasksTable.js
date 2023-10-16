@@ -113,7 +113,7 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                 </thead>
                 <tbody>
                     {tasks.map((task) => {
-
+ 
                         return (
                             <tr className="table-body-line" key={task.id}>
                                 <td data-label="Cliente" >{task.client}</td>
@@ -121,9 +121,9 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                                 <td data-label="Prioridade">{task.priority}</td>
                                 <td data-label="Status"><span className="status">{task.status}</span></td>
                                 <td data-label="Criado em">{task.created}</td>
-                                {page === 'completedtasks' &&
                                 <td data-label="Concluido em">{task.concluded}</td>
-                                }
+                                {/* {page === 'completedtasks' &&
+                                } */}
                                 <td data-label="#">
                                     {page === 'completedtasks' ? 
                                         <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
