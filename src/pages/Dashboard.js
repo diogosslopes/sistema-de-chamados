@@ -484,7 +484,7 @@ export default function Dashboard() {
                 </select>
               </div>
             </div>
-            <TasksTable tasks={tasks} order={orderBy} getDoc={getDocs} />
+            <TasksTable tasks={tasks} order={orderBy} getDoc={getDocs} disable='true' />
             {loadingMore && <h3>Carregando...</h3>}
 
             {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Carregar Mais</button>}

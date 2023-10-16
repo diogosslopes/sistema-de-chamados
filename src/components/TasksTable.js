@@ -105,7 +105,9 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                         <th scope="col" onClick={() => order('priority')}>Prioridade</th>
                         <th scope="col" onClick={() => order('status')}>Status</th>
                         <th scope="col" onClick={() => order('created')}>Criado em</th>
+                        {page === 'completedtasks' &&
                         <th scope="col" onClick={() => order('concluded')}>Concluido em</th>
+                        }
                         <th scope="col">#</th>
                     </tr>
                 </thead>
@@ -119,7 +121,9 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                                 <td data-label="Prioridade">{task.priority}</td>
                                 <td data-label="Status"><span className="status">{task.status}</span></td>
                                 <td data-label="Criado em">{task.created}</td>
+                                {page === 'completedtasks' &&
                                 <td data-label="Concluido em">{task.concluded}</td>
+                                }
                                 <td data-label="#">
                                     {page === 'completedtasks' ? 
                                         <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
