@@ -16,7 +16,7 @@ const validation = yup.object().shape({
   client: yup.string(),
   subject: yup.string().required("Assunto obrigatorio").min(5, "Minimo de 5 caracteres").max(15, "Maximo de 15 caracteres"),
   status: yup.string().required('Status é obrigatorio'),
-  obs: yup.string().required('Descrição é obrigatorio').min(10, 'Minimo de 10 caracteres').max(300, 'Maximo de 300 caracteres'),
+  obs: yup.string().min(10, 'Minimo de 10 caracteres').max(300, 'Maximo de 300 caracteres'),
 })
 
 
