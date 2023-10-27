@@ -146,7 +146,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
   function saveObs(newObs) {
     
     fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
-      console.log('Data é: ' + fullDate)
       setNewList('')
       const newOBS = {
         name: user.name,
