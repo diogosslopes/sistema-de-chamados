@@ -23,7 +23,7 @@ function TasksReport(tasks) {
             [
                 { text: task.client, fontSize: 9 },
                 { text: task.subject, fontSize: 9, alignment: 'justify' },
-                { text: task.obs, fontSize: 9, alignment: 'justify' },
+                { text: task.obs[0].obs, fontSize: 9, alignment: 'justify' },
                 { text: task.created, fontSize: 9},
 
             ]

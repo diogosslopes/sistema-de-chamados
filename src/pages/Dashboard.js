@@ -344,8 +344,8 @@ export default function Dashboard() {
   }
 
   function saveObs(newObs) {
-    /*   obsList = item.obs */
-      console.log(obsList)
+    
+      
       setNewList('')
       const newOBS = {
         name: client,
@@ -355,7 +355,6 @@ export default function Dashboard() {
       
       obsList.push(newOBS)
       setNewList(obsList)
-      // saveTask()
       console.log(obsList)
     }
 
@@ -493,9 +492,6 @@ export default function Dashboard() {
           </div>
         }
       </div>
-      {/* {showModal && (
-        <Modal tipo={type} close={newClient} item={task} />
-      )} */}
     </div>
   )
 }

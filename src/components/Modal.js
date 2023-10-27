@@ -39,7 +39,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
   const [newList, setNewList] = useState(item.obs)
   let fullDate = ''
   let obsList = item.obs
-  console.log(obsList)
 
   const [priority, setPriority] = useState(item.priority)
   const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
@@ -51,7 +50,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
     resolver: yupResolver(validation)
   })
 
-  console.log(getDoc)
 
 
 
@@ -95,17 +93,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   
 
-/*   useEffect(()=>{
-    const doc = firebase.firestore().collection('tasks').doc(item.id).onSnapshot((snapshot)=>{
-      snapshot.forEach((doc)=>{
-        console.log(doc.data())
-        obsList.push(doc.data()) 
 
-      })
-      console.log(obsList)
-   
-    })
-  },[]) */
 
   const save = data => {
     saveTask()
@@ -119,7 +107,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
   }
 
   function sendEmail(){
-    console.log(item)
     emailjs.send("service_lv8kn8j","template_shcpe8x", templateParams, "BrAq6Nxcac_3F_GXo")
     .then((response)=>{
       console.log("Email enviado ", response.status, response.text)
@@ -133,7 +120,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   async function saveTask(e) {
 
-    console.log(priority)
 
 
     await firebase.firestore().collection('tasks').doc(item.id).update({
@@ -158,8 +144,9 @@ export default function Modal({ tipo, close, item, getDoc }) {
   }
 
   function saveObs(newObs) {
-    /*   obsList = item.obs */
-      console.log(obsList)
+    
+    fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
+      console.log('Data é: ' + fullDate)
       setNewList('')
       const newOBS = {
         name: user.name,
@@ -170,7 +157,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
       obsList.push(newOBS)
       setNewList(obsList)
       saveTask()
-      console.log(obsList)
     }
 
 
