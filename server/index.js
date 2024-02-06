@@ -45,6 +45,20 @@ app.post("/registertask", (req, res)=>{
         console.log(err)
     })
 })
+app.post("/registerobs", (req, res)=>{
+    console.log(req.body.obs)
+    const {client} = req.body
+    const {created} = req.body
+    const {obs} = req.body
+    const {taskId} = req.body
+
+
+    let SQL = "INSERT INTO obs(taskId, obs, client, created) VALUES(?,?,?,?)"
+
+    db.query(SQL, [taskId, obs, client, created], (err, result)=>{
+        console.log(err)
+    })
+})
 
 app.get("/getTasks", (req, res)=>{
     let SQL = "SELECT * from tasks"

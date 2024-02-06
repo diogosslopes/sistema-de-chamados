@@ -75,7 +75,7 @@ export default function Dashboard() {
   useEffect(() => {
 
     async function loadClients() {
-      await firebase.firestore().collection('clients').orderBy('name','asc').get()
+      await firebase.firestore().collection('clients').orderBy('name', 'asc').get()
         .then((snapshot) => {
           let list = []
 
@@ -102,60 +102,68 @@ export default function Dashboard() {
       setDisable(false)
     }
 
- 
+
   }, [])
 
   useEffect(() => {
-    
-    if(taskType === "TI"){
+
+    if (taskType === "TI") {
       setSubjects(subjectsTi)
-    }else{
+    } else {
       setSubjects(subjectsGeneral)
     }
 
-    Axios.get("http://localhost:3001/getTasks").then((response)=>{
-      console.log(response)
-    })
+
 
   }, [taskType])
 
   async function getDocs() {
-    setTasks('')
-    if (user.group === "admin") {
-      const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('10').get()
-      await loadTasks(docs)
-    } else {
-      const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name).limit('10').get()
-      await loadTasks(docs)
+    // setTasks('')
+    // if (user.group === "admin") {
+    //   const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('10').get()
+      // await loadTasks(docs)
+    // } else {
+    //   const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name).limit('10').get()
+    //   await loadTasks(docs)
 
-    }
+    // }
+
+    Axios.get("http://localhost:3001/getTasks").then((response) => {
+      console.log(response.data)
+      loadTasks(response.data)
+      
+    })
 
 
   }
   async function loadTasks(docs) {
-
-    const isTaksEmpty = docs.size === 0
+    
+    console.log(docs.length)
+    const isTaksEmpty = docs.length === 0
+    console.log(isTaksEmpty)
 
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
         list.push({
-          id: doc.id,
-          client: doc.data().client,
-          created: doc.data().created,
-          obs: doc.data().obs,
-          priority: doc.data().priority,
-          status: doc.data().status,
-          type: doc.data().type,
-          subject: doc.data().subject,
-          userId: doc.data().userId,
-          taskImages: doc.data().taskImages,
-          userEmail: doc.data().userEmail
+          id: doc.taskId,
+          client: doc.client,
+          created: doc.created,
+          obs: doc.obs,
+          priority: doc.priority,
+          status: doc.status,
+          type: doc.type,
+          subject: doc.subject,
+          userId: doc.userId,
+          taskImages: doc.taskImages,
+          userEmail: doc.userEmail
         })
       })
 
+      console.log(list)
 
-      const lastDoc = docs.docs[docs.docs.length - 1]
+      const lastDoc = docs[docs.length - 1]
       setLastTask(lastDoc)
+      console.log(lastDoc.taskId)
       setTasks(tasks => [...tasks, ...list])
       setLoading(false)
 
@@ -190,23 +198,22 @@ export default function Dashboard() {
 
     let taskImages = []
 
-    saveObs(obs)
-
+    
     for (let i = 0; i < images.length; i++) {
       await firebase.storage().ref(`task-images/${user.id}/${images[i].name}`)
-        .put(images[i])
-        .then(async () => {
-          await firebase.storage().ref(`task-images/${user.id}`)
+      .put(images[i])
+      .then(async () => {
+        await firebase.storage().ref(`task-images/${user.id}`)
             .child(images[i].name).getDownloadURL()
             .then(async (url) => {
               console.log(url)
               taskImages.push(url)
             })
-        })
-      console.log(images[i].name)
-      console.log(taskImages)
-
-    }
+          })
+          console.log(images[i].name)
+          console.log(taskImages)
+          
+        }
 
     setNewTask({
       client: client,
@@ -215,35 +222,11 @@ export default function Dashboard() {
       priority: priority,
       type: taskType,
       created: created,
-      obs: obsList,
+      obs: "obsList",
       userId: user.id,
       taskImages: taskImages,
       userEmail: user.email
     })
-    // await firebase.firestore().collection('tasks').doc().set({
-    //   client: client,
-    //   subject: subject,
-    //   priority: priority,
-    //   status: status,
-    //   type: taskType,
-    //   created: created,
-    //   obs: obsList,
-    //   userId: user.id,
-    //   taskImages: taskImages,
-    //   userEmail: user.email
-    // })
-    //   .then(() => {
-    //     toast.success("Chamado registrado !")
-    //     setTasks('')
-    //     // saveImages(images)
-    //     closeForm()
-    //     getDocs()
-    //     sendEmail()
-    //   })
-    //   .catch((error) => {
-    //     toast.error("Erro ao registrar chamado !")
-    //     console.log(error)
-    //   })
 
     Axios.post("http://localhost:3001/registertask", {
       client: client,
@@ -252,27 +235,27 @@ export default function Dashboard() {
       status: status,
       type: taskType,
       created: created,
-      obs: obsList,
+      obs: created,
       userId: user.id,
       // taskImages: taskImages,
       userEmail: user.email
-    }).then((response)=>{
-      console.log(response)
-        toast.success("Chamado registrado !")
-        setTasks('')
-        // saveImages(images)
-        closeForm()
-        getDocs()
-        sendEmail()
     })
-
-
+    
+    toast.success("Chamado registrado !")
+    setTasks('')
+    // saveImages(images)
+    closeForm()
+    getDocs()
+    sendEmail()
+    // saveObs()
+    
+    
   }
-
+  
   async function moreTasks() {
-
+    
     setLoadingMore(true)
-
+    
     if (selectedType !== "" && isAdmin === false) {
       console.log(selectedType)
       const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
@@ -351,15 +334,15 @@ export default function Dashboard() {
     loadTasks(filterDocs)
   }
 
-  async function orderBy(e){
+  async function orderBy(e) {
     setTasks('')
-    
-    if(e === 'concluded'){
+
+    if (e === 'concluded') {
       const order = 'created'
       const docs = await firebase.firestore().collection('tasks').orderBy(order, 'asc').get()
       await loadTasks(docs)
-    }else{
-      const order = e      
+    } else {
+      const order = e
       const docs = await firebase.firestore().collection('tasks').orderBy(order, 'asc').get()
       await loadTasks(docs)
     }
@@ -368,19 +351,35 @@ export default function Dashboard() {
   }
 
   function saveObs(newObs) {
-    
+
+
+    // setNewList('')
+    // const newOBS = {
+    //   name: client,
+    //   obs: newObs,
+    //   date: fullDate
+    // }
+
+    // obsList.push(newOBS)
+    // setNewList(obsList)
+    // console.log(obsList)
+
+    Axios.get("http://localhost:3001/getTasks").then((response) => {
+      console.log(response.data.length)
+
+      const taskId = response.data.length - 1
       
-      setNewList('')
-      const newOBS = {
-        name: client,
-        obs: newObs,
-        date: fullDate
-      }
+      Axios.post("http://localhost:3001/registertask", {
+        client: client,
+        created: created,
+        obs: obs,
+        taskIdId: taskId
+      })
       
-      obsList.push(newOBS)
-      setNewList(obsList)
-      console.log(obsList)
-    }
+    })
+
+
+  }
 
 
   if (loading) {
@@ -418,7 +417,7 @@ export default function Dashboard() {
                 <option>TI</option>
                 <option>Estrutura</option>
               </select>
-              
+
             </div>
             <div className="subject_select">
               <label>Assunto</label>
@@ -464,7 +463,7 @@ export default function Dashboard() {
             <div id="obs">
               <label>Observações</label>
               <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} placeholder="Observações" />
-              
+
             </div>
             <div className="buttons">
               <button type='submit' >Salvar</button>
@@ -511,7 +510,7 @@ export default function Dashboard() {
             {loadingMore && <h3>Carregando...</h3>}
 
             {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Carregar Mais</button>}
-            <button className="button-hover" onClick={(e)=> TasksReport(tasks)}>Imprimir</button>
+            <button className="button-hover" onClick={(e) => TasksReport(tasks)}>Imprimir</button>
 
           </div>
         }
