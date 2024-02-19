@@ -17,6 +17,7 @@ import DeleteModal from "./DeleteModal";
 export default function TasksTable({ tasks, order, getDoc, page }) {
 
      const { user } = useContext(AuthContext)
+
     
 
     const [task, setTask] = useState('')
@@ -55,12 +56,12 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
           .catch((error) => {
             toast.error("Erro ao registrar chamado !")
             console.log(error)
-          })
+        })
+        
+        
+    }
     
     
-      }
-
-
     function editClient(t, item) {
         setType(t)
         setShowModal(!showModal)
@@ -80,7 +81,6 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
 
     async function completeTask(task) {
 
-        console.log(task)
 
         saveTask(task)
                

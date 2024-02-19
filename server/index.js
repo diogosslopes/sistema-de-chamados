@@ -27,7 +27,6 @@ app.post("/registeruser", (req, res)=>{
 })
 
 app.post("/registertask", (req, res)=>{
-    console.log(req.body.obs)
     const {client} = req.body
     const {created} = req.body
     const {obs} = req.body
@@ -40,26 +39,53 @@ app.post("/registertask", (req, res)=>{
     const {userId} = req.body
 
     let SQL = "INSERT INTO tasks(client, created, obs, priority, status, subject, type, userEmail, userId) VALUES(?,?,?,?,?,?,?,?,?)"
-
-    db.query(SQL, [client, created, obs, priority, status, subject,  type, userEmail, userId], (err, result)=>{
-        console.log(err)
+               
+    db.query(SQL, [client, created, obs, priority, status, subject, type, userEmail, userId], (err, result)=>{
+        if (err) console.log(err)
+        else res.send(result)
     })
 })
-app.post("/registerobs", (req, res)=>{
-    console.log(req.body.obs)
+app.post("/searchtask", (req, res)=>{
     const {client} = req.body
     const {created} = req.body
     const {obs} = req.body
-    const {taskId} = req.body
+    const {userEmail} = req.body
+    const {userId} = req.body
 
-
-    let SQL = "INSERT INTO obs(taskId, obs, client, created) VALUES(?,?,?,?)"
-
-    db.query(SQL, [taskId, obs, client, created], (err, result)=>{
-        console.log(err)
+    let SQL = "select * from tasks where client = ? and created = ? and obs = ? and userEmail = ? and userId = ?"
+               
+    db.query(SQL, [client, created, obs, userEmail, userId], (err, result)=>{
+        if (err) console.log(err)
+        else res.send(result)
     })
 })
 
+app.post("/registerobs", (req, res)=>{
+    console.log(req.body)
+    const {client} = req.body
+    const {created} = req.body
+    const {obs} = req.body
+    const {taskid} = req.body
+
+
+    let SQL = "INSERT INTO obs(taskid, obs, client, created) VALUES(?,?,?,?)"
+
+    db.query(SQL, [taskid, obs, client, created], (err, result)=>{
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
+
+
+app.get("/getLastTask", (req, res)=>{
+    let SQL = "SELECT taskId FROM tasks ORDER BY taskId DESC LIMIT 1"
+
+    db.query(SQL, (err, result)=>{
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
 app.get("/getTasks", (req, res)=>{
     let SQL = "SELECT * from tasks"
 

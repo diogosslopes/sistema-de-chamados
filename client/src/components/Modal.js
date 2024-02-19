@@ -22,7 +22,6 @@ const validation = yup.object().shape({
 
 export default function Modal({ tipo, close, item, getDoc }) {
 
-
   const { user } = useContext(AuthContext)
   const [newTask, setNewTask] = useState({})
   const [client, setClient] = useState(item.client)
@@ -51,7 +50,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
   })
 
 
-
+console.log(obsList)
 
   useEffect(() => {
 
@@ -156,6 +155,23 @@ export default function Modal({ tipo, close, item, getDoc }) {
       obsList.push(newOBS)
       setNewList(obsList)
       saveTask()
+
+          // const newObs = {
+    //   client: doc.client,
+    //   created: doc.created,
+    //   obs: doc.obs,
+    //   taskid: doc.taskId
+    // }
+    // obsList.push(newObs)
+
+    Axios.post("http://localhost:3001/registerobs", {
+      client: doc.client,
+      created: doc.created,
+      obs: doc.obs,
+      taskid: doc.taskId
+    })
+
+
     }
 
 
@@ -225,7 +241,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
           </div>
           <div className="imagesList">
             <label>Anexos</label>
-            <div className="list">
+            {/* <div className="list">
               {
                 
                 taskImages.map((images, index)=>{
@@ -234,7 +250,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
                   )
                 })
               }
-            </div>
+            </div> */}
           </div>
           <div id="obs">
             <label>Observações</label>

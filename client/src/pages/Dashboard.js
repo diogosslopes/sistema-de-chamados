@@ -62,6 +62,7 @@ export default function Dashboard() {
   const [disable, setDisable] = useState(true)
   const [images, setImages] = useState([])
   const [newList, setNewList] = useState([])
+  let taskkkk
   let fullDate = ''
   let obsList = []
 
@@ -121,7 +122,7 @@ export default function Dashboard() {
     // setTasks('')
     // if (user.group === "admin") {
     //   const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('10').get()
-      // await loadTasks(docs)
+    // await loadTasks(docs)
     // } else {
     //   const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name).limit('10').get()
     //   await loadTasks(docs)
@@ -129,26 +130,28 @@ export default function Dashboard() {
     // }
 
     Axios.get("http://localhost:3001/getTasks").then((response) => {
-      console.log(response.data)
       loadTasks(response.data)
-      
-    })
 
+    })
 
   }
   async function loadTasks(docs) {
-    
-    console.log(docs.length)
+
     const isTaksEmpty = docs.length === 0
-    console.log(isTaksEmpty)
 
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
+        const newObs = {
+          name: doc.client,
+          date: doc.created,
+          obs: doc.obs
+        }
+        obsList.push(newObs)
         list.push({
           id: doc.taskId,
           client: doc.client,
           created: doc.created,
-          obs: doc.obs,
+          obs: obsList,
           priority: doc.priority,
           status: doc.status,
           type: doc.type,
@@ -157,13 +160,13 @@ export default function Dashboard() {
           taskImages: doc.taskImages,
           userEmail: doc.userEmail
         })
+        obsList = []
       })
-
       console.log(list)
+
 
       const lastDoc = docs[docs.length - 1]
       setLastTask(lastDoc)
-      console.log(lastDoc.taskId)
       setTasks(tasks => [...tasks, ...list])
       setLoading(false)
 
@@ -198,22 +201,22 @@ export default function Dashboard() {
 
     let taskImages = []
 
-    
+
     for (let i = 0; i < images.length; i++) {
       await firebase.storage().ref(`task-images/${user.id}/${images[i].name}`)
-      .put(images[i])
-      .then(async () => {
-        await firebase.storage().ref(`task-images/${user.id}`)
+        .put(images[i])
+        .then(async () => {
+          await firebase.storage().ref(`task-images/${user.id}`)
             .child(images[i].name).getDownloadURL()
             .then(async (url) => {
               console.log(url)
               taskImages.push(url)
             })
-          })
-          console.log(images[i].name)
-          console.log(taskImages)
-          
-        }
+        })
+      console.log(images[i].name)
+      console.log(taskImages)
+
+    }
 
     setNewTask({
       client: client,
@@ -222,7 +225,7 @@ export default function Dashboard() {
       priority: priority,
       type: taskType,
       created: created,
-      obs: "obsList",
+      obs: obs,
       userId: user.id,
       taskImages: taskImages,
       userEmail: user.email
@@ -235,34 +238,65 @@ export default function Dashboard() {
       status: status,
       type: taskType,
       created: created,
-      obs: created,
+      obs: obs,
       userId: user.id,
       // taskImages: taskImages,
       userEmail: user.email
+    }).then(() => {
+      Axios.post("http://localhost:3001/searchtask", {
+        client: client,
+        created: created,
+        obs: obs,
+        userEmail: user.email,
+        userId: user.id
+      }).then((response) => {
+        console.log(response.data)
+        saveObs(response.data[0])
+        const newObs = {
+          client: response.data[0].client,
+          created: response.data[0].created,
+          obs: response.data[0].obs,
+          taskid: response.data[0].id
+        }
+        obsList.push(newObs)
+        setTasks([
+          ...tasks,
+          {
+            id: response.data[0].id,
+            client: client,
+            subject: subject,
+            priority: priority,
+            status: status,
+            type: taskType,
+            created: created,
+            obs: obsList,
+            userId: user.id,
+            // taskImages: taskImages,
+            userEmail: user.email
+          }
+        ])
+      })
     })
-    
+
     toast.success("Chamado registrado !")
-    setTasks('')
+    // setTasks('')
     // saveImages(images)
     closeForm()
     getDocs()
     sendEmail()
-    // saveObs()
-    
-    
+
+
   }
-  
+
   async function moreTasks() {
-    
+
     setLoadingMore(true)
-    
+
     if (selectedType !== "" && isAdmin === false) {
-      console.log(selectedType)
       const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
         .where("type", "==", selectedType).limit('10').startAfter(lastTask).get()
       await loadTasks(newDocs)
     } else if (selectedType === "" && isAdmin === false) {
-      console.log(selectedType)
       const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
         .limit('10').startAfter(lastTask).get()
       await loadTasks(newDocs)
@@ -277,15 +311,15 @@ export default function Dashboard() {
 
 
   }
-  function newClient(t, item) {
-    setType(t)
-    setShowModal(!showModal)
-    if (t === 'new') {
-      setTask('')
-    } else {
-      setTask('25/01/2023')
-    }
-  }
+  // function newClient(t, item) {
+  //   setType(t)
+  //   setShowModal(!showModal)
+  //   if (t === 'new') {
+  //     setTask('')
+  //   } else {
+  //     setTask('25/01/2023')
+  //   }
+  // }
 
   function showForm(e) {
     e.preventDefault()
@@ -347,39 +381,35 @@ export default function Dashboard() {
       await loadTasks(docs)
     }
 
-    console.log(e)
   }
 
-  function saveObs(newObs) {
+  async function saveObs(doc) {
 
+    console.log(doc)
 
-    // setNewList('')
-    // const newOBS = {
-    //   name: client,
-    //   obs: newObs,
-    //   date: fullDate
+    // const newObs = {
+    //   client: doc.client,
+    //   created: doc.created,
+    //   obs: doc.obs,
+    //   taskid: doc.taskId
     // }
+    // obsList.push(newObs)
 
-    // obsList.push(newOBS)
-    // setNewList(obsList)
-    // console.log(obsList)
-
-    Axios.get("http://localhost:3001/getTasks").then((response) => {
-      console.log(response.data.length)
-
-      const taskId = response.data.length - 1
-      
-      Axios.post("http://localhost:3001/registertask", {
-        client: client,
-        created: created,
-        obs: obs,
-        taskIdId: taskId
-      })
-      
+    Axios.post("http://localhost:3001/registerobs", {
+      client: doc.client,
+      created: doc.created,
+      obs: doc.obs,
+      taskid: doc.taskId
     })
 
 
   }
+
+
+
+
+
+
 
 
   if (loading) {
