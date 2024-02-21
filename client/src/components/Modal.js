@@ -10,6 +10,7 @@ import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../context/auth";
 import emailjs, { send } from '@emailjs/browser'
+import Axios from "axios";
 
 
 const validation = yup.object().shape({
@@ -50,12 +51,12 @@ export default function Modal({ tipo, close, item, getDoc }) {
   })
 
 
-console.log(obsList)
+  console.log(obsList)
 
   useEffect(() => {
 
     async function loadClients() {
-      await firebase.firestore().collection('clients').orderBy('name','asc').get()
+      await firebase.firestore().collection('clients').orderBy('name', 'asc').get()
         .then((snapshot) => {
           let list = []
 
@@ -90,7 +91,7 @@ console.log(obsList)
 
   }, [])
 
-  
+
 
 
 
@@ -105,15 +106,15 @@ console.log(obsList)
     email: item.userEmail
   }
 
-  function sendEmail(){
-    emailjs.send("service_lv8kn8j","template_shcpe8x", templateParams, "BrAq6Nxcac_3F_GXo")
-    .then((response)=>{
-      console.log("Email enviado ", response.status, response.text)
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
-  } 
+  function sendEmail() {
+    emailjs.send("service_lv8kn8j", "template_shcpe8x", templateParams, "BrAq6Nxcac_3F_GXo")
+      .then((response) => {
+        console.log("Email enviado ", response.status, response.text)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
 
 
 
@@ -143,20 +144,20 @@ console.log(obsList)
   }
 
   function saveObs(newObs) {
-    
-    fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
-      setNewList('')
-      const newOBS = {
-        name: user.name,
-        obs: newObs,
-        date: fullDate
-      }
-      
-      obsList.push(newOBS)
-      setNewList(obsList)
-      saveTask()
 
-          // const newObs = {
+    fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
+    setNewList('')
+    const newOBS = {
+      name: user.name,
+      obs: newObs,
+      date: fullDate
+    }
+
+    obsList.push(newOBS)
+    setNewList(obsList)
+    saveTask()
+
+    // const newObs = {
     //   client: doc.client,
     //   created: doc.created,
     //   obs: doc.obs,
@@ -164,15 +165,15 @@ console.log(obsList)
     // }
     // obsList.push(newObs)
 
-    Axios.post("http://localhost:3001/registerobs", {
-      client: doc.client,
-      created: doc.created,
-      obs: doc.obs,
-      taskid: doc.taskId
-    })
+    // Axios.post("http://localhost:3001/registerobs", {
+    //   client: doc.client,
+    //   created: doc.created,
+    //   obs: doc.obs,
+    //   taskid: doc.taskId
+    // })
 
 
-    }
+  }
 
 
 
@@ -256,29 +257,29 @@ console.log(obsList)
             <label>Observações</label>
             {tipo === 'show' ?
               <div className="obs-list">
-                {obsList.map((o)=>{
-                  return(
-                <div className="obs">
-                  <label>{`${o.name} - ${o.date}`}</label>
-                  <textarea value={o.obs} name="obs" disabled={disable} placeholder="Observações" />
-                </div>
+                {obsList.map((o) => {
+                  return (
+                    <div className="obs">
+                      <label>{`${o.name} - ${o.date}`}</label>
+                      <textarea value={o.obs} name="obs" disabled={disable} placeholder="Observações" />
+                    </div>
                   )
                 })}
               </div>
               :
               <div className="new-obs">
                 <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
-                <button type="button" onClick={(()=>{saveObs(obs)})}>Enviar</button>
+                <button type="button" onClick={(() => { saveObs(obs) })}>Enviar</button>
                 <div className="obs-list">
-                {newList.map((o)=>{
-                  return(
-                <div className="obs">
-                  <label>{`${o.name} - ${o.date}`}</label>
-                  <textarea value={o.obs} name="obs" disabled='disable' placeholder="Observações" />
+                  {newList.map((o) => {
+                    return (
+                      <div className="obs">
+                        <label>{`${o.name} - ${o.date}`}</label>
+                        <textarea value={o.obs} name="obs" disabled='disable' placeholder="Observações" />
+                      </div>
+                    )
+                  })}
                 </div>
-                  )
-                })}
-              </div>
               </div>
             }
           </div>
