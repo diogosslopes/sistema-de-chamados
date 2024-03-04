@@ -47,6 +47,31 @@ app.post("/registeruser", (req, res) => {
     })
 })
 
+app.post("/updateUser", (req, res)=>{
+    const { avatar } = req.body
+    const { clientId } = req.body
+    const { name } = req.body
+
+    SQL = "update users set name = ? where clientId = ?"
+
+    db.query(SQL, [name, clientId], (err, result)=>{
+        if (err) console.log(err)
+        else res.send(name)
+    })
+})
+app.post("/updateAvatar", (req, res)=>{
+    const { avatar } = req.body
+    const { clientId } = req.body
+    const { name } = req.body
+
+    SQL = "update users set avatar = ? where clientId = ?"
+
+    db.query(SQL, [avatar, clientId], (err, result)=>{
+        if (err) console.log(err)
+        else console.log(avatar)
+    })
+})
+
 app.post("/login", (req, res) => {
     const { name } = req.body
     const { email } = req.body
@@ -58,7 +83,7 @@ app.post("/login", (req, res) => {
     db.query(SQL, [email], (err, result) => {
         if (err) console.log(err)
         if(result.length > 0) {
-            
+            // res.send(result)            
             bcrypt.compare(password, result[0].password, (err, result)=>{
                 res.send(result)
              })
@@ -66,6 +91,19 @@ app.post("/login", (req, res) => {
             res.send({msg: "inexistente"})
         }
 
+    })
+})
+
+app.post("/getUser", (req, res) => {
+
+    const { email } = req.body
+    const { password } = req.body
+
+    let SQL = "SELECT * from users where email = ?"
+
+    db.query(SQL, [email, password], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
     })
 })
 

@@ -23,6 +23,7 @@ import { generateDownload } from "../components/cropImage";
 import { createRoot } from 'react-dom/client';
 import ImgCrop from 'antd-img-crop';
 import { Upload } from 'antd';
+import  Axios  from "axios";
 
 const getSrcFromFile = (file) => {
     return new Promise((resolve) => {
@@ -84,35 +85,43 @@ export default function Profile() {
 
     const editLogin = data => {
 
-        handleLogin(data)
+        handleAvatar(data)
     }
 
 
 
-    async function handleLogin() {
+    async function handleAvatar() {
         
         
-        console.log(newAvatar)
+      
         
         if (newAvatar === null && name !== '') {
-            await firebase.firestore().collection('users')
-                .doc(user.id)
-                .update({
-                    name: name
-                })
-                .then(() => {
-                    let userData = {
-                        ...user,
-                        name: name
-                    }
-                    toast.success("Edição realizada com sucesso")
-                    setUser(userData)
-                    storage(userData)
-                })
+            console.log(user, name)
+
+            Axios.post("http://localhost:3001/updateUser", {
+                clientId: user.id,
+                name: name
+            
+            })
+            let userData = {
+                ...user,
+                name: name
+            }
+            // setUser(userData)
+            storage(userData)
+
+            // await firebase.firestore().collection('users')
+            //     .doc(user.id)
+            //     .update({
+            //         name: name
+            //     })
+            //     .then(() => {
+            //         toast.success("Edição realizada com sucesso")
+            //     })
 
         } else if (name !== '' && newAvatar !== null) {
             upload()
-        }
+            }
 
 
         async function upload() {
@@ -126,22 +135,28 @@ export default function Profile() {
                         .child(newAvatar.name).getDownloadURL()
                         .then(async (url) => {
 
-                            await firebase.firestore().collection('users')
-                                .doc(user.id)
-                                .update({
-                                    avatar: newAvatar.thumbUrl,
-                                    name: name
-                                })
-                                .then(() => {
-                                    let userData = {
-                                        ...user,
-                                        avatar: newAvatar.thumbUrl,
-                                        name: name
-                                    }
+                            // await firebase.firestore().collection('users')
+                            //     .doc(user.id)
+                            //     .update({
+                            //         avatar: newAvatar.thumbUrl,
+                            //         name: name
+                            //     })
+                            //     .then(() => {
+                            //     })
+                        })
+                        let userData = {
+                            ...user,
+                            avatar: newAvatar.thumbUrl,
+                            name: name
+                        }
 
-                                    setUser(userData)
-                                    storage(userData)
-                                })
+                        // setUser(userData)
+                        console.log(userData.id)
+                        storage(userData)
+
+                        Axios.post("http://localhost:3001/updateAvatar", {
+                            clientId: userData.id,
+                            avatar: userData.avatar
                         })
                 })
         }

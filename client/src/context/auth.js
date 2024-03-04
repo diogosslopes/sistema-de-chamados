@@ -112,17 +112,23 @@ function AuthProvider({ children }) {
                 toast.error("Usuario não cadastrado!")
                 setLoadingAuth(false)
             } else if(response.data) {
-                console.log(response.data)                
-                let userData = {
-                    id: response.clientId,
-                    name: response.name,
+                console.log(response.data)
+                Axios.post("http://localhost:3001/getUser", {
                     email: value.login,
-                    // avatar: userProfile.data().avatar,
-                    // group: userProfile.data().group,
-                }
+                    password: value.password
+                }).then((response)=>{
+                    let userData = {
+                        id: response.data[0].clientId,
+                        name: response.data[0].name,
+                        email: value.login,
+                        avatar: response.data[0].avatar,
+                        // group: userProfile.data().group,
+                    }
+                    console.log(response)
+                    storage(userData)
+                    setUser(userData)
+                })                
                 
-                storage(userData)
-                setUser(userData)
                 setLoadingAuth(false)
                 setLoggedIn(true)
                 
