@@ -3,6 +3,7 @@ import firebase from '../services/firebaseConnection'
 import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import { useHistory } from 'react-router-dom'
+import Axios from 'axios';
 
 export const AuthContext = createContext({})
 
@@ -23,6 +24,7 @@ function AuthProvider({ children }) {
     const [isEmpty, setIsEmpty] = useState(false)
     const [isAdmin, setIsAdmin] = useState(false)
     const [isFiltered, setIsFiltered] = useState(false)
+    const [loggedIn, setLoggedIn] = useState(false)
 
 
     const [newTask, setNewTask] = useState({})
@@ -53,7 +55,9 @@ function AuthProvider({ children }) {
                 setUser(JSON.parse(activeUser))
                 setClient(user)
                 setLoading(false)
+                setLoggedIn(true)
             }
+
 
             setLoading(false)
         }
@@ -65,68 +69,95 @@ function AuthProvider({ children }) {
 
     async function registerUser(value) {
         setLoadingAuth(true)
+        console.log(loggedIn)
 
-
-
-        await firebase.auth().createUserWithEmailAndPassword(value.login, value.password)
-            .then(async (data) => {
-                let uid = data.user.uid
-                await firebase.firestore().collection("users")
-                    .doc(uid).set({
-                        id: uid,
-                        name: value.name,
-                        email: data.user.email,
-                        avatar: null,
-                        group: null
-                    })
-                    .then(() => {
-                        let userData = {
-                            id: uid,
-                            name: value.name,
-                            email: value.login,
-                            avatar: null,
-                            group: null
-                        }
-
-                        // setUser(userData)
-                        storage(userData)
-                        setLoadingAuth(false)
-                    })
-
-            }).catch((error) => {
-                console.log(error)
-                setLoadingAuth(true)
-            })
+        Axios.post("http://localhost:3001/registeruser", {
+            email: value.login,
+            password: value.password,
+            name: value.name
+        }).then((response) => {
+            if (response.data.msg === 'cadastrado') {
+                toast.error("Email já cadastrado!")
+                return
+            }
+            let userData = {
+                name: value.name,
+                email: value.login,
+                avatar: null,
+                group: null
+            }
+            toast.success("Cadastrado com sucesso!")
+            storage(userData)
+            setUser(userData)
+            setLoadingAuth(false)
+            setLoggedIn(true)
+        }).catch((error) => {
+            setLoggedIn(false)
+            console.log(error)
+            setLoadingAuth(true)
+        })
 
 
     }
 
     async function logIn(value) {
         setLoadingAuth(true)
-        await firebase.auth().signInWithEmailAndPassword(value.login, value.password)
-            .then(async (data) => {
-                let uid = data.user.uid
-
-                const userProfile = await firebase.firestore().collection('users').doc(uid).get()
-
+        
+        Axios.post("http://localhost:3001/login", {
+            email: value.login,
+            password: value.password
+        }).then((response) => {
+            
+            if (response.data.msg === "inexistente") {
+                toast.error("Usuario não cadastrado!")
+                setLoadingAuth(false)
+            } else if(response.data) {
+                console.log(response.data)                
                 let userData = {
-                    id: uid,
-                    name: userProfile.data().name,
+                    id: response.clientId,
+                    name: response.name,
                     email: value.login,
-                    avatar: userProfile.data().avatar,
-                    group: userProfile.data().group,
+                    // avatar: userProfile.data().avatar,
+                    // group: userProfile.data().group,
                 }
-                setUser(userData)
+                
                 storage(userData)
-                setClient(user)
+                setUser(userData)
                 setLoadingAuth(false)
-            })
-            .catch((error) => {
-                console.log(error)
-                toast.error("Usuario ou senha invalido!")
-                alert("Erro")
+                setLoggedIn(true)
+                
+            } else{
                 setLoadingAuth(false)
-            })
+                toast.error("Usuario ou senha incorretos!")
+            }
+
+        })
+
+
+
+        // await firebase.auth().signInWithEmailAndPassword(value.login, value.password)
+        //     .then(async (data) => {
+        //         let uid = data.user.uid
+
+        //         const userProfile = await firebase.firestore().collection('users').doc(uid).get()
+
+        //         let userData = {
+        //             id: uid,
+        //             name: userProfile.data().name,
+        //             email: value.login,
+        //             avatar: userProfile.data().avatar,
+        //             group: userProfile.data().group,
+        //         }
+        //         setUser(userData)
+        //         storage(userData)
+        //         setClient(user)
+        //         setLoadingAuth(false)
+        //     })
+        //     .catch((error) => {
+        //         console.log(error)
+        //         alert("Erro")
+        //         setLoadingAuth(false)
+        //     })
 
     }
 
@@ -139,9 +170,6 @@ function AuthProvider({ children }) {
         localStorage.removeItem('activeUser')
         setUser(null)
     }
-
-
-
 
 
     async function loadClients() {
@@ -182,7 +210,7 @@ function AuthProvider({ children }) {
 
     //     const isTaksEmpty = docs.size === 0
 
-        
+
     //     if (!isTaksEmpty) {
     //         docs.forEach((doc) => {
     //             console.log(doc.data())
@@ -220,27 +248,27 @@ function AuthProvider({ children }) {
     //     setLoading(true)
     //     setTasks('')
     //     setSelectedType(e.target.value)
-    
+
     //     if (isAdmin) {
     //       filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("type", "==", e.target.value).limit('20').get()
     //     } else {
     //       filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
     //       .where("type", "==", e.target.value).limit('20').get()
     //     }
-        
+
     //     setIsEmpty(false)
     //     setLoadingMore(false)
     //     loadTasks(filterDocs, e)
     //     console.log(filterDocs.docs)
     //     setIsFiltered(true)
-        
+
     //   }
 
 
 
     return (
         <AuthContext.Provider value={{
-            signed: !!user, user, loading, registerUser, signOut, logIn, loadingAuth, storage
+            signed: !!user, user, loading, registerUser, signOut, logIn, loadingAuth, storage, loggedIn
         }}>
             {children}
         </AuthContext.Provider>

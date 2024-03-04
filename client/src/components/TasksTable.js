@@ -64,6 +64,8 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
     
     function editClient(t, item) {
         setType(t)
+        console.log(item)
+        console.log(tasks)
         setShowModal(!showModal)
         if (t === 'edit') {
             setTask(item)

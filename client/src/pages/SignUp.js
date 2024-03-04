@@ -37,7 +37,7 @@ function SignUp() {
       <div className="container-login">
         <h1>Cadastro de usuario</h1>
         <form className="form" onSubmit={handleSubmit(signUp)}>
-          <input type='text' name="name" placeholder="Digite seu Login" {...register("name")} ></input>
+          <input type='text' name="name" placeholder="Digite seu Nome" {...register("name")} ></input>
           <p>{errors.name?.message}</p>
           <input type='text' name="login" placeholder="Digite seu Login" {...register("login")} ></input>
           <p>{errors.login?.message}</p>

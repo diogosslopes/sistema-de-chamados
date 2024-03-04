@@ -9,6 +9,7 @@ import * as yup from "yup"
 import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../context/auth";
+import  Axios  from "axios";
 
 
 
@@ -22,21 +23,33 @@ export default function DeleteModal({ id, close, bd, getDoc }) {
 
   async function deleteItem() {
 
-    await firebase.firestore().collection(bd).doc(id).delete()
-      .then(() => {
-        
-        toast.success("Deletado com sucesso")
-        // getDoc()
+    console.log(id)
+    Axios.delete(`http://localhost:3001/deleteobs/${id}`).then((response)=>{
+      Axios.delete(`http://localhost:3001/deletetask/${id}`).then((response)=>{
         close()
-        setTasks('')
-        getDocs()
-        // window.location.reload()
+        console.log(response)
+        toast.success("Deletado com sucesso")
+        getDoc()
+      }).catch((error)=>{
+         toast.error("Erro ao excluir !")
       })
-      .catch((error) => {
-        toast.error("Erro ao excluir !")
-        console.log(error)
-      })
+
+    })
+
+    // await firebase.firestore().collection(bd).doc(id).delete()
+    //   .then(() => {
+        
+    //     // getDoc()
+    //     close()
+    //     setTasks('')
+    //     getDocs()
+    //     // window.location.reload()
+    //   })
+    //   .catch((error) => {
+    //     console.log(error)
+    //   })
   }
+
 
 
   return (

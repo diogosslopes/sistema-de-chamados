@@ -35,10 +35,11 @@ export default function Modal({ tipo, close, item, getDoc }) {
   const [obs, setObs] = useState([])
   const [taskImages, setTaskImages] = useState(item.taskImages)
   const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
+  const [subjectsTi, setSubjectsTi] = useState(['Impressora', 'Sistema', 'Internet'])
+  const [subjectsGeneral, setSubjectsGeneral] = useState(['Eletrica', 'Pintura', 'Ar Condicionado', 'Hidraulico', 'Portas', 'Outros'])
   const [disable, setDisable] = useState(false)
-  const [newList, setNewList] = useState(item.obs)
   let fullDate = ''
-  let obsList = item.obs
+  const [obsList, setObsList] = useState([])
 
   const [priority, setPriority] = useState(item.priority)
   const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
@@ -51,7 +52,19 @@ export default function Modal({ tipo, close, item, getDoc }) {
   })
 
 
-  console.log(obsList)
+  console.log(item.client)
+
+  useEffect(() => {
+
+    if (taskType === "TI") {
+      setSubjects(subjectsTi)
+    } else {
+      setSubjects(subjectsGeneral)
+    }
+
+
+
+  }, [taskType])
 
   useEffect(() => {
 
@@ -91,6 +104,16 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   }, [])
 
+  useEffect(()=>{
+    Axios.post("http://localhost:3001/searchObs",{
+      taskid: item.id
+    }).then((response)=>{
+      console.log(item.id)
+      console.log(response)
+      setObsList(response.data)
+    })
+  },[])
+
 
 
 
@@ -120,42 +143,60 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   async function saveTask(e) {
 
-
-
-    await firebase.firestore().collection('tasks').doc(item.id).update({
-      client: client,
-      priority: priority,
-      subject: subject,
-      status: status,
-      type: taskType,
-      obs: obsList
+    Axios.put("http://localhost:3001/editTask",{
+      taskId: item.id,
+      client: client, 
+      priority: priority, 
+      subject: subject, 
+      status: status, 
+      type: taskType
     })
-      .then(() => {
-        toast.success("Edição realizada com sucesso !")
-        sendEmail()
         close()
-      })
-      .catch((error) => {
-        toast.error("Erro ao realizar edição !")
-        console.log(error)
-      })
-    // }
+        getDoc()
+
+    
+
+    // await firebase.firestore().collection('tasks').doc(item.id).update({
+    //   client: client,
+    //   priority: priority,
+    //   subject: subject,
+    //   status: status,
+    //   type: taskType,
+    //   obs: obsList
+    // })
+    //   .then(() => {
+    //     toast.success("Edição realizada com sucesso !")
+    //     sendEmail()
+    //   })
+    //   .catch((error) => {
+    //     toast.error("Erro ao realizar edição !")
+    //     console.log(error)
+    //   })
 
   }
 
   function saveObs(newObs) {
 
+    console.log(item)
+
     fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
-    setNewList('')
+    // setNewList('')
     const newOBS = {
-      name: user.name,
+      client: user.name,
       obs: newObs,
-      date: fullDate
+      created: fullDate,
+      taskid: item.id
     }
 
-    obsList.push(newOBS)
-    setNewList(obsList)
-    saveTask()
+    setObsList([
+      ...obsList,
+      newOBS
+    ])
+
+    console.log(newOBS)
+
+    // obsList.push(newOBS)
+    // saveTask()
 
     // const newObs = {
     //   client: doc.client,
@@ -165,12 +206,12 @@ export default function Modal({ tipo, close, item, getDoc }) {
     // }
     // obsList.push(newObs)
 
-    // Axios.post("http://localhost:3001/registerobs", {
-    //   client: doc.client,
-    //   created: doc.created,
-    //   obs: doc.obs,
-    //   taskid: doc.taskId
-    // })
+    Axios.post("http://localhost:3001/registerobs", {
+      client: newOBS.client,
+      created: newOBS.created,
+      obs: newOBS.obs,
+      taskid: newOBS.taskid
+    })
 
 
   }
@@ -259,8 +300,8 @@ export default function Modal({ tipo, close, item, getDoc }) {
               <div className="obs-list">
                 {obsList.map((o) => {
                   return (
-                    <div className="obs">
-                      <label>{`${o.name} - ${o.date}`}</label>
+                    <div className="obs" key={o.id}>
+                      <label>{`${o.client} - ${o.created}`}</label>
                       <textarea value={o.obs} name="obs" disabled={disable} placeholder="Observações" />
                     </div>
                   )
@@ -271,7 +312,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
                 <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
                 <button type="button" onClick={(() => { saveObs(obs) })}>Enviar</button>
                 <div className="obs-list">
-                  {newList.map((o) => {
+                  {obsList.map((o) => {
                     return (
                       <div className="obs">
                         <label>{`${o.name} - ${o.date}`}</label>
@@ -298,244 +339,3 @@ export default function Modal({ tipo, close, item, getDoc }) {
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

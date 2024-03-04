@@ -9,7 +9,7 @@ export default function RouteWrapper({
   ...rest
 }){
 
-  const {signed, loading} = useContext(AuthContext)
+  const {signed, loading, loggedIn} = useContext(AuthContext)
   
   
 
@@ -18,7 +18,7 @@ export default function RouteWrapper({
       <div></div>
     )
   }
-
+ console.log(loggedIn)
   if(!signed && isPrivate){
     return <Redirect to="/" />
   }

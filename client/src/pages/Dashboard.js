@@ -31,8 +31,10 @@ export default function Dashboard() {
 
   const resolveAfter3Sec = new Promise(resolve => setTimeout(resolve, 3000))
 
+  
   const { user } = useContext(AuthContext)
   const [tasks, setTasks] = useState([])
+  const [taskss, setTaskss] = useState([])
   let list = []
   const [task, setTask] = useState('')
   const [type, setType] = useState('')
@@ -42,8 +44,8 @@ export default function Dashboard() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [isEmpty, setIsEmpty] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
-
-
+  
+  
   const [newTask, setNewTask] = useState({})
   const [client, setClient] = useState(user.name)
   const [clients, setClients] = useState([])
@@ -65,13 +67,14 @@ export default function Dashboard() {
   let taskkkk
   let fullDate = ''
   let obsList = []
-
-
-
+  
+  
+  console.log(user)
+  
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(validation)
   })
-
+  
 
   useEffect(() => {
 
@@ -119,34 +122,29 @@ export default function Dashboard() {
   }, [taskType])
 
   async function getDocs() {
-    // setTasks('')
-    // if (user.group === "admin") {
-    //   const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('10').get()
-    // await loadTasks(docs)
-    // } else {
-    //   const docs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name).limit('10').get()
-    //   await loadTasks(docs)
 
-    // }
-
+    let newTasks = []
+    let newObsList = []
+    setTasks([])
     Axios.get("http://localhost:3001/getTasks").then((response) => {
-      loadTasks(response.data)
-
+      // loadTasks(response.data)
+      newTasks = response.data
+      Axios.get("http://localhost:3001/getObsList").then((response) => {
+        // loadTasks(response.data)
+        newObsList = response.data
+        loadTasks(newTasks, newObsList)
+      })
     })
 
+
   }
-  async function loadTasks(docs) {
+  async function loadTasks(docs, obs) {
 
     const isTaksEmpty = docs.length === 0
 
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
-        const newObs = {
-          name: doc.client,
-          date: doc.created,
-          obs: doc.obs
-        }
-        obsList.push(newObs)
+        obsList = obs.filter((o) => doc.taskId === o.taskid )
         list.push({
           id: doc.taskId,
           client: doc.client,
@@ -250,7 +248,7 @@ export default function Dashboard() {
         userEmail: user.email,
         userId: user.id
       }).then((response) => {
-        console.log(response.data)
+        console.log(response)
         saveObs(response.data[0])
         const newObs = {
           client: response.data[0].client,
@@ -282,7 +280,7 @@ export default function Dashboard() {
     // setTasks('')
     // saveImages(images)
     closeForm()
-    getDocs()
+    // getDocs()
     sendEmail()
 
 
