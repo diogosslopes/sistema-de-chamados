@@ -21,7 +21,7 @@ import Axios from "axios";
 
 const validation = yup.object().shape({
   client: yup.string(),
-  subject: yup.string().required("Assunto obrigatorio").min(5, "Minimo de 5 caracteres").max(15, "Maximo de 15 caracteres"),
+  subject: yup.string().required("Assunto obrigatorio"),
   obs: yup.string().required('Descrição é obrigatorio').min(10, 'Minimo de 10 caracteres').max(300, 'Maximo de 300 caracteres'),
 })
 
@@ -34,7 +34,6 @@ export default function Dashboard() {
   
   const { user } = useContext(AuthContext)
   const [tasks, setTasks] = useState([])
-  const [taskss, setTaskss] = useState([])
   let list = []
   const [task, setTask] = useState('')
   const [type, setType] = useState('')
@@ -126,18 +125,19 @@ export default function Dashboard() {
     let newTasks = []
     let newObsList = []
     setTasks([])
-    Axios.get("http://localhost:3001/getTasks").then((response) => {
+    Axios.get("http://localhost:3001/getObsList").then((response) => {
       // loadTasks(response.data)
-      newTasks = response.data
-      Axios.get("http://localhost:3001/getObsList").then((response) => {
+      newObsList = response.data
+      Axios.get("http://localhost:3001/getTasks").then((response) => {
         // loadTasks(response.data)
-        newObsList = response.data
+        newTasks = response.data
         loadTasks(newTasks, newObsList)
       })
     })
 
 
   }
+
   async function loadTasks(docs, obs) {
 
     const isTaksEmpty = docs.length === 0
@@ -146,7 +146,7 @@ export default function Dashboard() {
       docs.forEach((doc) => {
         obsList = obs.filter((o) => doc.taskId === o.taskid )
         list.push({
-          id: doc.taskId,
+          taskId: doc.taskId,
           client: doc.client,
           created: doc.created,
           obs: obsList,
@@ -281,7 +281,7 @@ export default function Dashboard() {
     // saveImages(images)
     closeForm()
     // getDocs()
-    sendEmail()
+    // sendEmail()
 
 
   }

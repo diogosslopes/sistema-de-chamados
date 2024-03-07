@@ -15,6 +15,7 @@ import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import { format } from 'date-fns'
 import emailjs from '@emailjs/browser'
+import Axios from "axios";
 
 
 const validation = yup.object().shape({
@@ -32,6 +33,7 @@ export default function CompletedTasks() {
   const { user } = useContext(AuthContext)
   const [tasks, setTasks] = useState([])
   let list = []
+  let obsList = []
   const [task, setTask] = useState('')
   const [type, setType] = useState('')
   const [showModal, setShowModal] = useState(false)
@@ -99,39 +101,56 @@ export default function CompletedTasks() {
   }, [])
 
   async function getDocs() {
-    if (user.group === "admin") {
-      const docs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').limit('10').get()
-      await loadTasks(docs)
-    } else {
-      const docs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name).limit('10').get()
-      await loadTasks(docs)
 
-    }
+    let newTasks = []
+    let newObsList = []
+    setTasks([])
+    Axios.get("http://localhost:3001/getCompletedTasks").then((response) => {
+      // loadTasks(response.data)
+      newTasks = response.data
+      Axios.get("http://localhost:3001/getObsList").then((response) => {
+        // loadTasks(response.data)
+        newObsList = response.data
+        console.log(response.data)
+        loadTasks(newTasks, newObsList)
+      })
+    })
+  //   if (user.group === "admin") {
+  //     const docs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').limit('10').get()
+  //     await loadTasks(docs)
+  //   } else {
+  //     const docs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name).limit('10').get()
+  //     await loadTasks(docs)
+
+  //   }
   }
-  async function loadTasks(docs) {
+  async function loadTasks(docs, obs) {
 
     const isTaksEmpty = docs.size === 0
 
+
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
+        obsList = obs.filter((o) => doc.taskId === o.taskid )
         list.push({
           id: doc.id,
-          client: doc.data().client,
-          created: doc.data().created,
-          concluded: doc.data().concluded,
-          obs: doc.data().obs,
-          priority: doc.data().priority,
-          status: doc.data().status,
-          type: doc.data().type,
-          subject: doc.data().subject,
-          userId: doc.data().userId,
-          taskImages: doc.data().taskImages
+          client: doc.client,
+          created: doc.created,
+          concluded: doc.concluded,
+          obs: obsList,
+          priority: doc.priority,
+          status: doc.status,
+          type: doc.type,
+          subject: doc.subject,
+          userId: doc.userId,
+          taskId: doc.taskId,
+          taskImages: doc.taskImages
         })
+        console.log(list)
       })
 
-      console.log(list)
-
-      const lastDoc = docs.docs[docs.docs.length - 1]
+      
+      const lastDoc = docs[docs.length - 1]
       setLastTask(lastDoc)
       setTasks(tasks => [...tasks, ...list])
       setLoading(false)

@@ -12,13 +12,14 @@ import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../context/auth";
 import Modal from "./Modal";
 import DeleteModal from "./DeleteModal";
+import Axios from "axios";
 
 
 export default function TasksTable({ tasks, order, getDoc, page }) {
 
-     const { user } = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
 
-    
+
 
     const [task, setTask] = useState('')
     const [taskId, setTaskId] = useState('')
@@ -28,49 +29,54 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [newTask, setNewTask] = useState()
 
-    
+
 
     async function saveTask(task) {
-        
-        const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
-        setConcluded(fullDate)
- 
 
-        await firebase.firestore().collection('completedtasks').doc().set({
-          client: task.client,
-          subject: task.subject,
-          priority: task.priority,
-          status: task.status,
-          type: task.type,
-          created: task.created,
-          concluded: fullDate,
-          obs: task.obs,
-          userId: user.id,
-          taskImages: task.taskImages
-        })
-          .then(() => {
-            toast.success("Chamado registrado !")
-            getDoc()
+        // const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
+        // setConcluded(fullDate)
 
-          })
-          .catch((error) => {
-            toast.error("Erro ao registrar chamado !")
-            console.log(error)
-        })
-        
-        
+
+        // await firebase.firestore().collection('completedtasks').doc().set({
+        //   client: task.client,
+        //   subject: task.subject,
+        //   priority: task.priority,
+        //   status: task.status,
+        //   type: task.type,
+        //   created: task.created,
+        //   concluded: fullDate,
+        //   obs: task.obs,
+        //   userId: user.id,
+        //   taskImages: task.taskImages
+        // })
+        //   .then(() => {
+        //     toast.success("Chamado registrado !")
+        //     getDoc()
+
+        //   })
+        //   .catch((error) => {
+        //     toast.error("Erro ao registrar chamado !")
+        //     console.log(error)
+        // })
+
+
     }
-    
-    
+
+
     function editClient(t, item) {
-        setType(t)
         console.log(item)
-        console.log(tasks)
+        setType(t)
         setShowModal(!showModal)
+        if (showModal) {
+            toast.warning("Ação cancelada!")
+        }
         if (t === 'edit') {
             setTask(item)
         } else {
             setTask(item)
+            console.log(task)
+            console.log(item)
+            console.log(t)
         }
     }
 
@@ -79,22 +85,35 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
         setTaskId(id)
         setShowDeleteModal(!showDeleteModal)
 
-        }
+    }
 
     async function completeTask(task) {
 
 
-        saveTask(task)
-               
-        await firebase.firestore().collection("tasks").doc(task.id).delete()
-            .then(() => {
+        const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
+        setConcluded(fullDate)
 
-                toast.success("Chamado encerrado")
-            })
-            .catch((error) => {
-                toast.error("Erro ao excluir !")
-                console.log(error)
-            })
+        Axios.post("http://localhost:3001/completeTask", {
+            client: task.client,
+            subject: task.subject,
+            priority: task.priority,
+            status: task.status,
+            type: task.type,
+            created: task.created,
+            concluded: fullDate,
+            obs: task.obs,
+            userId: task.clientId,
+            // taskImages: taskImages,
+            userEmail: task.userEmail,
+            taskId: task.taskId
+        }).then(() => {
+            Axios.put("http://localhost:3001/editTaskConcluded",{
+                taskId: task.taskId
+            })            
+            toast.success("Chamado finalizado!")
+        })
+
+
     }
 
     return (
@@ -108,14 +127,14 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                         <th scope="col" onClick={() => order('status')}>Status</th>
                         <th scope="col" onClick={() => order('created')}>Criado em</th>
                         {page === 'completedtasks' &&
-                        <th scope="col" onClick={() => order('concluded')}>Concluido em</th>
+                            <th scope="col" onClick={() => order('concluded')}>Concluido em</th>
                         }
                         <th scope="col">#</th>
                     </tr>
                 </thead>
                 <tbody>
                     {tasks.map((task) => {
- 
+
                         return (
                             <tr className="table-body-line" key={task.id}>
                                 <td data-label="Cliente" >{task.client}</td>
@@ -124,22 +143,22 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                                 <td data-label="Status"><span className="status">{task.status}</span></td>
                                 <td data-label="Criado em">{task.created}</td>
                                 {page === 'completedtasks' &&
-                                <td data-label="Concluido em">{task.concluded}</td>
+                                    <td data-label="Concluido em">{task.concluded}</td>
                                 }
                                 <td data-label="#">
-                                    {page === 'completedtasks' ? 
+                                    {page === 'completedtasks' ?
                                         <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
                                         :
                                         <>
-                                        <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
-                                        <button className="task-btn edit" onClick={() => editClient('edit', task)}><FiEdit2 size={17} /></button>
-                                        {user.group === 'admin' &&(
-                                            <button className="task-btn check" onClick={() => completeTask(task)}><FiCheck size={17} /></button>
-                                        )}
-                                        <button className="task-btn delete" onClick={() => deleteTask(task.id)}><FiTrash size={17} /></button>
+                                            <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
+                                            <button className="task-btn edit" onClick={() => editClient('edit', task)}><FiEdit2 size={17} /></button>
+                                            {user.group === 'admin' && (
+                                                <button className="task-btn check" onClick={() => completeTask(task)}><FiCheck size={17} /></button>
+                                            )}
+                                            <button className="task-btn delete" onClick={() => deleteTask(task.taskId)}><FiTrash size={17} /></button>
                                         </>
 
-                                     }
+                                    }
                                 </td>
                             </tr>
                         )

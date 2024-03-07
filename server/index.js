@@ -59,6 +59,7 @@ app.post("/updateUser", (req, res)=>{
         else res.send(name)
     })
 })
+
 app.post("/updateAvatar", (req, res)=>{
     const { avatar } = req.body
     const { clientId } = req.body
@@ -127,6 +128,29 @@ app.post("/registertask", (req, res) => {
     })
 })
 
+app.post("/completeTask", (req, res) => {
+    const { client } = req.body
+    const { created } = req.body
+    const { obs } = req.body
+    const { priority } = req.body
+    const { status } = req.body
+    const { subject } = req.body
+    // const {taskImages} = req.body
+    const { type } = req.body
+    const { userEmail } = req.body
+    const { userId } = req.body
+    const { taskId } = req.body
+    const { concluded } = req.body
+
+    let SQL = "INSERT INTO completedtasks(client, created,  priority, status, subject, type, userEmail, userId, taskId, concluded) VALUES(?,?,?,?,?,?,?,?,?,?)"
+
+    db.query(SQL, [client, created, priority, status, subject, type, userEmail, userId, taskId, concluded], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    console.log(type)
+    })
+})
+
 app.post("/searchtask", (req, res) => {
     const { client } = req.body
     const { created } = req.body
@@ -181,9 +205,19 @@ app.get("/getLastTask", (req, res) => {
     })
 })
 
+app.get("/getCompletedTasks", (req, res) => {
+
+    let SQL = "SELECT * from completedtasks"
+
+    db.query(SQL, (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
 app.get("/getTasks", (req, res) => {
 
-    let SQL = "SELECT * from tasks"
+    let SQL = "SELECT * from tasks where isConcluded = 0"
 
     db.query(SQL, (err, result) => {
         if (err) console.log(err)
@@ -198,6 +232,19 @@ app.get("/getObsList", (req, res) => {
     db.query(SQL, (err, result) => {
         if (err) console.log(err)
         else res.send(result)
+    })
+})
+
+app.put("/editTaskConcluded", (req, res) => {
+    const { taskId } = req.body
+
+
+    let SQL = "update tasks set isConcluded = 1 where taskId = ? "
+
+    db.query(SQL, [taskId], (err, result) => {
+        if (err) console.log(err)
+        else {res.send(result)
+    console.log("ok")}
     })
 })
 
@@ -226,6 +273,7 @@ app.delete("/deletetask/:taskId", (req, res) => {
         else res.send(result)
     })
 })
+
 app.delete("/deleteobs/:taskId", (req, res) => {
     const { taskId } = req.params
     let SQL = "delete from obs where taskId = ?"

@@ -674,9 +674,9 @@ table td  svg{
   flex-direction: column;
   width: 45%;
   height: 100%;
-  max-height: 627px;
+  max-height: 685px;
   border-radius: 5px;
-  margin: 0px auto;
+  margin: 7px auto;
   justify-content: space-evenly;
   padding: 8px;
 }
@@ -750,14 +750,14 @@ table td  svg{
 }
 
 #obs{
-  height: 210px;
+  height: 300px;
   display: flex;
   flex-direction: column;
   justify-content: start;
 }
 
 .obs-list{
-  height: 260px !important;
+  height: 480px !important;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -792,7 +792,7 @@ table td  svg{
 #obs .new-obs{
   display: flex;
   flex-direction: column;
-  height: 200px;
+  height: 300px;
 }
 
 #obs .new-obs textarea{

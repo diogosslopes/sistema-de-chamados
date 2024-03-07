@@ -15,7 +15,6 @@ import Axios from "axios";
 
 const validation = yup.object().shape({
   client: yup.string(),
-  subject: yup.string().required("Assunto obrigatorio").min(5, "Minimo de 5 caracteres").max(15, "Maximo de 15 caracteres"),
   status: yup.string().required('Status é obrigatorio'),
   obs: yup.string().max(300, 'Maximo de 300 caracteres'),
 })
@@ -40,6 +39,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
   const [disable, setDisable] = useState(false)
   let fullDate = ''
   const [obsList, setObsList] = useState([])
+  const [ isObsOk, setIsObsOk] = useState(true)
 
   const [priority, setPriority] = useState(item.priority)
   const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
@@ -52,9 +52,10 @@ export default function Modal({ tipo, close, item, getDoc }) {
   })
 
 
-  console.log(item.client)
 
   useEffect(() => {
+
+    console.log(item)
 
     if (taskType === "TI") {
       setSubjects(subjectsTi)
@@ -105,11 +106,10 @@ export default function Modal({ tipo, close, item, getDoc }) {
   }, [])
 
   useEffect(()=>{
+    
     Axios.post("http://localhost:3001/searchObs",{
-      taskid: item.id
+      taskid: item.taskId
     }).then((response)=>{
-      console.log(item.id)
-      console.log(response)
       setObsList(response.data)
     })
   },[])
@@ -140,7 +140,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
   }
 
 
-
   async function saveTask(e) {
 
     Axios.put("http://localhost:3001/editTask",{
@@ -150,9 +149,11 @@ export default function Modal({ tipo, close, item, getDoc }) {
       subject: subject, 
       status: status, 
       type: taskType
+    }).then(()=>{
+      close()
+      getDoc()
+      toast.success("Edição realizada!")
     })
-        close()
-        getDoc()
 
     
 
@@ -177,7 +178,13 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   function saveObs(newObs) {
 
-    console.log(item)
+    if(newObs.length < 11){
+      setIsObsOk(false)
+      return
+    } else{
+      setIsObsOk(true)
+    }
+
 
     fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
     // setNewList('')
@@ -193,7 +200,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
       newOBS
     ])
 
-    console.log(newOBS)
+    
 
     // obsList.push(newOBS)
     // saveTask()
@@ -211,6 +218,9 @@ export default function Modal({ tipo, close, item, getDoc }) {
       created: newOBS.created,
       obs: newOBS.obs,
       taskid: newOBS.taskid
+    }).then(()=>{
+      setObs("")
+      toast.success("Observação salva")
     })
 
 
@@ -299,6 +309,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
             {tipo === 'show' ?
               <div className="obs-list">
                 {obsList.map((o) => {
+                console.log("aqui!!!!!!!")
                   return (
                     <div className="obs" key={o.id}>
                       <label>{`${o.client} - ${o.created}`}</label>
@@ -310,12 +321,13 @@ export default function Modal({ tipo, close, item, getDoc }) {
               :
               <div className="new-obs">
                 <textarea value={obs} name="obs" {...register("obs")} onChange={(e) => setObs(e.target.value)} disabled={disable} placeholder="Observações" />
+                {!isObsOk && <p>Digite 10 caracteres ou mais.</p>}
                 <button type="button" onClick={(() => { saveObs(obs) })}>Enviar</button>
                 <div className="obs-list">
                   {obsList.map((o) => {
                     return (
                       <div className="obs">
-                        <label>{`${o.name} - ${o.date}`}</label>
+                        <label>{`${o.client} - ${o.created}`}</label>
                         <textarea value={o.obs} name="obs" disabled='disable' placeholder="Observações" />
                       </div>
                     )

@@ -78,6 +78,7 @@ function AuthProvider({ children }) {
         }).then((response) => {
             if (response.data.msg === 'cadastrado') {
                 toast.error("Email já cadastrado!")
+                setLoadingAuth(false)
                 return
             }
             let userData = {
@@ -122,7 +123,8 @@ function AuthProvider({ children }) {
                         name: response.data[0].name,
                         email: value.login,
                         avatar: response.data[0].avatar,
-                        // group: userProfile.data().group,
+                        group: response.data[0].group,
+                        
                     }
                     console.log(response)
                     storage(userData)
