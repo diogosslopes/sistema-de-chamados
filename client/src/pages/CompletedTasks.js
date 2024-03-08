@@ -34,6 +34,8 @@ export default function CompletedTasks() {
   const [tasks, setTasks] = useState([])
   let list = []
   let obsList = []
+  let newTasks = []
+  let newObsList = []
   const [task, setTask] = useState('')
   const [type, setType] = useState('')
   const [showModal, setShowModal] = useState(false)
@@ -102,8 +104,7 @@ export default function CompletedTasks() {
 
   async function getDocs() {
 
-    let newTasks = []
-    let newObsList = []
+
     setTasks([])
     Axios.get("http://localhost:3001/getCompletedTasks").then((response) => {
       // loadTasks(response.data)
@@ -112,21 +113,25 @@ export default function CompletedTasks() {
         // loadTasks(response.data)
         newObsList = response.data
         console.log(response.data)
-        loadTasks(newTasks, newObsList)
+        // loadTasks(newTasks, newObsList)
+        if (user.group === "admin") {
+          loadTasks(newTasks, newObsList)
+          
+        } else {
+          const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
+          const obsDocs = newObsList.filter((o) => user.name === o.client)
+          loadTasks(tasksDocs, obsDocs)
+          
+    
+        }
       })
     })
-  //   if (user.group === "admin") {
-  //     const docs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').limit('10').get()
-  //     await loadTasks(docs)
-  //   } else {
-  //     const docs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name).limit('10').get()
-  //     await loadTasks(docs)
-
-  //   }
   }
+
   async function loadTasks(docs, obs) {
 
-    const isTaksEmpty = docs.size === 0
+    const isTaksEmpty = docs.length === 0
+    console.log(isEmpty)
 
 
     if (!isTaksEmpty) {
@@ -190,6 +195,7 @@ export default function CompletedTasks() {
 
 
   }
+
   function newClient(t, item) {
     setType(t)
     setShowModal(!showModal)
@@ -229,22 +235,40 @@ export default function CompletedTasks() {
   }
 
   async function filter(e) {
+
+    console.log(tasks)
     e.preventDefault()
     setLoading(true)
     setTasks('')
     setSelectedType(e.target.value)
     let filterDocs = ""
 
-    if (isAdmin) {
-      filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("type", "==", e.target.value).limit('10').get()
+    if (user.group === "admin") {
+      Axios.post("http://localhost:3001/filtertask", {
+        type: e.target.value
+      }).then((response)=>{
+        setIsEmpty(false)
+        setLoadingMore(false)
+       loadTasks(response.data, newObsList)
+      })
     } else {
-      filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .where("type", "==", e.target.value).limit('10').get()
+      Axios.post("http://localhost:3001/filtertask", {
+        type: e.target.value
+      }).then((response)=>{
+        const tasksDocs = response.data.filter((t) => user.email === t.userEmail)
+        const obsDocs = newObsList.filter((o) => user.name === o.client)
+        setIsEmpty(false)
+        setLoadingMore(false)
+        loadTasks(tasksDocs, obsDocs)
+      })
+
+      
+
     }
 
-    setIsEmpty(false)
-    setLoadingMore(false)
-    loadTasks(filterDocs)
+
+    console.log(filterDocs)
+    // loadTasks(filterDocs, newObsList)
   }
 
   async function orderBy(e){

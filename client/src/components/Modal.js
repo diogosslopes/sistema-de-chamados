@@ -293,6 +293,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
           </div>
           <div className="imagesList">
             <label>Anexos</label>
+            <a target="_blank" href={`${taskImages}`}>{`Imagem `}</a>
             {/* <div className="list">
               {
                 

@@ -115,14 +115,14 @@ app.post("/registertask", (req, res) => {
     const { priority } = req.body
     const { status } = req.body
     const { subject } = req.body
-    // const {taskImages} = req.body
+    const {taskImages} = req.body
     const { type } = req.body
     const { userEmail } = req.body
     const { userId } = req.body
 
-    let SQL = "INSERT INTO tasks(client, created, obs, priority, status, subject, type, userEmail, userId) VALUES(?,?,?,?,?,?,?,?,?)"
+    let SQL = "INSERT INTO tasks(client, created, obs, priority, status, subject, taskImages, type, userEmail, userId) VALUES(?,?,?,?,?,?,?,?,?,?)"
 
-    db.query(SQL, [client, created, obs, priority, status, subject, type, userEmail, userId], (err, result) => {
+    db.query(SQL, [client, created, obs, priority, status, subject, taskImages, type, userEmail, userId], (err, result) => {
         if (err) console.log(err)
         else res.send(result)
     })
@@ -166,6 +166,19 @@ app.post("/searchtask", (req, res) => {
     })
 })
 
+app.post("/filtertask", (req, res) => {
+    const { type } = req.body
+    const { table } = req.body
+
+    let SQL = "select * from completedtasks where type = ?"
+
+
+    db.query(SQL, [type], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
 app.post("/searchObs", (req, res) => {
     const { taskid } = req.body
 
@@ -191,6 +204,22 @@ app.post("/registerobs", (req, res) => {
     let SQL = "INSERT INTO obs(taskid, obs, client, created) VALUES(?,?,?,?)"
 
     db.query(SQL, [taskid, obs, client, created], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
+app.post("/registerImage", (req, res) => {
+    console.log(req.body)
+    const { client } = req.body
+    const { created } = req.body
+    const { image } = req.body
+    const { taskid } = req.body
+
+
+    let SQL = "INSERT INTO images(taskid, image, client, created) VALUES(?,?,?,?)"
+
+    db.query(SQL, [taskid, image, client, created], (err, result) => {
         if (err) console.log(err)
         else res.send(result)
     })
