@@ -32,7 +32,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
   const [taskType, setTaskType] = useState(item.type)
   const [created, setCreated] = useState(item.created)
   const [obs, setObs] = useState([])
-  const [taskImages, setTaskImages] = useState(item.taskImages)
+  const [taskImages, setTaskImages] = useState([])
   const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet'])
   const [subjectsTi, setSubjectsTi] = useState(['Impressora', 'Sistema', 'Internet'])
   const [subjectsGeneral, setSubjectsGeneral] = useState(['Eletrica', 'Pintura', 'Ar Condicionado', 'Hidraulico', 'Portas', 'Outros'])
@@ -112,6 +112,15 @@ export default function Modal({ tipo, close, item, getDoc }) {
     }).then((response)=>{
       setObsList(response.data)
     })
+
+    Axios.post("http://localhost:3001/searchImages",{
+      taskid: item.taskId
+    }).then((response)=>{
+      setTaskImages(response.data)
+      console.log(taskImages)
+    })
+
+
   },[])
 
 
@@ -138,7 +147,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
         console.log(err)
       })
   }
-
 
   async function saveTask(e) {
 
@@ -200,7 +208,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
       newOBS
     ])
 
-    
+   
 
     // obsList.push(newOBS)
     // saveTask()
@@ -226,10 +234,15 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   }
 
+  function salvar (){
+    console.log(taskImages)
+  }
+
 
 
   return (
     <div className="modal">
+      <button onClick={(e)=> {salvar()}}>Salvaaaaaaaaar</button>
       <div className="modal-new">
         <h1>Cadastro de Chamado</h1>
         <form onSubmit={handleSubmit(saveTask)} className="form-modal" >
@@ -293,17 +306,16 @@ export default function Modal({ tipo, close, item, getDoc }) {
           </div>
           <div className="imagesList">
             <label>Anexos</label>
-            <a target="_blank" href={`${taskImages}`}>{`Imagem `}</a>
-            {/* <div className="list">
-              {
-                
-                taskImages.map((images, index)=>{
+            {/* <a target="_blank" href={`${taskImages}`}>{`Imagem `}</a> */}
+            <div className="list">
+              {                
+                taskImages.map((i, index)=>{
                   return (
-                    <a target="_blank" href={`${images}`}>{`Imagem ${index +1}`}</a>
+                    <a target="_blank" href={`${i.image}`}>{`Imagem ${index +1}`}</a>
                   )
                 })
               }
-            </div> */}
+            </div>
           </div>
           <div id="obs">
             <label>Observações</label>

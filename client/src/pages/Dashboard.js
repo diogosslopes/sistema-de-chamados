@@ -44,7 +44,7 @@ export default function Dashboard() {
   const [isEmpty, setIsEmpty] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
 
-
+  
   const [newTask, setNewTask] = useState({})
   const [client, setClient] = useState(user.name)
   const [clients, setClients] = useState([])
@@ -63,6 +63,7 @@ export default function Dashboard() {
   const [disable, setDisable] = useState(true)
   const [images, setImages] = useState([])
   const [newList, setNewList] = useState([])
+  const [taskImages, setTaskImages] = useState([])
   let taskkkk
   let fullDate = ''
   let obsList = []
@@ -98,18 +99,18 @@ export default function Dashboard() {
           console.log(error)
         })
 
-    }
-
-    loadClients()
-    getDocs()
-
-    if (user.group === 'admin') {
-      setIsAdmin(true)
-      setDisable(false)
-    }
-
-
-  }, [])
+      }
+      
+      loadClients()
+      getDocs()
+      
+      if (user.group === 'admin') {
+        setIsAdmin(true)
+        setDisable(false)
+      }
+      
+      
+    }, [])
 
   useEffect(() => {
 
@@ -133,7 +134,7 @@ export default function Dashboard() {
         // loadTasks(response.data)
         newTasks = response.data
         // loadTasks(newTasks, newObsList)
-
+        
         if (user.group === "admin") {
           loadTasks(newTasks, newObsList)
           
@@ -142,19 +143,19 @@ export default function Dashboard() {
           const obsDocs = newObsList.filter((o) => user.name === o.client)
           loadTasks(tasksDocs, obsDocs)
           
-
+          
         }
       })
     })
-
+    
 
   }
 
   async function loadTasks(docs, obs) {
-
+    
     const isTaksEmpty = docs.length === 0
     console.log(isEmpty)
-
+    
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
         obsList = obs.filter((o) => doc.taskId === o.taskid)
@@ -174,17 +175,17 @@ export default function Dashboard() {
         obsList = []
       })
       console.log(list)
-
-
+      
+      
       const lastDoc = docs[docs.length - 1]
       setLastTask(lastDoc)
       setTasks(tasks => [...tasks, ...list])
       setLoading(false)
-
+      
     } else {
       setIsEmpty(true)
       setLoading(false)
-
+      
     }
     setLoadingMore(false)
   }
@@ -198,20 +199,20 @@ export default function Dashboard() {
     subject: subject,
     message: obs
   }
-
+  
   function sendEmail() {
     emailjs.send("service_lv8kn8j", "template_a9s048m", templateParams, "BrAq6Nxcac_3F_GXo")
-      .then((response) => {
-        console.log("Email enviado ", response.status, response.text)
-      })
+    .then((response) => {
+      console.log("Email enviado ", response.status, response.text)
+    })
   }
-
-
+  
+  
   async function saveTask(e) {
-
-    let taskImages = []
-
-
+    
+    let taskImagesList = []
+    
+    
     for (let i = 0; i < images.length; i++) {
       await firebase.storage().ref(`task-images/${user.id}/${images[i].name}`)
         .put(images[i])
@@ -220,14 +221,15 @@ export default function Dashboard() {
             .child(images[i].name).getDownloadURL()
             .then(async (url) => {
               console.log(url)
-              taskImages.push(url)
+              taskImagesList.push(url)
             })
-        })
-      console.log(images[i].name)
-      console.log(taskImages)
-
-    }
-
+          })
+          console.log(images[i].name)
+          
+        }
+        console.log(taskImages)
+        setTaskImages(taskImagesList)
+    
     setNewTask({
       client: client,
       subject: subject,
@@ -237,7 +239,7 @@ export default function Dashboard() {
       created: created,
       obs: obs,
       userId: user.id,
-      taskImages: taskImages,
+      // taskImages: taskImagesList,
       userEmail: user.email
     })
 
@@ -250,7 +252,7 @@ export default function Dashboard() {
       created: created,
       obs: obs,
       userId: user.id,
-      taskImages: taskImages,
+      // taskImages: taskImagesList,
       userEmail: user.email
     }).then(() => {
       Axios.post("http://localhost:3001/searchtask", {
@@ -262,7 +264,7 @@ export default function Dashboard() {
       }).then((response) => {
         console.log(response)
         saveObs(response.data[0])
-        saveImages(response.data[0])
+        saveImages(response.data[0], taskImages)
         const newObs = {
           client: response.data[0].client,
           created: response.data[0].created,
@@ -298,10 +300,10 @@ export default function Dashboard() {
     })
 
     toast.success("Chamado registrado !")
-    // setTasks('')
+    setTasks('')
     // saveImages(images)
     closeForm()
-    // getDocs()
+    getDocs()
     // sendEmail()
 
 
@@ -432,21 +434,26 @@ export default function Dashboard() {
 
   }
 
-  async function saveImages(doc) {
+  async function saveImages(doc, images) {
 
-    console.log(doc)
+    console.log(images)
+    images.map((i)=>{
 
-    Axios.post("http://localhost:3001/registerImage", {
-      client: doc.client,
-      created: doc.created,
-      image: doc.taskImages,
-      taskid: doc.taskId
+      console.log(i)
+      Axios.post("http://localhost:3001/registerImage", {
+        client: doc.client,
+        created: doc.created,
+        image: i,
+        taskid: doc.taskId
+      })
     })
 
 
   }
 
-
+function mostrar (e){
+  console.log(images)
+}
 
 
   if (loading) {
@@ -475,6 +482,7 @@ export default function Dashboard() {
         </Title>
       </div>
       <div className="container-task">
+        <button onClick={(e) => {mostrar(e)}}>MOSTRARRRRRRRRRRRR</button>
         <form className="form-task hide" onSubmit={handleSubmit(save)}>
           <div className="form-div form-div-task">
             <div className="tipo_select">

@@ -179,20 +179,6 @@ app.post("/filtertask", (req, res) => {
     })
 })
 
-app.post("/searchObs", (req, res) => {
-    const { taskid } = req.body
-
-
-    let SQL = "select * from obs where taskid = ?"
-
-    db.query(SQL, [taskid], (err, result) => {
-        if (err) console.log(err)
-        else res.send(result)
-    })
-
-
-})
-
 app.post("/registerobs", (req, res) => {
     console.log(req.body)
     const { client } = req.body
@@ -209,6 +195,20 @@ app.post("/registerobs", (req, res) => {
     })
 })
 
+app.post("/searchObs", (req, res) => {
+    const { taskid } = req.body
+
+
+    let SQL = "select * from obs where taskid = ?"
+
+    db.query(SQL, [taskid], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+
+
+})
+
 app.post("/registerImage", (req, res) => {
     console.log(req.body)
     const { client } = req.body
@@ -223,6 +223,20 @@ app.post("/registerImage", (req, res) => {
         if (err) console.log(err)
         else res.send(result)
     })
+})
+
+app.post("/searchImages", (req, res) => {
+    const { taskid } = req.body
+
+
+    let SQL = "select * from images where taskid = ?"
+
+    db.query(SQL, [taskid], (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+
+
 })
 
 app.get("/getLastTask", (req, res) => {
