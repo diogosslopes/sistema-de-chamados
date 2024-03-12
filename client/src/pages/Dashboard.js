@@ -82,22 +82,30 @@ export default function Dashboard() {
   useEffect(() => {
 
     async function loadClients() {
-      await firebase.firestore().collection('clients').orderBy('name', 'asc').get()
-        .then((snapshot) => {
-          let list = []
 
-          snapshot.forEach((doc) => {
-            list.push({
-              id: doc.id,
-              client: doc.data().name
-            })
-          })
-          setClients(list)
+      Axios.get("http://localhost:3001/getUsers").then((response)=>{
+        console.log(response.data)
+        let list = []
+        setClients(response.data)
 
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+      })
+
+      // await firebase.firestore().collection('clients').orderBy('name', 'asc').get()
+      //   .then((snapshot) => {
+      //     let list = []
+
+      //     snapshot.forEach((doc) => {
+      //       list.push({
+      //         id: doc.id,
+      //         client: doc.data().name
+      //       })
+      //     })
+      //     setClients(list)
+
+      //   })
+      //   .catch((error) => {
+      //     console.log(error)
+      //   })
 
       }
       
@@ -345,7 +353,7 @@ export default function Dashboard() {
 
   function showForm(e) {
     e.preventDefault()
-
+    console.log(clients)
     const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
     setCreated(fullDate)
 
@@ -451,9 +459,6 @@ export default function Dashboard() {
 
   }
 
-function mostrar (e){
-  console.log(images)
-}
 
 
   if (loading) {
@@ -482,7 +487,6 @@ function mostrar (e){
         </Title>
       </div>
       <div className="container-task">
-        <button onClick={(e) => {mostrar(e)}}>MOSTRARRRRRRRRRRRR</button>
         <form className="form-task hide" onSubmit={handleSubmit(save)}>
           <div className="form-div form-div-task">
             <div className="tipo_select">

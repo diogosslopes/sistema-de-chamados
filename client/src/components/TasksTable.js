@@ -64,7 +64,6 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
 
 
     function editClient(t, item) {
-        console.log(item)
         setType(t)
         setShowModal(!showModal)
         if (showModal) {
@@ -74,9 +73,6 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
             setTask(item)
         } else {
             setTask(item)
-            console.log(task)
-            console.log(item)
-            console.log(t)
         }
     }
 
@@ -134,9 +130,8 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                 </thead>
                 <tbody>
                     {tasks.map((task) => {
-
                         return (
-                            <tr className="table-body-line" key={task.id}>
+                            <tr className="table-body-line" key={task.taskId}>
                                 <td data-label="Cliente" >{task.client}</td>
                                 <td data-label="Assunto">{task.subject}</td>
                                 <td data-label="Prioridade">{task.priority}</td>

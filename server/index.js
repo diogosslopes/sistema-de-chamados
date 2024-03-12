@@ -13,6 +13,8 @@ const db = mysql.createPool({
     database: "chamadosfacil"
 })
 
+const port = process.env.PORT || 3001
+
 app.use(cors())
 app.use(express.json())
 
@@ -268,6 +270,16 @@ app.get("/getTasks", (req, res) => {
     })
 })
 
+app.get("/getUsers", (req, res) => {
+
+    let SQL = "SELECT * from users"
+
+    db.query(SQL, (err, result) => {
+        if (err) console.log(err)
+        else res.send(result)
+    })
+})
+
 app.get("/getObsList", (req, res) => {
 
     let SQL = "SELECT * from obs"
@@ -293,6 +305,7 @@ app.put("/editTaskConcluded", (req, res) => {
 
 app.put("/editTask", (req, res) => {
     const { taskId } = req.body
+    const { userId } = req.body
     const { client } = req.body
     const { priority } = req.body
     const { subject } = req.body

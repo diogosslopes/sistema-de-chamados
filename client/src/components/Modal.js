@@ -55,7 +55,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   useEffect(() => {
 
-    console.log(item)
 
     if (taskType === "TI") {
       setSubjects(subjectsTi)
@@ -70,22 +69,29 @@ export default function Modal({ tipo, close, item, getDoc }) {
   useEffect(() => {
 
     async function loadClients() {
-      await firebase.firestore().collection('clients').orderBy('name', 'asc').get()
-        .then((snapshot) => {
-          let list = []
 
-          snapshot.forEach((doc) => {
-            list.push({
-              id: doc.id,
-              client: doc.data().name
-            })
-          })
-          setClients(list)
+      Axios.get("http://localhost:3001/getUsers").then((response)=>{
+        let list = []
+        setClients(response.data)
 
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+      })
+
+      // await firebase.firestore().collection('clients').orderBy('name', 'asc').get()
+      //   .then((snapshot) => {
+      //     let list = []
+
+      //     snapshot.forEach((doc) => {
+      //       list.push({
+      //         id: doc.id,
+      //         client: doc.data().name
+      //       })
+      //     })
+      //     setClients(list)
+
+      //   })
+      //   .catch((error) => {
+      //     console.log(error)
+      //   })
 
     }
 
@@ -117,7 +123,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
       taskid: item.taskId
     }).then((response)=>{
       setTaskImages(response.data)
-      console.log(taskImages)
     })
 
 
@@ -150,8 +155,12 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   async function saveTask(e) {
 
+    console.log(client)
+
+
     Axios.put("http://localhost:3001/editTask",{
-      taskId: item.id,
+      taskId: item.taskId,
+      userId: client,
       client: client, 
       priority: priority, 
       subject: subject, 
@@ -234,26 +243,38 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   }
 
-  function salvar (){
-    console.log(taskImages)
+  function handleClient (e){
+    console.log(e)
+
+    setClient(e.target.value)
+    
+    const clientId = document.querySelector(".clientOption")
+    console.log(clientId)
   }
+  
+  function handleSelect (e){
+    console.log(e)
+    
+
+  }
+
+ 
 
 
 
   return (
     <div className="modal">
-      <button onClick={(e)=> {salvar()}}>Salvaaaaaaaaar</button>
       <div className="modal-new">
         <h1>Cadastro de Chamado</h1>
         <form onSubmit={handleSubmit(saveTask)} className="form-modal" >
           <div>
             <label>Cliente</label>
-            <select disabled={disable} name="client" {...register("client")} value={client} onChange={(e) => { setClient(e.target.value) }} >
+            <select disabled="disable" name="client" {...register("client")} onSelect={(e)=> handleSelect(e)} value={client} onChange={(e) => handleClient(e) } >
               <option hidden value={''}>Selecione a unidade</option>
 
               {clients.map((c, index) => {
                 return (
-                  <option value={c.client} key={c.id}>{c.client}</option>
+                  <option value={c.name} id={c.clientId} className="clientOption" key={c.clientId}>{c.name}</option>
                 )
               })}
             </select>
@@ -322,7 +343,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
             {tipo === 'show' ?
               <div className="obs-list">
                 {obsList.map((o) => {
-                console.log("aqui!!!!!!!")
                   return (
                     <div className="obs" key={o.id}>
                       <label>{`${o.client} - ${o.created}`}</label>
