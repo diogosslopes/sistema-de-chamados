@@ -14,15 +14,16 @@ const db = mysql.createPool({
 })
 
 
-const PORT = process.env.PORT || 3001
+// const PORT = process.env.PORT || 3001
 
-app.use(cors({
-    credentials: true,
-    origin: '*',
-    methods: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
-    allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version', 'Authorization']
-}))
+// app.use(cors({
+//     credentials: true,
+//     origin: '*',
+//     methods: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+//     allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version', 'Authorization']
+// }))
 
+app.use(cors())
 app.use(express.json())
 
 
@@ -97,8 +98,8 @@ app.post("/login", (req, res) => {
         if (err) console.log(err)
         if (result.length > 0) {
             // res.send(result)            
-            bcrypt.compare(password, result[0].password, (err, passwordMatch) => {
-                res.send(passwordMatch)
+            bcrypt.compare(password, result[0].password, (err, result) => {
+                res.send(result)
             })
         } else {
             res.send({ msg: "inexistente" })
@@ -113,7 +114,7 @@ app.post("/getUser", (req, res) => {
 
     let SQL = "SELECT * from users where email = ?"
 
-    db.query(SQL, [email, password], (err, result) => {
+    db.query(SQL, [email], (err, result) => {
         if (err) console.log(err)
         else res.send(result)
     })

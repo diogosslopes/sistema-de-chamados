@@ -71,7 +71,7 @@ function AuthProvider({ children }) {
         setLoadingAuth(true)
         console.log(loggedIn)
 
-        Axios.post("/registeruser", {
+        Axios.post("http://localhost:3001/registeruser", {
             email: value.login,
             password: value.password,
             name: value.name
@@ -104,7 +104,7 @@ function AuthProvider({ children }) {
     async function logIn(value) {
         setLoadingAuth(true)
         
-        Axios.post("/login", {
+        Axios.post("http://localhost:3001/login", {
             email: value.login,
             password: value.password
         }).then((response) => {
@@ -114,7 +114,7 @@ function AuthProvider({ children }) {
                 setLoadingAuth(false)
             } else if(response.data) {
                 console.log(response.data)
-                Axios.post("/getUser", {
+                Axios.post("http://localhost:3001/getUser", {
                     email: value.login,
                     password: value.password
                 }).then((response)=>{
