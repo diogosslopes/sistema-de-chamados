@@ -77,7 +77,7 @@ function AuthProvider({ children }) {
             name: value.name
         }).then((response) => {
             if (response.data.msg === 'cadastrado') {
-                toast.error("Email já cadastrado!")
+                toast.error("Email já cadastrado!!!")
                 setLoadingAuth(false)
                 return
             }
