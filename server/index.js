@@ -17,11 +17,17 @@ const port = process.env.PORT || 3001
 
 app.use(
     cors({
+        
     origin: '*',
     allowedHeaders: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
     methods: 'GET,OPTIONS,PATCH,DELETE,POST,PUT'
 }))
-app.use(express.json()) 
+app.use(express.json({
+        
+    origin: '*',
+    allowedHeaders: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
+    methods: 'GET,OPTIONS,PATCH,DELETE,POST,PUT'
+})) 
 
 
 
