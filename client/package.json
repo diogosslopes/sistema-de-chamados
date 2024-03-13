@@ -2,7 +2,7 @@
   "name": "sistema-chamados",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://sistema-chamados-feature.vercel.app",
+  "proxy": "*",
   "dependencies": {
     "@emailjs/browser": "^3.11.0",
     "@emotion/react": "^11.10.6",
