@@ -17,17 +17,17 @@ const port = process.env.PORT || 3001
 
 app.use(
     cors({
-        
+        credentials: true,
+        origin: '*',
+        allowedHeaders: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
+        methods: 'GET,OPTIONS,PATCH,DELETE,POST,PUT'
+    }))
+app.use(express.json({
+
     origin: '*',
     allowedHeaders: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
     methods: 'GET,OPTIONS,PATCH,DELETE,POST,PUT'
 }))
-app.use(express.json({
-        
-    origin: '*',
-    allowedHeaders: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
-    methods: 'GET,OPTIONS,PATCH,DELETE,POST,PUT'
-})) 
 
 
 
@@ -62,27 +62,27 @@ app.post("/registeruser", (req, res) => {
     })
 })
 
-app.post("/updateUser", (req, res)=>{
+app.post("/updateUser", (req, res) => {
     const { avatar } = req.body
     const { clientId } = req.body
     const { name } = req.body
 
     SQL = "update users set name = ? where clientId = ?"
 
-    db.query(SQL, [name, clientId], (err, result)=>{
+    db.query(SQL, [name, clientId], (err, result) => {
         if (err) console.log(err)
         else res.send(name)
     })
 })
 
-app.post("/updateAvatar", (req, res)=>{
+app.post("/updateAvatar", (req, res) => {
     const { avatar } = req.body
     const { clientId } = req.body
     const { name } = req.body
 
     SQL = "update users set avatar = ? where clientId = ?"
 
-    db.query(SQL, [avatar, clientId], (err, result)=>{
+    db.query(SQL, [avatar, clientId], (err, result) => {
         if (err) console.log(err)
         else console.log(avatar)
     })
@@ -98,13 +98,13 @@ app.post("/login", (req, res) => {
 
     db.query(SQL, [email], (err, result) => {
         if (err) console.log(err)
-        if(result.length > 0) {
+        if (result.length > 0) {
             // res.send(result)            
-            bcrypt.compare(password, result[0].password, (err, result)=>{
+            bcrypt.compare(password, result[0].password, (err, result) => {
                 res.send(result)
-             })
-        }else{
-            res.send({msg: "inexistente"})
+            })
+        } else {
+            res.send({ msg: "inexistente" })
         }
 
     })
@@ -130,7 +130,7 @@ app.post("/registertask", (req, res) => {
     const { priority } = req.body
     const { status } = req.body
     const { subject } = req.body
-    const {taskImages} = req.body
+    const { taskImages } = req.body
     const { type } = req.body
     const { userEmail } = req.body
     const { userId } = req.body
@@ -162,7 +162,7 @@ app.post("/completeTask", (req, res) => {
     db.query(SQL, [client, created, priority, status, subject, type, userEmail, userId, taskId, concluded], (err, result) => {
         if (err) console.log(err)
         else res.send(result)
-    console.log(type)
+        console.log(type)
     })
 })
 
@@ -311,8 +311,10 @@ app.put("/editTaskConcluded", (req, res) => {
 
     db.query(SQL, [taskId], (err, result) => {
         if (err) console.log(err)
-        else {res.send(result)
-    console.log("ok")}
+        else {
+            res.send(result)
+            console.log("ok")
+        }
     })
 })
 
