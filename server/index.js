@@ -24,6 +24,8 @@ app.use(
     }))
 app.use(express.json())
 
+app.options('/products/:id', cors())
+
 
 
 app.post("/registeruser", (req, res) => {
