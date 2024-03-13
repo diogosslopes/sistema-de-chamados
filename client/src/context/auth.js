@@ -65,7 +65,7 @@ function AuthProvider({ children }) {
     }, [])
 
 
-
+ 
 
     async function registerUser(value) {
         setLoadingAuth(true)
