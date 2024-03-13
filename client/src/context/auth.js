@@ -104,7 +104,7 @@ function AuthProvider({ children }) {
     async function logIn(value) {
         setLoadingAuth(true)
         
-        Axios.post("https://sistema-chamados-feature.vercel.app/login", {
+        Axios.post("/login", {
             email: value.login,
             password: value.password
         }).then((response) => {
