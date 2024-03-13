@@ -13,18 +13,18 @@ const db = mysql.createPool({
     database: "chamadosfacil"
 })
 
+app.options('/products/:id', cors())
 const PORT = process.env.PORT || 3001
 
 app.use(
     cors({
         credentials: true,
-        origin: '*',
+        origin: false,
         methods: ['GET', 'OPTIONS', 'PATCH', 'DELETE', 'POST', 'PUT'],
         allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version', 'Authorization']
     }))
 app.use(express.json())
 
-app.options('/products/:id', cors())
 
 
 
