@@ -64,7 +64,7 @@ function AuthProvider({ children }) {
         userLoged()
     }, [])
 
-
+ 
 
 
     async function registerUser(value) {
