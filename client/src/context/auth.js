@@ -65,13 +65,15 @@ function AuthProvider({ children }) {
     }, [])
 
 
+    const baseURL = "https://sistema-chamados-feature.vercel.app"
+    // const baseURL = "http://localhost:3001"
  
 
     async function registerUser(value) {
         setLoadingAuth(true)
         console.log(loggedIn)
 
-        Axios.post("https://sistema-chamados-feature.vercel.app/registeruser", {
+        Axios.post(`${baseURL}/registeruser`, {
             email: value.login,
             password: value.password,
             name: value.name
@@ -104,7 +106,7 @@ function AuthProvider({ children }) {
     async function logIn(value) {
         setLoadingAuth(true)
         
-        Axios.post("https://sistema-chamados-feature.vercel.app/login", {
+        Axios.post(`${baseURL}/login`, {
             email: value.login,
             password: value.password
         }).then((response) => {
@@ -114,7 +116,7 @@ function AuthProvider({ children }) {
                 setLoadingAuth(false)
             } else if(response.data) {
                 console.log(response.data)
-                Axios.post("https://sistema-chamados-feature.vercel.app/getUser", {
+                Axios.post(`${baseURL}/getUser`, {
                     email: value.login,
                     password: value.password
                 }).then((response)=>{
@@ -276,7 +278,7 @@ function AuthProvider({ children }) {
 
     return (
         <AuthContext.Provider value={{
-            signed: !!user, user, loading, registerUser, signOut, logIn, loadingAuth, storage, loggedIn
+            signed: !!user, user, baseURL, loading,  signOut, logIn, loadingAuth, storage, loggedIn
         }}>
             {children}
         </AuthContext.Provider>

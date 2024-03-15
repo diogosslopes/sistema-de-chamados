@@ -32,7 +32,7 @@ export default function Dashboard() {
   const resolveAfter3Sec = new Promise(resolve => setTimeout(resolve, 3000))
 
 
-  const { user } = useContext(AuthContext)
+  const { user, baseURL } = useContext(AuthContext)
   const [tasks, setTasks] = useState([])
   let list = []
   const [task, setTask] = useState('')
@@ -43,6 +43,8 @@ export default function Dashboard() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [isEmpty, setIsEmpty] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
+
+  // const baseURL = "http://localhost:3001"
 
   
   const [newTask, setNewTask] = useState({})
@@ -82,8 +84,7 @@ export default function Dashboard() {
   useEffect(() => {
 
     async function loadClients() {
-
-      Axios.get("http://localhost:3001/getUsers").then((response)=>{
+      Axios.get(`${baseURL}/getUsers`).then((response)=>{
         console.log(response.data)
         let list = []
         setClients(response.data)
@@ -135,10 +136,11 @@ export default function Dashboard() {
   async function getDocs() {
 
     setTasks([])
-    Axios.get("http://localhost:3001/getObsList").then((response) => {
+    Axios.get(`${baseURL}/getObsList`).then((response) => {
       // loadTasks(response.data)
+      console.log(response)
       newObsList = response.data
-      Axios.get("http://localhost:3001/getTasks").then((response) => {
+      Axios.get(`${baseURL}/getTasks`).then((response) => {
         // loadTasks(response.data)
         newTasks = response.data
         // loadTasks(newTasks, newObsList)
@@ -162,7 +164,7 @@ export default function Dashboard() {
   async function loadTasks(docs, obs) {
     
     const isTaksEmpty = docs.length === 0
-    console.log(isEmpty)
+    console.log(docs)
     
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
@@ -251,7 +253,7 @@ export default function Dashboard() {
       userEmail: user.email
     })
 
-    Axios.post("http://localhost:3001/registertask", {
+    Axios.post(`${baseURL}/registertask`, {
       client: client,
       subject: subject,
       priority: priority,
@@ -263,7 +265,7 @@ export default function Dashboard() {
       // taskImages: taskImagesList,
       userEmail: user.email
     }).then(() => {
-      Axios.post("http://localhost:3001/searchtask", {
+      Axios.post(`${baseURL}/searchtask`, {
         client: client,
         created: created,
         obs: obs,
@@ -389,14 +391,14 @@ export default function Dashboard() {
     let filterDocs = ""
 
     if (user.group === "admin") {
-      Axios.get("http://localhost:3001/getTasks").then((response)=>{
+      Axios.get(`${baseURL}/getTasks`).then((response)=>{
         setIsEmpty(false)
         setLoadingMore(false)
         const tasksDocs = response.data.filter((t) => t.type === e.target.value )
        loadTasks(tasksDocs, newObsList)
       })
     } else {
-      Axios.get("http://localhost:3001/getTasks").then((response)=>{
+      Axios.get(`${baseURL}/getTasks`).then((response)=>{
         const tasksDocs = response.data.filter((t) => t.type === e.target.value && user.email === t.userEmail )
         const obsDocs = newObsList.filter((o) => user.name === o.client)
         setIsEmpty(false)
@@ -432,7 +434,7 @@ export default function Dashboard() {
 
     console.log(doc)
 
-    Axios.post("http://localhost:3001/registerobs", {
+    Axios.post(`${baseURL}/registerobs`, {
       client: doc.client,
       created: doc.created,
       obs: doc.obs,
@@ -448,7 +450,7 @@ export default function Dashboard() {
     images.map((i)=>{
 
       console.log(i)
-      Axios.post("http://localhost:3001/registerImage", {
+      Axios.post(`${baseURL}/registerImage`, {
         client: doc.client,
         created: doc.created,
         image: i,
