@@ -25,7 +25,6 @@ app.use(cors({
 
 app.use(express.json())
 
-
 app.get("/", (req, res) =>{
     return res.json("Hello World")
 })
@@ -36,9 +35,12 @@ app.post("/registeruser", (req, res) => {
     const { adress } = req.body
     const { password } = req.body
 
+    console.log(req.body)
+
     let SQLINSERT = "INSERT INTO users(adress, email, name, password) VALUES(?,?,?,?)"
     let SQL = "select * from users where email = ?"
 
+ 
     db.query(SQL, [email, password], (err, result) => {
         if (err) {
             console.log(err)
