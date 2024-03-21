@@ -23,7 +23,7 @@ export default function Clients() {
         login: yup.string().required("Email é obrigatório").email("Digitie um e-mail válido")
     })
 
-    const { registerUser } = useContext(AuthContext)
+    const { registerUser, baseURL } = useContext(AuthContext)
     const [name, setName] = useState('')
     const [cnpj, setCnpj] = useState('')
     const [adress, setAdress] = useState('')
@@ -159,7 +159,7 @@ export default function Clients() {
 
 function newClient () {
  console.log("Cadastrado")
- Axios.post("http://localhost:3001/registeruser", {
+ Axios.post(`${baseURL}/registeruser`, {
     name: name,
     adress: adress, 
     email: login,

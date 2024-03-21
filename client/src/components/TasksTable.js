@@ -17,7 +17,7 @@ import Axios from "axios";
 
 export default function TasksTable({ tasks, order, getDoc, page }) {
 
-    const { user } = useContext(AuthContext)
+    const { user, baseURL } = useContext(AuthContext)
 
 
 
@@ -89,7 +89,7 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
         const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
         setConcluded(fullDate)
 
-        Axios.post("http://localhost:3001/completeTask", {
+        Axios.post(`${baseURL}/completeTask`, {
             client: task.client,
             subject: task.subject,
             priority: task.priority,
@@ -103,7 +103,7 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
             userEmail: task.userEmail,
             taskId: task.taskId
         }).then(() => {
-            Axios.put("http://localhost:3001/editTaskConcluded",{
+            Axios.put(`${baseURL}/editTaskConcluded`,{
                 taskId: task.taskId
             })            
             toast.success("Chamado finalizado!")

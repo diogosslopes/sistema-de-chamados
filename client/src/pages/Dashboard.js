@@ -74,7 +74,6 @@ export default function Dashboard() {
   let newObsList = []
 
 
-  console.log(user)
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(validation)
@@ -85,7 +84,6 @@ export default function Dashboard() {
 
     async function loadClients() {
       Axios.get(`${baseURL}/getUsers`).then((response)=>{
-        console.log(response.data)
         let list = []
         setClients(response.data)
 
@@ -138,7 +136,6 @@ export default function Dashboard() {
     setTasks([])
     Axios.get(`${baseURL}/getObsList`).then((response) => {
       // loadTasks(response.data)
-      console.log(response)
       newObsList = response.data
       Axios.get(`${baseURL}/getTasks`).then((response) => {
         // loadTasks(response.data)
@@ -164,7 +161,6 @@ export default function Dashboard() {
   async function loadTasks(docs, obs) {
     
     const isTaksEmpty = docs.length === 0
-    console.log(docs)
     
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
@@ -184,7 +180,6 @@ export default function Dashboard() {
         })
         obsList = []
       })
-      console.log(list)
       
       
       const lastDoc = docs[docs.length - 1]
@@ -230,14 +225,11 @@ export default function Dashboard() {
           await firebase.storage().ref(`task-images/${user.id}`)
             .child(images[i].name).getDownloadURL()
             .then(async (url) => {
-              console.log(url)
               taskImagesList.push(url)
             })
           })
-          console.log(images[i].name)
           
         }
-        console.log(taskImages)
         setTaskImages(taskImagesList)
     
     setNewTask({
@@ -355,7 +347,6 @@ export default function Dashboard() {
 
   function showForm(e) {
     e.preventDefault()
-    console.log(clients)
     const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
     setCreated(fullDate)
 
@@ -383,7 +374,6 @@ export default function Dashboard() {
 
   async function filter(e) {
 
-    console.log(tasks)
     e.preventDefault()
     setLoading(true)
     setTasks('')
@@ -411,7 +401,6 @@ export default function Dashboard() {
     }
 
 
-    console.log(filterDocs)
     // loadTasks(filterDocs, newObsList)
   }
 
@@ -433,7 +422,6 @@ export default function Dashboard() {
   async function saveObs(doc) {
 
     console.log(doc)
-
     Axios.post(`${baseURL}/registerobs`, {
       client: doc.client,
       created: doc.created,
@@ -446,10 +434,8 @@ export default function Dashboard() {
 
   async function saveImages(doc, images) {
 
-    console.log(images)
     images.map((i)=>{
 
-      console.log(i)
       Axios.post(`${baseURL}/registerImage`, {
         client: doc.client,
         created: doc.created,

@@ -22,7 +22,7 @@ const validation = yup.object().shape({
 
 export default function Modal({ tipo, close, item, getDoc }) {
 
-  const { user } = useContext(AuthContext)
+  const { user, baseURL } = useContext(AuthContext)
   const [newTask, setNewTask] = useState({})
   const [client, setClient] = useState(item.client)
   const [task, setTask] = useState()
@@ -70,7 +70,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
     async function loadClients() {
 
-      Axios.get("http://localhost:3001/getUsers").then((response)=>{
+      Axios.get(`${baseURL}/getUsers`).then((response)=>{
         let list = []
         setClients(response.data)
 
@@ -113,13 +113,13 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   useEffect(()=>{
     
-    Axios.post("http://localhost:3001/searchObs",{
+    Axios.post(`${baseURL}/searchObs`,{
       taskid: item.taskId
     }).then((response)=>{
       setObsList(response.data)
     })
 
-    Axios.post("http://localhost:3001/searchImages",{
+    Axios.post(`${baseURL}/searchImages`,{
       taskid: item.taskId
     }).then((response)=>{
       setTaskImages(response.data)
@@ -158,7 +158,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
     console.log(client)
 
 
-    Axios.put("http://localhost:3001/editTask",{
+    Axios.put(`${baseURL}/editTask`,{
       taskId: item.taskId,
       userId: client,
       client: client, 
@@ -202,14 +202,14 @@ export default function Modal({ tipo, close, item, getDoc }) {
       setIsObsOk(true)
     }
 
-
+    console.log(item)
     fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
     // setNewList('')
     const newOBS = {
       client: user.name,
       obs: newObs,
       created: fullDate,
-      taskid: item.id
+      taskid: item.taskId
     }
 
     setObsList([
@@ -230,7 +230,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
     // }
     // obsList.push(newObs)
 
-    Axios.post("http://localhost:3001/registerobs", {
+    Axios.post(`${baseURL}/registerobs`, {
       client: newOBS.client,
       created: newOBS.created,
       obs: newOBS.obs,

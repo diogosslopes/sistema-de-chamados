@@ -17,15 +17,15 @@ import  Axios  from "axios";
 
 export default function DeleteModal({ id, close, bd, getDoc }) {
 
-  const { getDocs, setTasks } = useContext(AuthContext)
+  const { getDocs, setTasks, baseURL } = useContext(AuthContext)
 
 
 
   async function deleteItem() {
 
     console.log(id)
-    Axios.delete(`http://localhost:3001/deleteobs/${id}`).then((response)=>{
-      Axios.delete(`http://localhost:3001/deletetask/${id}`).then((response)=>{
+    Axios.delete(`${baseURL}/updateUser/deleteobs/${id}`).then((response)=>{
+      Axios.delete(`${baseURL}/updateUser/deletetask/${id}`).then((response)=>{
         close()
         console.log(response)
         toast.success("Deletado com sucesso")

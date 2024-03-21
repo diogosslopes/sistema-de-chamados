@@ -30,7 +30,7 @@ export default function CompletedTasks() {
 
   const resolveAfter3Sec = new Promise(resolve => setTimeout(resolve, 3000))
 
-  const { user } = useContext(AuthContext)
+  const { user, baseURL } = useContext(AuthContext)
   const [tasks, setTasks] = useState([])
   let list = []
   let obsList = []
@@ -106,10 +106,10 @@ export default function CompletedTasks() {
 
 
     setTasks([])
-    Axios.get("http://localhost:3001/getCompletedTasks").then((response) => {
+    Axios.get(`${baseURL}/getCompletedTasks`).then((response) => {
       // loadTasks(response.data)
       newTasks = response.data
-      Axios.get("http://localhost:3001/getObsList").then((response) => {
+      Axios.get(`${baseURL}/getObsList`).then((response) => {
         // loadTasks(response.data)
         newObsList = response.data
         console.log(response.data)

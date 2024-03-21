@@ -65,14 +65,15 @@ function AuthProvider({ children }) {
     }, [])
 
 
-    const baseURL = "https://sistema-chamados-feature.vercel.app"
+    const baseURL = "https://server-three-navy.vercel.app"
     // const baseURL = "http://localhost:3001"
  
 
     async function registerUser(value) {
         setLoadingAuth(true)
         console.log(loggedIn)
-
+        console.log(value.name)
+        
         Axios.post(`${baseURL}/registeruser`, {
             email: value.login,
             password: value.password,
@@ -278,7 +279,7 @@ function AuthProvider({ children }) {
 
     return (
         <AuthContext.Provider value={{
-            signed: !!user, user, baseURL, loading,  signOut, logIn, loadingAuth, storage, loggedIn
+            signed: !!user, user, baseURL, loading, registerUser, signOut, logIn, loadingAuth, storage, loggedIn
         }}>
             {children}
         </AuthContext.Provider>

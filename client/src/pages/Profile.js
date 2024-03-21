@@ -68,7 +68,7 @@ export default function Profile() {
 
 
 
-    const { user, storage, setUser } = useContext(AuthContext)
+    const { user, storage, setUser, baseURL } = useContext(AuthContext)
     const [name, setName] = useState(user && user.name)
     const [editingName, setEditingName] = useState(user && user.name)
     const [email, setEmail] = useState(user && user.email)
@@ -98,7 +98,7 @@ export default function Profile() {
         if (newAvatar === null && name !== '') {
             console.log(user, name)
 
-            Axios.post("http://localhost:3001/updateUser", {
+            Axios.post(`${baseURL}/updateUser`, {
                 clientId: user.id,
                 name: name
             
@@ -154,7 +154,7 @@ export default function Profile() {
                         console.log(userData.id)
                         storage(userData)
 
-                        Axios.post("http://localhost:3001/updateAvatar", {
+                        Axios.post(`${baseURL}/updateAvatar`, {
                             clientId: userData.id,
                             avatar: userData.avatar
                         })
