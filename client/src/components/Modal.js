@@ -76,23 +76,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
       })
 
-      // await firebase.firestore().collection('clients').orderBy('name', 'asc').get()
-      //   .then((snapshot) => {
-      //     let list = []
-
-      //     snapshot.forEach((doc) => {
-      //       list.push({
-      //         id: doc.id,
-      //         client: doc.data().name
-      //       })
-      //     })
-      //     setClients(list)
-
-      //   })
-      //   .catch((error) => {
-      //     console.log(error)
-      //   })
-
     }
 
     loadClients()
@@ -144,7 +127,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
   }
 
   function sendEmail() {
-    emailjs.send("service_lv8kn8j", "template_shcpe8x", templateParams, "BrAq6Nxcac_3F_GXo")
+    emailjs.send("service_uw92p6x", "template_shcpe8x", templateParams, "BrAq6Nxcac_3F_GXo")
       .then((response) => {
         console.log("Email enviado ", response.status, response.text)
       })
@@ -174,23 +157,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
     
 
-    // await firebase.firestore().collection('tasks').doc(item.id).update({
-    //   client: client,
-    //   priority: priority,
-    //   subject: subject,
-    //   status: status,
-    //   type: taskType,
-    //   obs: obsList
-    // })
-    //   .then(() => {
-    //     toast.success("Edição realizada com sucesso !")
-    //     sendEmail()
-    //   })
-    //   .catch((error) => {
-    //     toast.error("Erro ao realizar edição !")
-    //     console.log(error)
-    //   })
-
   }
 
   function saveObs(newObs) {
@@ -219,16 +185,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
    
 
-    // obsList.push(newOBS)
-    // saveTask()
-
-    // const newObs = {
-    //   client: doc.client,
-    //   created: doc.created,
-    //   obs: doc.obs,
-    //   taskid: doc.taskId
-    // }
-    // obsList.push(newObs)
+  
 
     Axios.post(`${baseURL}/registerobs`, {
       client: newOBS.client,
@@ -238,6 +195,8 @@ export default function Modal({ tipo, close, item, getDoc }) {
     }).then(()=>{
       setObs("")
       toast.success("Observação salva")
+      sendEmail()
+      close()
     })
 
 

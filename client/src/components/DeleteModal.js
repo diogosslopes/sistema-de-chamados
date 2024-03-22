@@ -20,34 +20,35 @@ export default function DeleteModal({ id, close, bd, getDoc }) {
   const { getDocs, setTasks, baseURL } = useContext(AuthContext)
 
   console.log(id)
+  console.log(bd)
 
   async function deleteItem() {
 
-    console.log(id)
-    await Axios.delete(`${baseURL}/deleteobs/${id}`).then((response) => {
-      Axios.delete(`${baseURL}/deletetask/${id}`).then((response) => {
+    if (bd === 'tasks') {
+      console.log(id)
+      await Axios.delete(`${baseURL}/deleteobs/${id}`).then((response) => {
+        Axios.delete(`${baseURL}/deletetask/${id}`).then((response) => {
+          close()
+          console.log(response)
+          toast.success("Deletado com sucesso")
+          getDoc()
+        }).catch((error) => {
+          toast.error("Erro ao excluir !")
+        })
+
+      })
+    } else if (bd === 'clients') {
+      console.log(id)
+      Axios.delete(`${baseURL}/deleteClient/${id}`).then((response) => {
+          console.log(response)
+          toast.success("Deletado com sucesso")
         close()
-        console.log(response)
-        toast.success("Deletado com sucesso")
-        getDoc()
-      }).catch((error) => {
-        toast.error("Erro ao excluir !")
       })
 
-    })
+    }
 
-    // await firebase.firestore().collection(bd).doc(id).delete()
-    //   .then(() => {
+    console.log(id)
 
-    //     // getDoc()
-    //     close()
-    //     setTasks('')
-    //     getDocs()
-    //     // window.location.reload()
-    //   })
-    //   .catch((error) => {
-    //     console.log(error)
-    //   })
   }
 
 

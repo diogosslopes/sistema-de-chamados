@@ -72,27 +72,7 @@ export default function CompletedTasks() {
 
   useEffect(() => {
 
-    // async function loadClients() {
-    //   await firebase.firestore().collection('clients').get()
-    //     .then((snapshot) => {
-    //       let list = []
 
-    //       snapshot.forEach((doc) => {
-    //         list.push({
-    //           id: doc.id,
-    //           client: doc.data().name
-    //         })
-    //       })
-    //       setClients(list)
-
-    //     })
-    //     .catch((error) => {
-    //       console.log(error)
-    //     })
-
-    // }
-
-    // loadClients()
     getDocs()
 
     if (user.group === 'admin') {

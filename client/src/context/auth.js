@@ -77,7 +77,8 @@ function AuthProvider({ children }) {
         Axios.post(`${baseURL}/registeruser`, {
             email: value.login,
             password: value.password,
-            name: value.name
+            name: value.name,
+            adress: value.adress
         }).then((response) => {
             if (response.data.msg === 'cadastrado') {
                 toast.error("Email já cadastrado!!!")
@@ -91,10 +92,10 @@ function AuthProvider({ children }) {
                 group: null
             }
             toast.success("Cadastrado com sucesso!")
-            storage(userData)
-            setUser(userData)
+            // storage(userData)
+            // setUser(userData)
             setLoadingAuth(false)
-            setLoggedIn(true)
+            // setLoggedIn(true)
         }).catch((error) => {
             setLoggedIn(false)
             console.log(error)

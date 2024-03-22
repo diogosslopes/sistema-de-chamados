@@ -67,7 +67,7 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
         setType(t)
         setShowModal(!showModal)
         if (showModal) {
-            toast.warning("Ação cancelada!")
+            
         }
         if (t === 'edit') {
             setTask(item)

@@ -56,16 +56,24 @@ export default function Clients() {
                 adress: adress
             }).then(() => {
                 toast.success("Editado com sucesso")
-
+                showForm()
             })
         } else {
-            
-            newClient()
+
+            const newClient = {
+                login: login,
+                password: password,
+                name: name,
+                adress: adress
+            }
+
+            registerUser(newClient)
+            showForm()
+            console.log(newClient)
         }
 
 
     }
-
 
 
     useEffect(() => {
@@ -75,28 +83,23 @@ export default function Clients() {
 
             await Axios.get(`${baseURL}/getUsers`).then((response) => {
                 let list = []
-                setClients(response.data)
+                console.log(response.data)
+                response.data.forEach((doc) => {
+                    list.push({
+                        id: doc.clientId,
+                        name: doc.name,
+                        cnpj: doc.cnpj,
+                        adress: doc.adress,
+                        email: doc.email
+                    })
 
-            })
-
-            console.log(clients)
-
-            // const clients = await firebase.firestore().collection('clients').orderBy("name").get()
-
-            clients.forEach((doc) => {
-                list.push({
-                    id: doc.clientId,
-                    name: doc.name,
-                    cnpj: doc.cnpj,
-                    adress: doc.adress,
-                    email: doc.email
                 })
-
+                setClientList(list)
             })
-            setClientList(list)
+
         }
         loadClients()
-    }, [])
+    }, [deleteItem])
 
 
     function showForm() {
@@ -114,9 +117,7 @@ export default function Clients() {
         }
     }
 
-
-
-    function editingClient(c) { 
+    function editingClient(c) {
 
         console.log(c)
         setEditing(true)
@@ -130,27 +131,12 @@ export default function Clients() {
 
     function deleteItem(id) {
         setShowModal(!showModal)
+        console.log(id)
         setUnitId(id)
     }
 
 
-
-
     //--------------------------------------------------- MYSQL ---------------------------------------------------------------------------------------
-
-    function newClient() {
-        console.log("Cadastrado")
-        Axios.post(`${baseURL}/registeruser`, {
-            name: name,
-            adress: adress,
-            email: login,
-            password: password
-        }).then((response) => {
-            console.log(response)
-        })
-    }
-
-
 
 
     return (
@@ -200,7 +186,7 @@ export default function Clients() {
                 })}
             </div>
             {showModal && (
-                <DeleteModal close={deleteItem} id={unitId} bd={"clients"} />
+                <DeleteModal close={deleteItem} id={unitId} bd={"clients"} loadclients={""} />
             )}
         </div>
     )

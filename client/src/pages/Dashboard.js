@@ -189,7 +189,8 @@ export default function Dashboard() {
   }
   
   function sendEmail() {
-    emailjs.send("service_lv8kn8j", "template_a9s048m", templateParams, "BrAq6Nxcac_3F_GXo")
+    console.log(templateParams)
+    emailjs.send("service_uw92p6x", "template_a9s048m", templateParams, "BrAq6Nxcac_3F_GXo")
     .then((response) => {
       console.log("Email enviado ", response.status, response.text)
     })
@@ -289,7 +290,7 @@ export default function Dashboard() {
     // saveImages(images)
     closeForm()
     getDocs()
-    // sendEmail()
+    sendEmail()
 
 
   }
