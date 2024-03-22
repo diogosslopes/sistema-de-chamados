@@ -83,28 +83,11 @@ export default function Dashboard() {
   useEffect(() => {
 
     async function loadClients() {
-      Axios.get(`${baseURL}/getUsers`).then((response)=>{
+     await Axios.get(`${baseURL}/getUsers`).then((response)=>{
         let list = []
         setClients(response.data)
 
       })
-
-      // await firebase.firestore().collection('clients').orderBy('name', 'asc').get()
-      //   .then((snapshot) => {
-      //     let list = []
-
-      //     snapshot.forEach((doc) => {
-      //       list.push({
-      //         id: doc.id,
-      //         client: doc.data().name
-      //       })
-      //     })
-      //     setClients(list)
-
-      //   })
-      //   .catch((error) => {
-      //     console.log(error)
-      //   })
 
       }
       
@@ -134,7 +117,7 @@ export default function Dashboard() {
   async function getDocs() {
 
     setTasks([])
-    Axios.get(`${baseURL}/getObsList`).then((response) => {
+   await Axios.get(`${baseURL}/getObsList`).then((response) => {
       // loadTasks(response.data)
       newObsList = response.data
       Axios.get(`${baseURL}/getTasks`).then((response) => {
@@ -245,7 +228,7 @@ export default function Dashboard() {
       userEmail: user.email
     })
 
-    Axios.post(`${baseURL}/registertask`, {
+   await Axios.post(`${baseURL}/registertask`, {
       client: client,
       subject: subject,
       priority: priority,
@@ -256,8 +239,8 @@ export default function Dashboard() {
       userId: user.id,
       // taskImages: taskImagesList,
       userEmail: user.email
-    }).then(() => {
-      Axios.post(`${baseURL}/searchtask`, {
+    }).then( async () => {
+    await  Axios.post(`${baseURL}/searchtask`, {
         client: client,
         created: created,
         obs: obs,
@@ -381,14 +364,14 @@ export default function Dashboard() {
     let filterDocs = ""
 
     if (user.group === "admin") {
-      Axios.get(`${baseURL}/getTasks`).then((response)=>{
+    await  Axios.get(`${baseURL}/getTasks`).then((response)=>{
         setIsEmpty(false)
         setLoadingMore(false)
         const tasksDocs = response.data.filter((t) => t.type === e.target.value )
        loadTasks(tasksDocs, newObsList)
       })
     } else {
-      Axios.get(`${baseURL}/getTasks`).then((response)=>{
+    await  Axios.get(`${baseURL}/getTasks`).then((response)=>{
         const tasksDocs = response.data.filter((t) => t.type === e.target.value && user.email === t.userEmail )
         const obsDocs = newObsList.filter((o) => user.name === o.client)
         setIsEmpty(false)

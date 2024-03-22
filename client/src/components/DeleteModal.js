@@ -9,7 +9,7 @@ import * as yup from "yup"
 import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../context/auth";
-import  Axios  from "axios";
+import Axios from "axios";
 
 
 
@@ -19,26 +19,26 @@ export default function DeleteModal({ id, close, bd, getDoc }) {
 
   const { getDocs, setTasks, baseURL } = useContext(AuthContext)
 
-
+  console.log(id)
 
   async function deleteItem() {
 
     console.log(id)
-    Axios.delete(`${baseURL}/updateUser/deleteobs/${id}`).then((response)=>{
-      Axios.delete(`${baseURL}/updateUser/deletetask/${id}`).then((response)=>{
+    await Axios.delete(`${baseURL}/deleteobs/${id}`).then((response) => {
+      Axios.delete(`${baseURL}/deletetask/${id}`).then((response) => {
         close()
         console.log(response)
         toast.success("Deletado com sucesso")
         getDoc()
-      }).catch((error)=>{
-         toast.error("Erro ao excluir !")
+      }).catch((error) => {
+        toast.error("Erro ao excluir !")
       })
 
     })
 
     // await firebase.firestore().collection(bd).doc(id).delete()
     //   .then(() => {
-        
+
     //     // getDoc()
     //     close()
     //     setTasks('')

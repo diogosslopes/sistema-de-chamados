@@ -24,12 +24,14 @@ export default function Clients() {
     })
 
     const { registerUser, baseURL } = useContext(AuthContext)
+    const [clientId, setClientId] = useState('')
     const [name, setName] = useState('')
     const [cnpj, setCnpj] = useState('')
     const [adress, setAdress] = useState('')
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
     const [clientList, setClientList] = useState([])
+    const [clients, setClients] = useState([])
     const [disable, setDisable] = useState(false)
     const [editing, setEditing] = useState()
     const [showModal, setShowModal] = useState(false)
@@ -43,62 +45,58 @@ export default function Clients() {
         resolver: yupResolver(validation)
     })
 
-    const save = value => {
+    const save = async value => {
 
 
-        // if (editing === true) {
-        //     editClient()
-        // } else {
-        //     firebase.auth().createUserWithEmailAndPassword(value.login, value.password)
-        //     .then(() => {
-        //         console.log("Sucesso")
-        //         })
-        //         .catch((error) => {
-        //             console.log(error)
-        //         })
-        //     firebase.auth().createUserWithEmailAndPassword(value.login, value.password)
-        //         .then(async (data) => {
-        //             let uid = data.user.uid
-        //             newClient()
-        //             await firebase.firestore().collection("users")
-        //                 .doc(uid).set({
-        //                     id: uid,
-        //                     name: value.name,
-        //                     email: data.user.email,
-        //                     avatar: null,
-        //                     group: null
-        //                 })
-        //         }).catch((error) => {
-        //             console.log(error)
-        //         })
-        // }
+        if (editing === true) {
+            console.log(clientId)
+            await Axios.put(`${baseURL}/editClient`, {
+                clientId: clientId,
+                name: name,
+                adress: adress
+            }).then(() => {
+                toast.success("Editado com sucesso")
 
-        newClient()
+            })
+        } else {
+            
+            newClient()
+        }
+
 
     }
 
 
 
     useEffect(() => {
+
+
         async function loadClients() {
 
+            await Axios.get(`${baseURL}/getUsers`).then((response) => {
+                let list = []
+                setClients(response.data)
 
-            const clients = await firebase.firestore().collection('clients').orderBy("name").get()
+            })
+
+            console.log(clients)
+
+            // const clients = await firebase.firestore().collection('clients').orderBy("name").get()
 
             clients.forEach((doc) => {
                 list.push({
-                    id: doc.id,
-                    name: doc.data().name,
-                    cnpj: doc.data().cnpj,
-                    adress: doc.data().adress,
-                    email: doc.data().email
+                    id: doc.clientId,
+                    name: doc.name,
+                    cnpj: doc.cnpj,
+                    adress: doc.adress,
+                    email: doc.email
                 })
 
             })
             setClientList(list)
         }
         loadClients()
-    }, [newClient])
+    }, [])
 
 
     function showForm() {
@@ -116,33 +114,16 @@ export default function Clients() {
         }
     }
 
-    // async function newClient(e) {
-    //     // e.preventDefault()
-    //     await firebase.firestore().collection('clients').add({
-    //         name: name,
-    //         cnpj: cnpj,
-    //         adress: adress,
-    //         email: login
-    //     })
-    //         .then(() => {
-    //             toast.success("Cliente cadastrado com sucesso !")
-    //             showForm()
-    //         })
-    //         .catch((error) => {
-    //             toast.error("Erro ao cadastrar cliente")
-    //             console.log(error)
-    //         })
-    // }
 
 
-    async function editClient() {
-        toast.success("Editado com sucesso")
-    }
-    function editingClient(c) {
+    function editingClient(c) { 
+
+        console.log(c)
         setEditing(true)
         setName(c.name)
         setAdress(c.adress)
         setLogin(c.email)
+        setClientId(c.id)
         showForm()
         // toast.success("Editado com sucesso")
     }
@@ -155,19 +136,19 @@ export default function Clients() {
 
 
 
-//--------------------------------------------------- MYSQL ---------------------------------------------------------------------------------------
+    //--------------------------------------------------- MYSQL ---------------------------------------------------------------------------------------
 
-function newClient () {
- console.log("Cadastrado")
- Axios.post(`${baseURL}/registeruser`, {
-    name: name,
-    adress: adress, 
-    email: login,
-    password: password
-  }).then((response)=>{
-    console.log(response)
-  })
-}
+    function newClient() {
+        console.log("Cadastrado")
+        Axios.post(`${baseURL}/registeruser`, {
+            name: name,
+            adress: adress,
+            email: login,
+            password: password
+        }).then((response) => {
+            console.log(response)
+        })
+    }
 
 
 

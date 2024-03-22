@@ -72,27 +72,27 @@ export default function CompletedTasks() {
 
   useEffect(() => {
 
-    async function loadClients() {
-      await firebase.firestore().collection('clients').get()
-        .then((snapshot) => {
-          let list = []
+    // async function loadClients() {
+    //   await firebase.firestore().collection('clients').get()
+    //     .then((snapshot) => {
+    //       let list = []
 
-          snapshot.forEach((doc) => {
-            list.push({
-              id: doc.id,
-              client: doc.data().name
-            })
-          })
-          setClients(list)
+    //       snapshot.forEach((doc) => {
+    //         list.push({
+    //           id: doc.id,
+    //           client: doc.data().name
+    //         })
+    //       })
+    //       setClients(list)
 
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+    //     })
+    //     .catch((error) => {
+    //       console.log(error)
+    //     })
 
-    }
+    // }
 
-    loadClients()
+    // loadClients()
     getDocs()
 
     if (user.group === 'admin') {
@@ -116,13 +116,13 @@ export default function CompletedTasks() {
         // loadTasks(newTasks, newObsList)
         if (user.group === "admin") {
           loadTasks(newTasks, newObsList)
-          
+
         } else {
           const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
           const obsDocs = newObsList.filter((o) => user.name === o.client)
           loadTasks(tasksDocs, obsDocs)
-          
-    
+
+
         }
       })
     })
@@ -136,7 +136,7 @@ export default function CompletedTasks() {
 
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
-        obsList = obs.filter((o) => doc.taskId === o.taskid )
+        obsList = obs.filter((o) => doc.taskId === o.taskid)
         list.push({
           id: doc.id,
           client: doc.client,
@@ -154,7 +154,7 @@ export default function CompletedTasks() {
         console.log(list)
       })
 
-      
+
       const lastDoc = docs[docs.length - 1]
       setLastTask(lastDoc)
       setTasks(tasks => [...tasks, ...list])
@@ -244,17 +244,17 @@ export default function CompletedTasks() {
     let filterDocs = ""
 
     if (user.group === "admin") {
-      Axios.post("http://localhost:3001/filtertask", {
+      Axios.post(`${baseURL}/filtertask`, {
         type: e.target.value
-      }).then((response)=>{
+      }).then((response) => {
         setIsEmpty(false)
         setLoadingMore(false)
-       loadTasks(response.data, newObsList)
+        loadTasks(response.data, newObsList)
       })
     } else {
-      Axios.post("http://localhost:3001/filtertask", {
+      Axios.post(`${baseURL}/filtertask`, {
         type: e.target.value
-      }).then((response)=>{
+      }).then((response) => {
         const tasksDocs = response.data.filter((t) => user.email === t.userEmail)
         const obsDocs = newObsList.filter((o) => user.name === o.client)
         setIsEmpty(false)
@@ -262,22 +262,32 @@ export default function CompletedTasks() {
         loadTasks(tasksDocs, obsDocs)
       })
 
-      
+
 
     }
 
 
-    console.log(filterDocs)
-    // loadTasks(filterDocs, newObsList)
   }
 
-  async function orderBy(e){
-    const order = e
-
+  async function orderBy(order) {
+    console.log(order)
     setTasks('')
-    const docs = await firebase.firestore().collection('completedtasks').orderBy(order, 'asc').get()
-    await loadTasks(docs)
-    console.log(e)
+
+    Axios.post(`${baseURL}/orderBy`, {
+      order: order
+    }).then((response) => {
+      const tasksDocs = response.data
+
+      console.log(tasksDocs)
+      setIsEmpty(false)
+      setLoadingMore(false)
+      loadTasks(tasksDocs, newObsList)
+    })
+
+    // const docs = await firebase.firestore().collection('completedtasks').orderBy(order, 'asc').get()
+    // await loadTasks(docs)
+    // console.log(e)
+
   }
 
 
@@ -316,7 +326,7 @@ export default function CompletedTasks() {
                 <option>TI</option>
                 <option>Estrutura</option>
               </select>
-              
+
             </div>
             <div className="subject_select">
               <label>Assunto</label>
@@ -397,7 +407,7 @@ export default function CompletedTasks() {
           :
           <div>
             <div className="new-task more-task">
-              
+
               <div className="filter-select">
                 <label>Filtrar</label>
                 <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { filter(e) }}>

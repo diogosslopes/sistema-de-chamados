@@ -89,7 +89,7 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
         const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
         setConcluded(fullDate)
 
-        Axios.post(`${baseURL}/completeTask`, {
+      await  Axios.post(`${baseURL}/completeTask`, {
             client: task.client,
             subject: task.subject,
             priority: task.priority,
@@ -117,13 +117,13 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
             <table className="table-tasks">
                 <thead>
                     <tr className="table-head">
-                        <th scope="col" onClick={() => order('client')}>Cliente</th>
-                        <th scope="col" onClick={() => order('subject')}>Assunto</th>
-                        <th scope="col" onClick={() => order('priority')}>Prioridade</th>
-                        <th scope="col" onClick={() => order('status')}>Status</th>
-                        <th scope="col" onClick={() => order('created')}>Criado em</th>
+                        <th scope="col" accessKey='client'  onClick={(e) => order(e.target.accessKey)}>Cliente</th>
+                        <th scope="col" onClick={() => order('subject', 'completedtask')}>Assunto</th>
+                        <th scope="col" onClick={() => order('priority', 'completedtask')}>Prioridade</th>
+                        <th scope="col" onClick={() => order('status', 'completedtask')}>Status</th>
+                        <th scope="col" onClick={() => order('created', 'completedtask')}>Criado em</th>
                         {page === 'completedtasks' &&
-                            <th scope="col" onClick={() => order('concluded')}>Concluido em</th>
+                            <th scope="col" onClick={() => order('concluded', 'completedtask')}>Concluido em</th>
                         }
                         <th scope="col">#</th>
                     </tr>
