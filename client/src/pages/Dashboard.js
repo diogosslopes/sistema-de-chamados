@@ -169,6 +169,7 @@ export default function Dashboard() {
       setLastTask(lastDoc)
       setTasks(tasks => [...tasks, ...list])
       setLoading(false)
+      console.log(lastDoc)
       
     } else {
       setIsEmpty(true)
@@ -297,24 +298,37 @@ export default function Dashboard() {
 
   async function moreTasks() {
 
+    console.log(lastTask.taskId)
+
     setLoadingMore(true)
 
-    if (selectedType !== "" && isAdmin === false) {
-      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .where("type", "==", selectedType).limit('10').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    } else if (selectedType === "" && isAdmin === false) {
-      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .limit('10').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    } else if (selectedType !== "" && isAdmin === true) {
-      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("type", "==", selectedType)
-        .limit('10').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    } else if (selectedType === "" && isAdmin === true) {
-      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('10').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    }
+    await Axios.get(`${baseURL}/getObsList`).then((response) => {
+      // loadTasks(response.data)
+      newObsList = response.data
+      Axios.post(`${baseURL}/getMoreTasks`, {
+        taskId: lastTask.taskId
+      }).then((response) => {
+        // loadTasks(response.data)
+        newTasks = response.data
+        // loadTasks(newTasks, newObsList)
+        console.log(response.data)
+
+        if(response.data.length >0){
+          if (user.group === "admin") {
+            setTasks("")
+            loadTasks(newTasks, newObsList)
+            
+          } else {
+            setTasks("")
+            const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
+            const obsDocs = newObsList.filter((o) => user.name === o.client)
+            loadTasks(tasksDocs, obsDocs)
+           }
+        }else{
+          setLoadingMore(false)
+        }
+      })
+    })
 
 
   }
@@ -560,7 +574,7 @@ export default function Dashboard() {
             <TasksTable tasks={tasks} order={orderBy} getDoc={getDocs} disable='true' />
             {loadingMore && <h3>Carregando...</h3>}
 
-            {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Carregar Mais</button>}
+            {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Proxima Página</button>}
             <button className="button-hover" onClick={(e) => TasksReport(tasks)}>Imprimir</button>
 
           </div>

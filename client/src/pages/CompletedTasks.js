@@ -152,26 +152,37 @@ export default function CompletedTasks() {
 
   async function moreTasks() {
 
+    console.log(lastTask.taskId)
+
     setLoadingMore(true)
 
-    if (selectedType !== "" && isAdmin === false) {
-      console.log(selectedType)
-      const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .where("type", "==", selectedType).limit('10').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    } else if (selectedType === "" && isAdmin === false) {
-      console.log(selectedType)
-      const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .limit('10').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    } else if (selectedType !== "" && isAdmin === true) {
-      const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("type", "==", selectedType)
-        .limit('10').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    } else if (selectedType === "" && isAdmin === true) {
-      const newDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').limit('10').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    }
+    await Axios.get(`${baseURL}/getObsList`).then((response) => {
+      // loadTasks(response.data)
+      newObsList = response.data
+      Axios.post(`${baseURL}/getMoreCompletedTasks`, {
+        taskId: lastTask.taskId
+      }).then((response) => {
+        // loadTasks(response.data)
+        newTasks = response.data
+        // loadTasks(newTasks, newObsList)
+        console.log(response.data)
+
+        if(response.data.length >0){
+          if (user.group === "admin") {
+            setTasks("")
+            loadTasks(newTasks, newObsList)
+            
+          } else {
+            setTasks("")
+            const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
+            const obsDocs = newObsList.filter((o) => user.name === o.client)
+            loadTasks(tasksDocs, obsDocs)
+           }
+        }else{
+          setLoadingMore(false)
+        }
+      })
+    })
 
 
   }
@@ -400,7 +411,7 @@ export default function CompletedTasks() {
             <TasksTable tasks={tasks} order={orderBy} page={'completedtasks'} />
             {loadingMore && <h3>Carregando...</h3>}
 
-            {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Carregar Mais</button>}
+            {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Proxima Página</button>}
 
           </div>
         }
