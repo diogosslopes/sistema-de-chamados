@@ -40,8 +40,10 @@ export default function Dashboard() {
   const [showModal, setShowModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [lastTask, setLastTask] = useState()
+  const [firstTask, setFirstTask] = useState()
   const [loadingMore, setLoadingMore] = useState(false)
   const [isEmpty, setIsEmpty] = useState(false)
+  const [firstPage, setFirstPage] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
 
   // const baseURL = "http://localhost:3001"
@@ -142,6 +144,10 @@ export default function Dashboard() {
   }
 
   async function loadTasks(docs, obs) {
+
+    if(docs.length < 2){
+      setIsEmpty(true)
+    }
     
     const isTaksEmpty = docs.length === 0
     
@@ -167,9 +173,10 @@ export default function Dashboard() {
       
       const lastDoc = docs[docs.length - 1]
       setLastTask(lastDoc)
+      setFirstTask(docs[0])
       setTasks(tasks => [...tasks, ...list])
       setLoading(false)
-      console.log(lastDoc)
+      console.log(docs[0])
       
     } else {
       setIsEmpty(true)
@@ -196,8 +203,7 @@ export default function Dashboard() {
       console.log("Email enviado ", response.status, response.text)
     })
   }
-  
-  
+    
   async function saveTask(e) {
     
     let taskImagesList = []
@@ -296,16 +302,14 @@ export default function Dashboard() {
 
   }
 
-  async function moreTasks() {
-
-    console.log(lastTask.taskId)
+  async function nextTasks() {
 
     setLoadingMore(true)
 
     await Axios.get(`${baseURL}/getObsList`).then((response) => {
       // loadTasks(response.data)
       newObsList = response.data
-      Axios.post(`${baseURL}/getMoreTasks`, {
+      Axios.post(`${baseURL}/getNextTasks`, {
         taskId: lastTask.taskId
       }).then((response) => {
         // loadTasks(response.data)
@@ -317,15 +321,61 @@ export default function Dashboard() {
           if (user.group === "admin") {
             setTasks("")
             loadTasks(newTasks, newObsList)
+            setFirstPage(false)
             
           } else {
             setTasks("")
             const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
             const obsDocs = newObsList.filter((o) => user.name === o.client)
             loadTasks(tasksDocs, obsDocs)
+            setFirstPage(false)
            }
         }else{
           setLoadingMore(false)
+          setIsEmpty(true)
+          toast.warning("Não existem mais chamados")
+
+        }
+      })
+    })
+
+
+  }
+
+  async function previousTasks() {
+
+    console.log(firstTask.taskId)
+
+    setLoadingMore(true)
+
+    await Axios.get(`${baseURL}/getObsList`).then((response) => {
+      // loadTasks(response.data)
+      newObsList = response.data
+      Axios.post(`${baseURL}/getPreviousTasks`, {
+        taskId: firstTask.taskId
+      }).then((response) => {
+        // loadTasks(response.data)
+        newTasks = response.data
+        // loadTasks(newTasks, newObsList)
+        console.log(response.data)
+
+        if(response.data.length >0){
+          if (user.group === "admin") {
+            setTasks("")
+            loadTasks(newTasks, newObsList)
+            setIsEmpty(false)
+            
+          } else {
+            setTasks("")
+            const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
+            const obsDocs = newObsList.filter((o) => user.name === o.client)
+            loadTasks(tasksDocs, obsDocs)
+            setIsEmpty(false)
+           }
+        }else{
+          setLoadingMore(false)
+          setFirstPage(true)
+          toast.warning("Não existem páginas anteriores")
         }
       })
     })
@@ -574,7 +624,8 @@ export default function Dashboard() {
             <TasksTable tasks={tasks} order={orderBy} getDoc={getDocs} disable='true' />
             {loadingMore && <h3>Carregando...</h3>}
 
-            {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Proxima Página</button>}
+            {!loadingMore && !firstPage && <button className="button-hover" onClick={previousTasks}>Página Anterior</button>}
+            {!loadingMore && !isEmpty && <button className="button-hover" onClick={nextTasks}>Proxima Página</button>}
             <button className="button-hover" onClick={(e) => TasksReport(tasks)}>Imprimir</button>
 
           </div>

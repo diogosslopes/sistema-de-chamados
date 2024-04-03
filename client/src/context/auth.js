@@ -65,8 +65,8 @@ function AuthProvider({ children }) {
     }, [])
 
 
-    const baseURL = "https://server-three-navy.vercel.app"
-    // const baseURL = "http://localhost:3001"
+    // const baseURL = "https://server-three-navy.vercel.app"
+    const baseURL = "http://localhost:3001"
  
 
     async function registerUser(value) {
@@ -205,76 +205,7 @@ function AuthProvider({ children }) {
     }
 
 
-    // async function getDocs(bd) {
-    //     setTasks('')
-
-    //     if (user.group === "admin") {
-    //         const docs = await firebase.firestore().collection(bd).orderBy('created', 'desc').limit('2').get()
-    //         await loadTasks(docs)
-    //     } else {
-    //         const docs = await firebase.firestore().collection(bd).orderBy('created', 'desc').where("client", "==", user.name).limit('2').get()
-    //         await loadTasks(docs)
-
-    //     }
-    // }
-
-    // async function loadTasks(docs) {
-
-    //     const isTaksEmpty = docs.size === 0
-
-
-    //     if (!isTaksEmpty) {
-    //         docs.forEach((doc) => {
-    //             console.log(doc.data())
-    //             list.push({
-    //                 id: doc.id,
-    //                 client: doc.data().client,
-    //                 created: doc.data().created,
-    //                 obs: doc.data().obs,
-    //                 priority: doc.data().priority,
-    //                 status: doc.data().status,
-    //                 type: doc.data().type,
-    //                 subject: doc.data().subject,
-    //                 userId: doc.data().userId,
-    //                 taskImages: doc.data().taskImages
-    //             })
-    //         })
-
-    //         // console.log(list)
-
-    //         const lastDoc = docs.docs[docs.docs.length - 1]
-    //         setLastTask(lastDoc)
-    //         setTasks(tasks => [...tasks, ...list])
-    //         setLoading(false)
-
-    //     } else {
-    //         setIsEmpty(true)
-    //         setLoading(false)
-
-    //     }
-    //     setLoadingMore(false)
-    // }
-
-    // async function filter(e) {
-    //     e.preventDefault()
-    //     setLoading(true)
-    //     setTasks('')
-    //     setSelectedType(e.target.value)
-
-    //     if (isAdmin) {
-    //       filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("type", "==", e.target.value).limit('20').get()
-    //     } else {
-    //       filterDocs = await firebase.firestore().collection('completedtasks').orderBy('created', 'desc').where("client", "==", user.name)
-    //       .where("type", "==", e.target.value).limit('20').get()
-    //     }
-
-    //     setIsEmpty(false)
-    //     setLoadingMore(false)
-    //     loadTasks(filterDocs, e)
-    //     console.log(filterDocs.docs)
-    //     setIsFiltered(true)
-
-    //   }
+ 
 
 
 
