@@ -17,6 +17,7 @@ import { format } from 'date-fns'
 import emailjs from '@emailjs/browser'
 import TasksReport from "../documents/TasksReport";
 import Axios from "axios";
+import Loading from "../components/Loading.js";
 
 
 const validation = yup.object().shape({
@@ -48,7 +49,7 @@ export default function Dashboard() {
 
   // const baseURL = "http://localhost:3001"
 
-  
+
   const [newTask, setNewTask] = useState({})
   const [client, setClient] = useState(user.name)
   const [clients, setClients] = useState([])
@@ -85,24 +86,24 @@ export default function Dashboard() {
   useEffect(() => {
 
     async function loadClients() {
-     await Axios.get(`${baseURL}/getUsers`).then((response)=>{
+      await Axios.get(`${baseURL}/getUsers`).then((response) => {
         let list = []
         setClients(response.data)
 
       })
 
-      }
-      
-      loadClients()
-      getDocs()
-      
-      if (user.group === 'admin') {
-        setIsAdmin(true)
-        setDisable(false)
-      }
-      
-      
-    }, [])
+    }
+
+    loadClients()
+    getDocs()
+
+    if (user.group === 'admin') {
+      setIsAdmin(true)
+      setDisable(false)
+    }
+
+
+  }, [])
 
   useEffect(() => {
 
@@ -119,38 +120,38 @@ export default function Dashboard() {
   async function getDocs() {
 
     setTasks([])
-   await Axios.get(`${baseURL}/getObsList`).then((response) => {
+    await Axios.get(`${baseURL}/getObsList`).then((response) => {
       // loadTasks(response.data)
       newObsList = response.data
       Axios.get(`${baseURL}/getTasks`).then((response) => {
         // loadTasks(response.data)
         newTasks = response.data
         // loadTasks(newTasks, newObsList)
-        
+
         if (user.group === "admin") {
           loadTasks(newTasks, newObsList)
-          
+
         } else {
           const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
           const obsDocs = newObsList.filter((o) => user.name === o.client)
           loadTasks(tasksDocs, obsDocs)
-          
-          
+
+
         }
       })
     })
-    
+
 
   }
 
   async function loadTasks(docs, obs) {
 
-    if(docs.length < 2){
+    if (docs.length < 2) {
       setIsEmpty(true)
     }
-    
+
     const isTaksEmpty = docs.length === 0
-    
+
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
         obsList = obs.filter((o) => doc.taskId === o.taskid)
@@ -169,19 +170,19 @@ export default function Dashboard() {
         })
         obsList = []
       })
-      
-      
+
+
       const lastDoc = docs[docs.length - 1]
       setLastTask(lastDoc)
       setFirstTask(docs[0])
       setTasks(tasks => [...tasks, ...list])
       setLoading(false)
       console.log(docs[0])
-      
+
     } else {
       setIsEmpty(true)
       setLoading(false)
-      
+
     }
     setLoadingMore(false)
   }
@@ -195,20 +196,20 @@ export default function Dashboard() {
     subject: subject,
     message: obs
   }
-  
+
   function sendEmail() {
     console.log(templateParams)
     emailjs.send("service_uw92p6x", "template_a9s048m", templateParams, "BrAq6Nxcac_3F_GXo")
-    .then((response) => {
-      console.log("Email enviado ", response.status, response.text)
-    })
+      .then((response) => {
+        console.log("Email enviado ", response.status, response.text)
+      })
   }
-    
+
   async function saveTask(e) {
-    
+
     let taskImagesList = []
-    
-    
+
+
     for (let i = 0; i < images.length; i++) {
       await firebase.storage().ref(`task-images/${user.id}/${images[i].name}`)
         .put(images[i])
@@ -218,11 +219,11 @@ export default function Dashboard() {
             .then(async (url) => {
               taskImagesList.push(url)
             })
-          })
-          
-        }
-        setTaskImages(taskImagesList)
-    
+        })
+
+    }
+    setTaskImages(taskImagesList)
+
     setNewTask({
       client: client,
       subject: subject,
@@ -236,7 +237,7 @@ export default function Dashboard() {
       userEmail: user.email
     })
 
-   await Axios.post(`${baseURL}/registertask`, {
+    await Axios.post(`${baseURL}/registertask`, {
       client: client,
       subject: subject,
       priority: priority,
@@ -247,8 +248,8 @@ export default function Dashboard() {
       userId: user.id,
       // taskImages: taskImagesList,
       userEmail: user.email
-    }).then( async () => {
-    await  Axios.post(`${baseURL}/searchtask`, {
+    }).then(async () => {
+      await Axios.post(`${baseURL}/searchtask`, {
         client: client,
         created: created,
         obs: obs,
@@ -317,20 +318,20 @@ export default function Dashboard() {
         // loadTasks(newTasks, newObsList)
         console.log(response.data)
 
-        if(response.data.length >0){
+        if (response.data.length > 0) {
           if (user.group === "admin") {
             setTasks("")
             loadTasks(newTasks, newObsList)
             setFirstPage(false)
-            
+
           } else {
             setTasks("")
             const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
             const obsDocs = newObsList.filter((o) => user.name === o.client)
             loadTasks(tasksDocs, obsDocs)
             setFirstPage(false)
-           }
-        }else{
+          }
+        } else {
           setLoadingMore(false)
           setIsEmpty(true)
           toast.warning("Não existem mais chamados")
@@ -359,20 +360,20 @@ export default function Dashboard() {
         // loadTasks(newTasks, newObsList)
         console.log(response.data)
 
-        if(response.data.length >0){
+        if (response.data.length > 0) {
           if (user.group === "admin") {
             setTasks("")
             loadTasks(newTasks, newObsList)
             setIsEmpty(false)
-            
+
           } else {
             setTasks("")
             const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
             const obsDocs = newObsList.filter((o) => user.name === o.client)
             loadTasks(tasksDocs, obsDocs)
             setIsEmpty(false)
-           }
-        }else{
+          }
+        } else {
           setLoadingMore(false)
           setFirstPage(true)
           toast.warning("Não existem páginas anteriores")
@@ -429,22 +430,22 @@ export default function Dashboard() {
     let filterDocs = ""
 
     if (user.group === "admin") {
-    await  Axios.get(`${baseURL}/getTasks`).then((response)=>{
+      await Axios.get(`${baseURL}/getTasks`).then((response) => {
         setIsEmpty(false)
         setLoadingMore(false)
-        const tasksDocs = response.data.filter((t) => t.type === e.target.value )
-       loadTasks(tasksDocs, newObsList)
+        const tasksDocs = response.data.filter((t) => t.type === e.target.value)
+        loadTasks(tasksDocs, newObsList)
       })
     } else {
-    await  Axios.get(`${baseURL}/getTasks`).then((response)=>{
-        const tasksDocs = response.data.filter((t) => t.type === e.target.value && user.email === t.userEmail )
+      await Axios.get(`${baseURL}/getTasks`).then((response) => {
+        const tasksDocs = response.data.filter((t) => t.type === e.target.value && user.email === t.userEmail)
         const obsDocs = newObsList.filter((o) => user.name === o.client)
         setIsEmpty(false)
         setLoadingMore(false)
         loadTasks(tasksDocs, obsDocs)
       })
 
-      
+
 
     }
 
@@ -482,7 +483,7 @@ export default function Dashboard() {
 
   async function saveImages(doc, images) {
 
-    images.map((i)=>{
+    images.map((i) => {
 
       Axios.post(`${baseURL}/registerImage`, {
         client: doc.client,
@@ -506,8 +507,8 @@ export default function Dashboard() {
           <Title name="Chamados">
             <FiMessageSquare size={22} />
           </Title>
-          <div className="new-task title">
-            <span>Carregando chamados !</span>
+          <div className="new-task">
+            <Loading />
           </div>
         </div>
       </div>
@@ -621,12 +622,12 @@ export default function Dashboard() {
                 </select>
               </div>
             </div>
-            <TasksTable tasks={tasks} order={orderBy} getDoc={getDocs} disable='true' />
-            {loadingMore && <h3>Carregando...</h3>}
+            {/* <TasksTable tasks={tasks} order={orderBy} getDoc={getDocs} disable='true' /> */}
+            {loadingMore ? <Loading /> : <TasksTable tasks={tasks} order={orderBy} getDoc={getDocs} disable='true' />}
 
             {!loadingMore && !firstPage && <button className="button-hover" onClick={previousTasks}>Página Anterior</button>}
             {!loadingMore && !isEmpty && <button className="button-hover" onClick={nextTasks}>Proxima Página</button>}
-            <button className="button-hover" onClick={(e) => TasksReport(tasks)}>Imprimir</button>
+            {!loadingMore && <button className="button-hover" onClick={(e) => TasksReport(tasks)}>Imprimir</button>}
 
           </div>
         }

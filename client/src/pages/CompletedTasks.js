@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { format } from 'date-fns'
 import emailjs from '@emailjs/browser'
 import Axios from "axios";
+import Loading from "../components/Loading.js";
 
 
 const validation = yup.object().shape({
@@ -41,7 +42,9 @@ export default function CompletedTasks() {
   const [showModal, setShowModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [lastTask, setLastTask] = useState()
+  const [firstTask, setFirstTask] = useState()
   const [loadingMore, setLoadingMore] = useState(false)
+  const [firstPage, setFirstPage] = useState(true)
   const [isEmpty, setIsEmpty] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
 
@@ -137,6 +140,7 @@ export default function CompletedTasks() {
 
       const lastDoc = docs[docs.length - 1]
       setLastTask(lastDoc)
+      setFirstTask(docs[0])
       setTasks(tasks => [...tasks, ...list])
       setLoading(false)
 
@@ -150,7 +154,7 @@ export default function CompletedTasks() {
 
 
 
-  async function moreTasks() {
+  async function nextTasks() {
 
     console.log(lastTask.taskId)
 
@@ -159,7 +163,7 @@ export default function CompletedTasks() {
     await Axios.get(`${baseURL}/getObsList`).then((response) => {
       // loadTasks(response.data)
       newObsList = response.data
-      Axios.post(`${baseURL}/getMoreCompletedTasks`, {
+      Axios.post(`${baseURL}/getNextCompletedTasks`, {
         taskId: lastTask.taskId
       }).then((response) => {
         // loadTasks(response.data)
@@ -171,15 +175,59 @@ export default function CompletedTasks() {
           if (user.group === "admin") {
             setTasks("")
             loadTasks(newTasks, newObsList)
-            
+            setFirstPage(false)
           } else {
             setTasks("")
             const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
             const obsDocs = newObsList.filter((o) => user.name === o.client)
             loadTasks(tasksDocs, obsDocs)
+            setFirstPage(false)
            }
         }else{
           setLoadingMore(false)
+          setIsEmpty(true)
+          toast.warning("Não existem mais chamados")
+        }
+      })
+    })
+
+
+  }
+
+  async function previousTasks() {
+
+    console.log(firstTask.taskId)
+
+    setLoadingMore(true)
+
+    await Axios.get(`${baseURL}/getObsList`).then((response) => {
+      // loadTasks(response.data)
+      newObsList = response.data
+      Axios.post(`${baseURL}/getPreviousCompletedTasks`, {
+        taskId: firstTask.taskId
+      }).then((response) => {
+        // loadTasks(response.data)
+        newTasks = response.data
+        // loadTasks(newTasks, newObsList)
+        console.log(response.data)
+
+        if (response.data.length > 0) {
+          if (user.group === "admin") {
+            setTasks("")
+            loadTasks(newTasks, newObsList)
+            setIsEmpty(false)
+
+          } else {
+            setTasks("")
+            const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
+            const obsDocs = newObsList.filter((o) => user.name === o.client)
+            loadTasks(tasksDocs, obsDocs)
+            setIsEmpty(false)
+          }
+        } else {
+          setLoadingMore(false)
+          setFirstPage(true)
+          toast.warning("Não existem páginas anteriores")
         }
       })
     })
@@ -291,8 +339,8 @@ export default function CompletedTasks() {
           <Title name="Chamados Concluidos">
             <FiMessageSquare size={22} />
           </Title>
-          <div className="new-task title">
-            <span>Carregando chamados !</span>
+          <div className="new-task">
+            <Loading />
           </div>
         </div>
       </div>
@@ -408,10 +456,13 @@ export default function CompletedTasks() {
                 </select>
               </div>
             </div>
-            <TasksTable tasks={tasks} order={orderBy} page={'completedtasks'} />
-            {loadingMore && <h3>Carregando...</h3>}
+            {/* <TasksTable tasks={tasks} order={orderBy} page={'completedtasks'} /> */}
+            {loadingMore ? <Loading /> : <TasksTable tasks={tasks} order={orderBy} page={'completedtasks'} />}
+            
 
-            {!loadingMore && !isEmpty && <button className="button-hover" onClick={moreTasks}>Proxima Página</button>}
+            {!loadingMore && !firstPage && <button className="button-hover" onClick={previousTasks}>Página Anterior</button>}
+            {!loadingMore && !isEmpty && <button className="button-hover" onClick={nextTasks}>Proxima Página</button>}
+            {/* {!loadingMore && <button className="button-hover" onClick={(e) => TasksReport(tasks)}>Imprimir</button>} */}
 
           </div>
         }

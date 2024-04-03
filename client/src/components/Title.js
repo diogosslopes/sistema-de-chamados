@@ -1,10 +1,10 @@
-// import index from '../index.css'
+import index from '../index.css'
 
 
 export default function Title({ children, name }) {
 
     return (
-        <div>
+        <div className='title' >
             {children}
             <h1> {name} </h1>
         </div>
