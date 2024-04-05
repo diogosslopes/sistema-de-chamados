@@ -23,7 +23,8 @@ function SignUp() {
   })
 
   const signUp = (value) => {
-    registerUser(value)
+    // registerUser(value)
+    // console.log(name login password)
   }
 
   
@@ -43,7 +44,8 @@ function SignUp() {
           <p>{errors.login?.message}</p>
           <input type='password' name="password" {...register("password")} placeholder="Digite sua senha"></input>
           <p>{errors.password?.message}</p>
-          <button type="submit">{loadingAuth ? 'Carregando...' : 'Cadastrar'}</button>
+          <Link onClick={signUp} to='confirmation'><button type="submit">{loadingAuth ? 'Carregando...' : 'Cadastrar'}</button></Link>  
+          
         </form>
         <Link to='/'>Já possui cadastro? Clique aqui</Link>
       </div>

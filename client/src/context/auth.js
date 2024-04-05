@@ -48,6 +48,7 @@ function AuthProvider({ children }) {
 
     useEffect(() => {
 
+
         function userLoged() {
             const activeUser = localStorage.getItem('activeUser')
 
@@ -65,20 +66,31 @@ function AuthProvider({ children }) {
     }, [])
 
 
-    const baseURL = "https://server-three-navy.vercel.app"
-    // const baseURL = "http://localhost:3001"
+    // const baseURL = "https://server-three-navy.vercel.app"
+    const baseURL = "http://localhost:3001"
  
 
     async function registerUser(value) {
+
+        const numbers = {
+            n1: Math.floor(Math.random()*10),
+            n2: Math.floor(Math.random()*10),
+            n3: Math.floor(Math.random()*10),
+            n4: Math.floor(Math.random()*10),
+        }
+        const emailToken = `${numbers.n1}${numbers.n2}${numbers.n3}${numbers.n4}` 
+
+
         setLoadingAuth(true)
         console.log(loggedIn)
         console.log(value.name)
-        
+        // const emailToken = Math.random(1)
         Axios.post(`${baseURL}/registeruser`, {
             email: value.login,
             password: value.password,
             name: value.name,
-            adress: value.adress
+            adress: value.adress,
+            emailToken: emailToken
         }).then((response) => {
             if (response.data.msg === 'cadastrado') {
                 toast.error("Email já cadastrado!!!")
@@ -95,7 +107,7 @@ function AuthProvider({ children }) {
             // storage(userData)
             // setUser(userData)
             setLoadingAuth(false)
-            // setLoggedIn(true)
+            setLoggedIn(true)
         }).catch((error) => {
             setLoggedIn(false)
             console.log(error)
@@ -117,22 +129,27 @@ function AuthProvider({ children }) {
                 toast.error("Usuario não cadastrado!")
                 setLoadingAuth(false)
             } else if(response.data) {
-                console.log(response.data)
                 Axios.post(`${baseURL}/getUser`, {
                     email: value.login,
                     password: value.password
                 }).then((response)=>{
-                    let userData = {
-                        id: response.data[0].clientId,
-                        name: response.data[0].name,
-                        email: value.login,
-                        avatar: response.data[0].avatar,
-                        group: response.data[0].group,
+                    console.log(response.data)
+                    if(response.data[0].isVerified === '0'){
+                        toast.warn("Email não verificado")
+                    }else if (response.data[0].isVerified === '1'){
                         
+                        let userData = {
+                            id: response.data[0].clientId,
+                            name: response.data[0].name,
+                            email: value.login,
+                            avatar: response.data[0].avatar,
+                            group: response.data[0].group,
+                            
+                        }
+                        console.log(response)
+                        storage(userData)
+                        setUser(userData)
                     }
-                    console.log(response)
-                    storage(userData)
-                    setUser(userData)
                 })                
                 
                 setLoadingAuth(false)
@@ -147,30 +164,6 @@ function AuthProvider({ children }) {
 
 
 
-        // await firebase.auth().signInWithEmailAndPassword(value.login, value.password)
-        //     .then(async (data) => {
-        //         let uid = data.user.uid
-
-        //         const userProfile = await firebase.firestore().collection('users').doc(uid).get()
-
-        //         let userData = {
-        //             id: uid,
-        //             name: userProfile.data().name,
-        //             email: value.login,
-        //             avatar: userProfile.data().avatar,
-        //             group: userProfile.data().group,
-        //         }
-        //         setUser(userData)
-        //         storage(userData)
-        //         setClient(user)
-        //         setLoadingAuth(false)
-        //     })
-        //     .catch((error) => {
-        //         console.log(error)
-        //         alert("Erro")
-        //         setLoadingAuth(false)
-        //     })
-
     }
 
     function storage(userData) {
@@ -178,7 +171,7 @@ function AuthProvider({ children }) {
     }
 
     async function signOut() {
-        await firebase.auth().signOut()
+        // await firebase.auth().signOut()
         localStorage.removeItem('activeUser')
         setUser(null)
     }
@@ -203,10 +196,6 @@ function AuthProvider({ children }) {
             })
 
     }
-
-
- 
-
 
 
     return (

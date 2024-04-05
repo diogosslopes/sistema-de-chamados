@@ -95,6 +95,7 @@ button {
   border-radius: 5px;
   border: none;
   max-width: 600px;
+  width: 100%;
 }
 
 button.button-hover {
@@ -537,6 +538,9 @@ button.button-hover {
   justify-content: center;
 }
 
+.registerButton {
+  width: 341px;
+}
 
 .new-task {
   background-color: #202529 !important;
