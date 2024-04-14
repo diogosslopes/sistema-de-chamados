@@ -92,10 +92,10 @@ export default function Dashboard() {
 
       })
 
+      getDocs()
     }
 
     loadClients()
-    getDocs()
 
     if (user.group === 'admin') {
       setIsAdmin(true)
@@ -119,16 +119,17 @@ export default function Dashboard() {
 
   async function getDocs() {
 
-    setTasks([])
     await Axios.get(`${baseURL}/getObsList`).then((response) => {
       // loadTasks(response.data)
       newObsList = response.data
       Axios.get(`${baseURL}/getTasks`).then((response) => {
+        
         // loadTasks(response.data)
         newTasks = response.data
         // loadTasks(newTasks, newObsList)
-
+        
         if (user.group === "admin") {
+          setTasks([])
           loadTasks(newTasks, newObsList)
 
         } else {
@@ -149,7 +150,7 @@ export default function Dashboard() {
     if (docs.length < 2) {
       setIsEmpty(true)
     }
-
+    
     const isTaksEmpty = docs.length === 0
 
     if (!isTaksEmpty) {
