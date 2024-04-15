@@ -47,7 +47,6 @@ export default function Dashboard() {
   const [firstPage, setFirstPage] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
 
-  // const baseURL = "http://localhost:3001"
 
 
   const [newTask, setNewTask] = useState({})
@@ -119,6 +118,7 @@ export default function Dashboard() {
 
   async function getDocs() {
 
+    setTasks([])
     await Axios.get(`${baseURL}/getObsList`).then((response) => {
       // loadTasks(response.data)
       newObsList = response.data
@@ -129,7 +129,6 @@ export default function Dashboard() {
         // loadTasks(newTasks, newObsList)
         
         if (user.group === "admin") {
-          setTasks([])
           loadTasks(newTasks, newObsList)
 
         } else {
@@ -178,7 +177,9 @@ export default function Dashboard() {
       setFirstTask(docs[0])
       setTasks(tasks => [...tasks, ...list])
       setLoading(false)
-      console.log(docs[0])
+
+      console.log(lastTask)
+      console.log(firstTask)
 
     } else {
       setIsEmpty(true)
@@ -199,7 +200,6 @@ export default function Dashboard() {
   }
 
   function sendEmail() {
-    console.log(templateParams)
     emailjs.send("service_uw92p6x", "template_a9s048m", templateParams, "BrAq6Nxcac_3F_GXo")
       .then((response) => {
         console.log("Email enviado ", response.status, response.text)
@@ -259,7 +259,7 @@ export default function Dashboard() {
       }).then((response) => {
         console.log(response)
         saveObs(response.data[0])
-        saveImages(response.data[0], taskImages)
+        saveImages(response.data[0], taskImagesList)
         const newObs = {
           client: response.data[0].client,
           created: response.data[0].created,
@@ -309,15 +309,11 @@ export default function Dashboard() {
     setLoadingMore(true)
 
     await Axios.get(`${baseURL}/getObsList`).then((response) => {
-      // loadTasks(response.data)
       newObsList = response.data
       Axios.post(`${baseURL}/getNextTasks`, {
         taskId: lastTask.taskId
       }).then((response) => {
-        // loadTasks(response.data)
         newTasks = response.data
-        // loadTasks(newTasks, newObsList)
-        console.log(response.data)
 
         if (response.data.length > 0) {
           if (user.group === "admin") {
@@ -346,20 +342,17 @@ export default function Dashboard() {
 
   async function previousTasks() {
 
-    console.log(firstTask.taskId)
 
     setLoadingMore(true)
 
+    console.log(firstTask)
+
     await Axios.get(`${baseURL}/getObsList`).then((response) => {
-      // loadTasks(response.data)
       newObsList = response.data
       Axios.post(`${baseURL}/getPreviousTasks`, {
         taskId: firstTask.taskId
       }).then((response) => {
-        // loadTasks(response.data)
         newTasks = response.data
-        // loadTasks(newTasks, newObsList)
-        console.log(response.data)
 
         if (response.data.length > 0) {
           if (user.group === "admin") {
@@ -385,15 +378,6 @@ export default function Dashboard() {
 
   }
 
-  // function newClient(t, item) {
-  //   setType(t)
-  //   setShowModal(!showModal)
-  //   if (t === 'new') {
-  //     setTask('')
-  //   } else {
-  //     setTask('25/01/2023')
-  //   }
-  // }
 
   function showForm(e) {
     e.preventDefault()
@@ -471,7 +455,6 @@ export default function Dashboard() {
 
   async function saveObs(doc) {
 
-    console.log(doc)
     Axios.post(`${baseURL}/registerobs`, {
       client: doc.client,
       created: doc.created,
@@ -483,6 +466,7 @@ export default function Dashboard() {
   }
 
   async function saveImages(doc, images) {
+
 
     images.map((i) => {
 
@@ -529,7 +513,7 @@ export default function Dashboard() {
           <div className="form-div form-div-task">
             <div className="tipo_select">
               <label>Tipo</label>
-              <select name="taskType" {...register("taskType")} value={taskType} onChange={(e) => { setTaskType(e.target.value) }}>
+              <select name="taskType" {...register("taskType")} multiple={false} value={taskType} onChange={(e) => { setTaskType(e.target.value) }}>
                 <option hidden value={''} >Selecione o tipo de chamado</option>
                 <option>TI</option>
                 <option>Estrutura</option>
@@ -538,7 +522,7 @@ export default function Dashboard() {
             </div>
             <div className="subject_select">
               <label>Assunto</label>
-              <select name="subject" {...register("subject")} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
+              <select name="subject" {...register("subject")} multiple={false} value={subject} onChange={(e) => { setSubject(e.target.value) }}>
                 <option hidden value={''} >Selecione o assunto</option>
                 {subjects.map((s, index) => {
                   return (
@@ -549,7 +533,7 @@ export default function Dashboard() {
             </div>
             <div className="priority_select">
               <label>Prioridade</label>
-              <select name="priority" {...register("priority")} value={priority} onChange={(e) => { setPriority(e.target.value) }}>
+              <select name="priority" {...register("priority")} multiple={false} value={priority} onChange={(e) => { setPriority(e.target.value) }}>
                 <option hidden value={''} >Selecione a prioridade</option>
                 {prioritys.map((p, index) => {
                   return (
@@ -560,7 +544,7 @@ export default function Dashboard() {
             </div>
             <div className="status_select">
               <label>Status</label>
-              <select disabled={disable} name="status" {...register("status")} value={status} onChange={(e) => { setStatus(e.target.value) }}>
+              <select disabled={disable} name="status" {...register("status")} multiple={false} value={status} onChange={(e) => { setStatus(e.target.value) }}>
                 <option hidden value={''} >Selecione o status</option>
                 {stats.map((s, index) => {
                   return (
@@ -571,7 +555,7 @@ export default function Dashboard() {
             </div>
             <div className="created">
               <label>Criando em</label>
-              <input value={created} name="created" disabled={true} {...register("created")} onChange={(e) => { setCreated(e.target.value) }} placeholder="Criado em" />
+              <input value={created || ''} name="created" disabled={true} {...register("created")} onChange={(e) => { setCreated(e.target.value) }} placeholder="Criado em" />
             </div>
             <div>
               <label>Anexos</label>
@@ -602,7 +586,7 @@ export default function Dashboard() {
             </div>
             <div className="filter-select">
               <label>Filtrar</label>
-              <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { filter(e) }}>
+              <select name="selectedType" {...register("selectedType")} multiple={false} value={selectedType} onChange={(e) => { filter(e) }}>
                 <option hidden value={''} >Selecione o tipo de chamado</option>
                 <option value="TI">TI</option>
                 <option value="Estrutura">Estrutura</option>
@@ -616,7 +600,7 @@ export default function Dashboard() {
               <Link to='#' className="new button-hover" onClick={showForm}> <FiPlus size={25} /> Abrir Chamado</Link>
               <div className="filter-select">
                 <label>Filtrar</label>
-                <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { filter(e) }}>
+                <select name="selectedType" {...register("selectedType")} multiple={false} value={selectedType} onChange={(e) => { filter(e) }}>
                   <option hidden value={''} >Selecione o tipo de chamado</option>
                   <option value="TI">TI</option>
                   <option value="Estrutura">Estrutura</option>

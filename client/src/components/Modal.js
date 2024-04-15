@@ -123,7 +123,9 @@ export default function Modal({ tipo, close, item, getDoc }) {
     unity: user.name,
     subject: subject,
     message: obs,
-    email: item.userEmail
+    email: item.userEmail,
+    status: status,
+    priority: priority
   }
 
   function sendEmail() {
@@ -152,6 +154,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
     }).then(()=>{
       close()
       getDoc()
+      sendEmail()
       toast.success("Edição realizada!")
     })
 
@@ -291,7 +294,7 @@ export default function Modal({ tipo, close, item, getDoc }) {
               {                
                 taskImages.map((i, index)=>{
                   return (
-                    <a target="_blank" href={`${i.image}`}>{`Imagem ${index +1}`}</a>
+                    <a target="_blank" key={i.id} href={`${i.image}`}>{`Imagem ${index +1}`}</a>
                   )
                 })
               }
