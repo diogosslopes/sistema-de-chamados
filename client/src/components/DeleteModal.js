@@ -38,10 +38,17 @@ export default function DeleteModal({ id, close, bd, getDoc }) {
 
       })
     } else if (bd === 'clients') {
-      console.log(id)
       Axios.delete(`${baseURL}/deleteClient/${id}`).then((response) => {
-          console.log(response)
-          toast.success("Deletado com sucesso")
+        console.log(response)
+        toast.success("Deletado com sucesso")
+        close()
+      })
+      
+    } else if (bd === 'taskTypes') {
+      console.log(id)
+      Axios.delete(`${baseURL}/deleteTaskType/${id}`).then((response) => {
+        console.log(response)
+        toast.success("Deletado com sucesso")
         close()
       })
 

@@ -22,7 +22,7 @@
 
 .modal-new div input,
 .modal-new div textarea,
-select{
+select {
   border: none;
   padding: 3px;
   height: 25px;
@@ -61,19 +61,46 @@ ul {
   list-style: none;
 }
 
-.button-hover:hover, button:hover{
+.button-hover:hover,
+button:hover {
   opacity: .7;
   transition: all ease-in-out .3s;
-  
-  
+
+
+}
+
+.new {
+  display: show;
+  transition: all ease-in-out .3s;
+  height: 41px !important;
+  padding: 8px !important;
 }
 
 .hide {
-  display: none !important;
-  height: 0;
+  /* display: none !important; */
+  height: 0px !important;
+  overflow-y: hidden;
+  transition: all ease-in-out .50s;
+  padding: 0 !important;
 }
 
-.loading{
+.setting-options {
+  font-size: 12px;
+  transition: all ease-in-out .3s;
+  margin-left: 10px;
+  height: 0px;
+  overflow-y: hidden;
+}
+
+.setting-options-show {
+  font-size: 12px;
+  transition: all ease-in-out .3s;
+  margin-left: 10px;
+  height: 190px;
+  overflow-y: hidden;
+}
+
+.loading {
   display: flex;
   width: 100%;
   height: 100%;
@@ -83,18 +110,18 @@ ul {
   background-color: #202529 !important;
 }
 
-.link-container{
+.link-container {
   display: flex;
   justify-content: space-between;
   width: 100%;
   max-width: 200px;
-  
+
 }
 
 
 
 
-.loading img{
+.loading img {
   width: 70px;
 }
 
@@ -252,6 +279,7 @@ button.button-hover {
   margin-left: 216px;
   margin-right: 14px;
 }
+
 .container-task {
   /* display: flex;
   flex-direction: column; */
@@ -259,6 +287,7 @@ button.button-hover {
   padding: 1px 16px;
   margin-left: 200px;
 }
+
 .container-client {
   /* display: flex;
   flex-direction: column; */
@@ -267,34 +296,35 @@ button.button-hover {
   margin-left: 200px;
 }
 
-.ant-tooltip-inner{
+.ant-tooltip-inner {
   display: none !important;
 }
 
-.upload-list-item::before{
+.upload-list-item::before {
   border-radius: 50% !important;
 }
 
 .container-profile span,
-.container-profile div{
+.container-profile div {
   width: 280px !important;
   height: 280px !important;
   border-radius: 50% !important;
 }
 
-.container-profile img{
+.container-profile img {
   border-radius: 50%;
 }
 
 
-.ant-upload-list-item-actions{
+.ant-upload-list-item-actions {
   display: flex;
   justify-content: center;
   align-items: center;
 
 }
 
-.container-profile .anticon-eye, .container-profile .anticon-delete {
+.container-profile .anticon-eye,
+.container-profile .anticon-delete {
   width: 16px !important;
   height: 16px !important;
 }
@@ -308,31 +338,31 @@ button.button-hover {
   padding: .8em;
 }
 
-.reactEasyCrop_CropArea{
+.reactEasyCrop_CropArea {
   border-radius: 50%;
 }
 
-.ant-upload-list-item::before{
+.ant-upload-list-item::before {
   border-radius: 50%;
 }
 
-.ant-tooltip-upload-list-item:hover{
+.ant-tooltip-upload-list-item:hover {
   border-radius: 50% !important;
   background-color: #F6a935 !important;
 }
 
-.form-client div{
+.form-client div {
   display: flex;
   flex-direction: column;
   width: 60%
 }
 
-.form-client .buttons{
+.form-client .buttons {
   flex-direction: row;
   width: 100%;
 }
 
-.form-client .error-message{
+.form-client .error-message {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -419,15 +449,65 @@ button.button-hover {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  
+
 }
 
-.form-client label{
+.form-client label {
   font-size: 1em;
 }
-.form-client input{
+
+.form-client input {
   padding: 6px;
   margin-top: 6px;
+}
+
+.form-options {
+  background-color: #202529;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+.form-options label {
+  font-size: 1em;
+}
+
+.form-options input {
+  padding: 6px;
+  margin-top: 6px;
+}
+
+.form-options div {
+  display: flex;
+  flex-direction: column;
+  width: 60%
+}
+
+.form-options .buttons {
+  flex-direction: row;
+  width: 100%;
+}
+
+.form-options .error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-types-list {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+}
+
+.task-types-list svg {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+
 }
 
 .clients-list {
@@ -444,10 +524,11 @@ button.button-hover {
   padding: 8px;
 }
 
-.clients-list .icons{
+.clients-list .icons {
   display: flex;
   gap: 10px;
-  margin: 6px 0 0 6px;;
+  margin: 6px 0 0 6px;
+  ;
 }
 
 .client-btn {
@@ -471,11 +552,24 @@ button.button-hover {
   justify-content: center;
   margin: 1em 0;
   border-radius: 5px;
-  padding: .8em;
+  /* padding: .8em; */
+  transition: all ease-in-out .3s;
+  overflow-y: hidden;
+  height: 0px;
+}
+
+.show-form-task {
+  display: flex;
+  justify-content: center;
+  /* border-radius: 5px; */
+  /* padding: .8em; */
+  transition: all ease-in-out .6s;
+  /* overflow-y: hidden; */
+  margin: 1em 0;
   height: 360px;
 }
 
-.filter-select{
+.filter-select {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -493,7 +587,7 @@ button.button-hover {
   width: 60%;
 } */
 
-.form-div{
+.form-div {
   background-color: #A1B4C4;
   padding: 15px;
   border-radius: 5px;
@@ -503,12 +597,12 @@ button.button-hover {
   gap: 80px;
 }
 
-.form-div-task{
+.form-div-task {
   flex-direction: column !important;
   gap: 0px;
 }
 
-.form-task div div{
+.form-task div div {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -517,16 +611,17 @@ button.button-hover {
   width: 90%;
 }
 
-.form-task .created{
+.form-task .created {
   display: none;
 }
 
-.form-task input, .form-task textarea{
+.form-task input,
+.form-task textarea {
   border: none;
   padding: 8px;
   border-radius: 5px;
   color: #32383D;
-  max-width: 720px;  
+  max-width: 720px;
 
   border: none;
   padding: 3px;
@@ -535,13 +630,13 @@ button.button-hover {
   width: 80%;
 }
 
-.form-task div textarea{
+.form-task div textarea {
   height: 70px;
 }
 
 
 
-.form-task .buttons{
+.form-task .buttons {
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -598,7 +693,7 @@ button.button-hover {
 
 }
 
-.more-tasks{
+.more-tasks {
   cursor: pointer;
   height: 35px;
   margin: 10px 0;
@@ -610,33 +705,34 @@ button.button-hover {
   max-width: 600px;
 }
 
-.more-task a{
+.more-task a {
   justify-content: end;
 }
 
-table{
+table {
   width: 100%;
   text-align: center;
   border: 1px solid black;
-  border-collapse:collapse ;
+  border-collapse: collapse;
   margin: 0;
   padding: 0;
   table-layout: fixed;
 }
 
-th{
+th {
   border: 1px solid black;
-  padding: 10px ;
-  background-color: #A1B4C4
-}
-td{
-  border: 1px solid black;
-  padding: 0 10px ;
+  padding: 10px;
   background-color: #A1B4C4
 }
 
-table td .task-btn{
-  border:0;
+td {
+  border: 1px solid black;
+  padding: 0 10px;
+  background-color: #A1B4C4
+}
+
+table td .task-btn {
+  border: 0;
   height: 23px;
   padding: 5px;
   margin: 2px;
@@ -648,31 +744,33 @@ table td .task-btn{
 
 }
 
-table td  svg{
+table td svg {
   vertical-align: middle;
 }
 
-.edit{
+.edit {
   background-color: rgb(108, 108, 241);
   color: #fff;
 }
-.search{
+
+.search {
   background-color: #F6a935;
   color: #fff;
 }
 
-.delete{
+.delete {
   background-color: red;
   color: #fff;
 }
-.status{
+
+.status {
   background-color: green;
   color: #fff;
   padding: 3px 5px;
   border-radius: 5px;
 }
 
-.delete-modal{
+.delete-modal {
   background-color: #a1b4c4;
   border-radius: 5px;
   display: flex;
@@ -686,7 +784,7 @@ table td  svg{
 
 /* Modal */
 
-.modal{
+.modal {
   background-color: rgba(0, 0, 0, 0.432);
   color: black;
   position: absolute;
@@ -699,7 +797,7 @@ table td  svg{
   z-index: 99;
 }
 
-.modal-new{
+.modal-new {
   background-color: #A1B4C4;
   display: flex;
   flex-direction: column;
@@ -712,14 +810,14 @@ table td  svg{
   padding: 8px;
 }
 
-.modal-new h1{
+.modal-new h1 {
   text-align: center;
-  
+
 }
 
 
 
-.modal-new div{
+.modal-new div {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -730,16 +828,16 @@ table td  svg{
   margin-bottom: 6px;
 }
 
-.form-modal{
-  margin-bottom: 12px ;
+.form-modal {
+  margin-bottom: 12px;
 }
 
-.imagesList{
+.imagesList {
   display: flex;
   justify-content: space-between;
 }
 
-.imagesList .list{
+.imagesList .list {
   background-color: #fff;
   width: 80%;
   border-radius: 5px;
@@ -748,46 +846,46 @@ table td  svg{
   gap: 8px;
 }
 
-.list a{
+.list a {
   color: #32383D;
 }
 
 
-.modal div textarea{
+.modal div textarea {
   height: 70px;
 }
 
-.form-modal .buttons{
+.form-modal .buttons {
   align-items: center;
   justify-content: center;
 }
 
-.radio-buttons{
+.radio-buttons {
   margin-left: 50px;
-  display: flex;  
+  display: flex;
   justify-content: flex-start;
   align-items: start;
 }
 
-.modal .radio-buttons input{
+.modal .radio-buttons input {
   font-size: 10px;
   width: 15%;
   height: 14px;
 }
 
-.radio-buttons span{
+.radio-buttons span {
   font-size: 12px;
-  margin-left: -30px ;
+  margin-left: -30px;
 }
 
-#obs{
+#obs {
   height: 300px;
   display: flex;
   flex-direction: column;
   justify-content: start;
 }
 
-.obs-list{
+.obs-list {
   height: 480px !important;
   display: flex;
   flex-direction: column;
@@ -799,6 +897,7 @@ table td  svg{
 ::-webkit-scrollbar {
   width: 3px;
 }
+
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
@@ -807,7 +906,7 @@ table td  svg{
   background: #888;
 }
 
-.obs{
+.obs {
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-start !important;
@@ -815,23 +914,23 @@ table td  svg{
   height: 90px !important;
 }
 
-.obs textarea{
+.obs textarea {
   width: 100% !important;
   margin-top: 3px;
 }
 
-#obs .new-obs{
+#obs .new-obs {
   display: flex;
   flex-direction: column;
   height: 300px;
 }
 
-#obs .new-obs textarea{
+#obs .new-obs textarea {
   height: 260px;
 }
 
 
-.error-message{
+.error-message {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -840,7 +939,7 @@ table td  svg{
   color: red;
 }
 
-.error-message p{
+.error-message p {
   margin-bottom: 4px;
 }
 
@@ -883,28 +982,28 @@ table td  svg{
 .button-area {
   display: flex;
   text-align: center;
-  
+
   align-items: center;
   justify-content: center;
-  
+
 }
 
 .reactEasyCrop_Container {
-position: relative !important;
-width: 280px;
-height: 280px;
+  position: relative !important;
+  width: 280px;
+  height: 280px;
 
 }
 
-.form-filter{
+.form-filter {
   height: 220px;
 }
 
-.date-filter{
+.date-filter {
   width: 24% !important;
 }
 
-th{
+th {
   cursor: pointer;
 }
 
@@ -917,15 +1016,15 @@ th{
     position: relative;
   }
 
-  .filter-select{
+  .filter-select {
     width: 85%;
   }
 
-  #settings{
+  #settings {
     display: none;
   }
 
-  .container-task{
+  .container-task {
     margin-left: 0;
   }
 
@@ -955,29 +1054,29 @@ th{
     margin-left: 0;
   }
 
-  .status_select{
+  .status_select {
     display: flex !important;
   }
 
-  .radio-status{
+  .radio-status {
     display: none !important;
   }
 
-  .modal-new{
+  .modal-new {
     width: 90%;
   }
 
-  table{
+  table {
     border: 0;
     background-color: #202529;
   }
 
-  table caption{
+  table caption {
     font-size: 1.3em;
   }
 
-  table thead{
-    border:none;
+  table thead {
+    border: none;
     clip: rect(0 0 0 0);
     height: 1px;
     margin: -1px;
@@ -987,42 +1086,42 @@ th{
     width: 1px;
   }
 
-  table tr{
+  table tr {
     border-bottom: 3px solid #ddd;
     display: block;
     margin-bottom: .65em;
   }
 
-  table td{
+  table td {
     border-bottom: 1px solid #DDD;
     display: block;
     font-size: .8em;
     text-align: right;
     padding: 4px 10px;
-    
+
   }
 
-  table td::before{
+  table td::before {
     content: attr(data-label);
     float: left;
     font-weight: bold;
     text-transform: uppercase;
   }
 
-  table td:last-child{
+  table td:last-child {
     border-bottom: 0;
   }
 
-  .status{
+  .status {
     padding: 2px;
   }
 
-  table td  svg{
+  table td svg {
     width: 12px;
     vertical-align: middle;
   }
 
-  table td .task-btn{
+  table td .task-btn {
     height: 20px;
   }
 
@@ -1040,13 +1139,13 @@ th{
 
   } */
 
-  .status_select{
+  .status_select {
     display: flex !important;
   }
 
-  .radio-status{
+  .radio-status {
     display: none !important;
   }
 
-  
+
 }

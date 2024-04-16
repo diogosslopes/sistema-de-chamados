@@ -384,17 +384,21 @@ export default function Dashboard() {
     const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
     setCreated(fullDate)
 
-    const elementForm = document.querySelector('.form-task')
-    const elementButton = document.querySelector('.new')
+    // const elementForm = document.querySelector('.form-task')
+    // const elementButton = document.querySelector('.new')
+    document.querySelector('.form-task').classList.toggle('show-form-task')
+    document.querySelector('.new').classList.toggle('hide')
 
-    if (elementForm.classList.contains('hide')) {
-      elementButton.classList.add('hide')
-      elementForm.classList.remove('hide')
-    } else {
-      elementForm.classList.add('hide')
-      elementButton.classList.remove('hide')
+    // if (elementForm.classList.contains('hide')) {
+    //   elementButton.classList.add('hide')
+    //   // elementForm.classList.remove('hide')
+    //   // elementForm.classList.add('show-form-task')
+    // } else {
+    //   // elementForm.classList.add('hide')
+    //   elementButton.classList.remove('hide')
+    //   // elementForm.classList.remove('show-form-task')
 
-    }
+    // }
   }
 
   function closeForm() {
@@ -509,7 +513,7 @@ export default function Dashboard() {
         </Title>
       </div>
       <div className="container-task">
-        <form className="form-task hide" onSubmit={handleSubmit(save)}>
+        <form className="form-task" onSubmit={handleSubmit(save)}>
           <div className="form-div form-div-task">
             <div className="tipo_select">
               <label>Tipo</label>
