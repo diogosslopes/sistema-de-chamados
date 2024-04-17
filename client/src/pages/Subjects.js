@@ -1,4 +1,4 @@
-import { FiUsers, FiTrash, FiEdit2, FiType } from "react-icons/fi";
+import { FiUsers, FiTrash, FiEdit2, FiType, FiTag } from "react-icons/fi";
 import Sidebar from "../components/Sidebar";
 import Title from "../components/Title";
 import { useContext, useEffect, useState } from "react";
@@ -19,80 +19,26 @@ import Axios from "axios"
 export default function Subjects() {
 
     const validation = yup.object().shape({
-        taskType: yup.string().required("Nome é obrigatório")
-        
+        subject: yup.string().required("Nome é obrigatório")
+
     })
 
-    const { registerUser, baseURL } = useContext(AuthContext)
-    
+    const { baseURL } = useContext(AuthContext)
+
     const [taskType, setTaskType] = useState('') //tasktype
-    const [taskTypeId, setTaskTypeId] = useState('') //tasktype
     const [taskTypeList, setTaskTypeList] = useState([]) //tasktype
+    const [subject, setSubject] = useState()
+    const [subjectList, setSubjectList] = useState([])
+    const [subjectId, setSubjectId] = useState('') //tasktype
     const [editing, setEditing] = useState()
     const [showModal, setShowModal] = useState()
-    let list = []
+    let listTasks = []
+    let listSubject = []
 
-    const elementForm = document.querySelector('.form-client')
-    
-    const elementButton = document.querySelector('.new')
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(validation)
     })
-
-    const save = async value => {
-
-
-        console.log("Tipo" + taskType)
-
-        
-        if(editing === true){
-            Axios.put(`${baseURL}/editTaskType`, {
-                taskType: taskType,
-                id: taskTypeId
-            }).then(() =>{
-                toast.success('Edição realizada com sucesso')
-                setTaskType('')
-            })
-            console.log(taskTypeId)
-        }else{
-            Axios.post(`${baseURL}/registerTaskType`, {
-                taskType: taskType
-            }).then(() =>{
-                toast.success('Tipo de chamado cadastrado com sucesso')
-                setTaskType('')
-            })
-
-        }
-
-
-        // if (editing === true) {
-        //     console.log(clientId)
-        //     await Axios.put(`${baseURL}/editClient`, {
-        //         clientId: clientId,
-        //         name: name,
-        //         adress: adress
-        //     }).then(() => {
-        //         toast.success("Editado com sucesso")
-        //         // showForm()
-        //     })
-        // } else {
-
-        //     const newClient = {
-        //         login: login,
-        //         password: password,
-        //         name: name,
-        //         adress: adress
-        //     }
-
-        //     registerUser(newClient)
-        //     // showForm()
-        //     console.log(newClient)
-        // }
-
-
-    }
-
 
     useEffect(() => {
 
@@ -100,23 +46,85 @@ export default function Subjects() {
         async function loadTaskType() {
 
             await Axios.get(`${baseURL}/getTaskTypes`).then((response) => {
-                
+
                 response.data.forEach((doc) => {
-                    list.push({
+                    listTasks.push({
                         id: doc.id,
-                        taskType: doc.taskType,
-                        
+                        taskType: doc.taskType
+
                     })
-                    
+                    console.log(listTasks)
                 })
-                
-                setTaskTypeList(list)   
+
+                setTaskTypeList(listTasks)
             })
-            
+     
+
         }
         loadTaskType()
-        console.log(taskTypeList)
-    }, [taskType, taskTypeId])
+    }, [subject, subjectId])
+
+    useEffect(() => {
+
+
+        async function loadSubjects() {
+
+            await Axios.get(`${baseURL}/getSubjects`).then((response) => {
+                response.data.forEach((doc) => {
+                    console.log(doc.subject)
+                    listSubject.push({
+                        id: doc.id,
+                        subject: doc.subject,
+                        taskType: doc.taskType
+                    })
+
+                })
+                
+                setSubjectList(listSubject)
+            })
+
+
+        }
+        console.log(subjectList)
+        loadSubjects()
+    }, [subject, subjectId])
+
+
+
+    const save = async value => {
+
+        console.log("Tipo" + subject)
+
+        if (editing === true) {
+            Axios.put(`${baseURL}/editSubject`, {
+                subject: subject,
+                id: subjectId,
+                taskType: taskType
+            }).then(() => {
+                toast.success('Edição realizada com sucesso')
+                setSubject('')
+                setTaskType('')
+                setEditing(false)
+            })
+            console.log(subjectId)
+        } else {
+            Axios.post(`${baseURL}/registerSubject`, {
+                subject: subject,
+                taskType: taskType
+            }).then(() => {
+                toast.success('Assunto cadastrado com sucesso')
+                setSubject('')
+                setTaskType('')
+            })
+
+        }
+
+
+
+
+    }
+
+
 
 
 
@@ -125,15 +133,16 @@ export default function Subjects() {
 
         console.log(c)
         setEditing(true)
+        setSubject(c.subject)
+        setSubjectId(c.id)
         setTaskType(c.taskType)
-        setTaskTypeId(c.id)
         // showForm()
         // toast.success("Editado com sucesso")
     }
 
     function deleteItem(id) {
         setShowModal(!showModal)
-        setTaskTypeId(id)
+        setSubjectId(id)
     }
 
 
@@ -145,31 +154,39 @@ export default function Subjects() {
             <Sidebar />
             <div className="title">
                 <Title name="Cadastro de Assuntos">
-                    <FiType size={22} />
+                    <FiTag size={22} />
                 </Title>
             </div>
             <div className="container-client ">
                 <form className="form-profile form-options" onSubmit={handleSubmit(save)}>
                     <div className="form-div">
                         <div >
+                            <label>Assunto</label>
+                            <input type='text' name="subject" {...register("subject")} value={subject} onChange={(e) => setSubject(e.target.value)} />
                             <label>Tipo de chamado</label>
-                            <input type='text' name="taskType" {...register("taskType")} value={taskType} onChange={(e) => setTaskType(e.target.value)} />
-
+                            <select name="taskType" {...register("taskType")} multiple={false} value={taskType} onChange={(e) => { setTaskType(e.target.value) }}>
+                                <option hidden value={''} >Selecione o tipo de chamado</option>
+                                {taskTypeList.map((t) => {
+                                    return (
+                                        <option>{t.taskType}</option>
+                                    )
+                                })}
+                            </select>
                             <div className="buttons">
                                 <button type="submit">Salvar</button>
-                                <button type="button" onClick={() => {setTaskType("")}}>Limpar</button>
+                                <button type="button" onClick={() => { setSubject("") }}>Limpar</button>
                             </div>
                         </div>
                         <article className="error-message">
-                            <p>{errors.taskType?.message}</p>
+                            <p>{errors.subject?.message}</p>
                         </article>
                     </div>
                 </form>
-                {taskTypeList.map((c) => {
+                {subjectList.map((c) => {
                     return (
                         <div key={c.id} className="clients-list">
                             <div className="task-types-list">
-                                <label>{c.taskType}</label>
+                                <label>{c.subject}</label>
                                 <FiEdit2 className="client-btn edit" onClick={() => editingTaskType(c)} />
                                 <FiTrash className="client-btn delete" onClick={() => deleteItem(c.id)} />
                             </div>
@@ -178,7 +195,7 @@ export default function Subjects() {
                 })}
             </div>
             {showModal && (
-                <DeleteModal close={deleteItem} id={taskTypeId} bd={"taskTypes"}  />
+                <DeleteModal close={deleteItem} id={subjectId} bd={"subject"} />
             )}
         </div>
     )

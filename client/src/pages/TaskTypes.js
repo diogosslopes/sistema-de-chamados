@@ -66,31 +66,6 @@ export default function TaskTypes() {
         }
 
 
-        // if (editing === true) {
-        //     console.log(clientId)
-        //     await Axios.put(`${baseURL}/editClient`, {
-        //         clientId: clientId,
-        //         name: name,
-        //         adress: adress
-        //     }).then(() => {
-        //         toast.success("Editado com sucesso")
-        //         // showForm()
-        //     })
-        // } else {
-
-        //     const newClient = {
-        //         login: login,
-        //         password: password,
-        //         name: name,
-        //         adress: adress
-        //     }
-
-        //     registerUser(newClient)
-        //     // showForm()
-        //     console.log(newClient)
-        // }
-
-
     }
 
 

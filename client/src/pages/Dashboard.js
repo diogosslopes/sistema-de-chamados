@@ -36,9 +36,6 @@ export default function Dashboard() {
   const { user, baseURL } = useContext(AuthContext)
   const [tasks, setTasks] = useState([])
   let list = []
-  const [task, setTask] = useState('')
-  const [type, setType] = useState('')
-  const [showModal, setShowModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [lastTask, setLastTask] = useState()
   const [firstTask, setFirstTask] = useState()
@@ -54,22 +51,21 @@ export default function Dashboard() {
   const [clients, setClients] = useState([])
   const [priority, setPriority] = useState()
   const [subject, setSubject] = useState()
-  const [taskType, setTaskType] = useState(['TI', 'Estrutura'])
+  const [taskType, setTaskType] = useState([])
   const [selectedType, setSelectedType] = useState('')
   const [status, setStatus] = useState('Criado')
   const [created, setCreated] = useState()
   const [obs, setObs] = useState([])
   const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
-  const [subjectsTi, setSubjectsTi] = useState(['Impressora', 'Sistema', 'Internet'])
-  const [subjectsGeneral, setSubjectsGeneral] = useState(['Eletrica', 'Pintura', 'Ar Condicionado', 'Hidraulico', 'Portas', 'Outros'])
   const [subjects, setSubjects] = useState([])
-  const [stats, setStats] = useState(['Criado', 'Aberto', 'Em andamento', 'Enviado p/ tec', 'Aguardando liberação', 'Fechado'])
+  const [statusList, setStatusList] = useState([])
   const [disable, setDisable] = useState(true)
   const [images, setImages] = useState([])
-  const [newList, setNewList] = useState([])
   const [taskImages, setTaskImages] = useState([])
-  let taskkkk
-  let fullDate = ''
+  const [subjectList, setSubjectList] = useState([])
+  const [taskTypeList, setTaskTypeList] = useState([])
+
+
   let obsList = []
   let imagesList = []
   let newTasks = []
@@ -104,17 +100,59 @@ export default function Dashboard() {
 
   }, [])
 
-  useEffect(() => {
 
-    if (taskType === "TI") {
-      setSubjects(subjectsTi)
-    } else {
-      setSubjects(subjectsGeneral)
-    }
+  useEffect(()=>{
+    async function loadStatus() {
 
+      let listStatus = []
+      let listSubject = []
+      let taskTypeList = []
+      await Axios.get(`${baseURL}/getStatus`).then((response) => {
+          
+          response.data.forEach((doc) => {
+            listStatus.push({
+                  id: doc.id,
+                  status: doc.status,
+                  
+              })
+              
+          })
+          
+          setStatusList(listStatus)   
+      })
 
+      await Axios.get(`${baseURL}/getSubjects`).then((response) => {
+        response.data.forEach((doc) => {
+            console.log(doc.subject)
+            listSubject.push({
+                id: doc.id,
+                subject: doc.subject,
+                taskType: doc.taskType
+            })
 
-  }, [taskType])
+        })
+
+        setSubjectList(listSubject)
+    })
+
+    await Axios.get(`${baseURL}/getTaskTypes`).then((response) => {
+                
+      response.data.forEach((doc) => {
+        taskTypeList.push({
+              id: doc.id,
+              taskType: doc.taskType,
+              
+          })
+          
+      })
+      
+      setTaskTypeList(taskTypeList)   
+  })
+      
+  }
+  loadStatus()
+  console.log(statusList)
+  }, [])
 
   async function getDocs() {
 
@@ -384,21 +422,10 @@ export default function Dashboard() {
     const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
     setCreated(fullDate)
 
-    // const elementForm = document.querySelector('.form-task')
-    // const elementButton = document.querySelector('.new')
     document.querySelector('.form-task').classList.toggle('show-form-task')
     document.querySelector('.new').classList.toggle('hide')
 
-    // if (elementForm.classList.contains('hide')) {
-    //   elementButton.classList.add('hide')
-    //   // elementForm.classList.remove('hide')
-    //   // elementForm.classList.add('show-form-task')
-    // } else {
-    //   // elementForm.classList.add('hide')
-    //   elementButton.classList.remove('hide')
-    //   // elementForm.classList.remove('show-form-task')
 
-    // }
   }
 
   function closeForm() {
@@ -485,6 +512,16 @@ export default function Dashboard() {
 
   }
 
+  function handleSubjects(value){
+    setTaskType(value)
+    console.log(subjectList)
+    console.log(value)
+
+    setSubjects(subjectList.filter((s)=> s.taskType === value))
+
+    // console.log(lista)
+  }
+
 
 
   if (loading) {
@@ -517,10 +554,13 @@ export default function Dashboard() {
           <div className="form-div form-div-task">
             <div className="tipo_select">
               <label>Tipo</label>
-              <select name="taskType" {...register("taskType")} multiple={false} value={taskType} onChange={(e) => { setTaskType(e.target.value) }}>
+              <select name="taskType" {...register("taskType")} multiple={false} value={taskType} onChange={(e) => { handleSubjects(e.target.value) }}>
                 <option hidden value={''} >Selecione o tipo de chamado</option>
-                <option>TI</option>
-                <option>Estrutura</option>
+                {taskTypeList.map((s, index) => {
+                  return (
+                    <option value={s.taskType} key={s.id}>{s.taskType}</option>
+                  )
+                })}
               </select>
 
             </div>
@@ -530,7 +570,7 @@ export default function Dashboard() {
                 <option hidden value={''} >Selecione o assunto</option>
                 {subjects.map((s, index) => {
                   return (
-                    <option value={s} key={index}>{s}</option>
+                    <option value={s.subject} key={s.id}>{s.subject}</option>
                   )
                 })}
               </select>
@@ -550,9 +590,9 @@ export default function Dashboard() {
               <label>Status</label>
               <select disabled={disable} name="status" {...register("status")} multiple={false} value={status} onChange={(e) => { setStatus(e.target.value) }}>
                 <option hidden value={''} >Selecione o status</option>
-                {stats.map((s, index) => {
+                {statusList.map((s) => {
                   return (
-                    <option value={s} key={index}>{s}</option>
+                    <option value={s.status} key={s.id}>{s.status}</option>
                   )
                 })}
               </select>

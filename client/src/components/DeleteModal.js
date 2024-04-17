@@ -52,6 +52,22 @@ export default function DeleteModal({ id, close, bd, getDoc }) {
         close()
       })
 
+    } else if (bd === 'status') {
+      console.log(id)
+      Axios.delete(`${baseURL}/deleteStatus/${id}`).then((response) => {
+        console.log(response)
+        toast.success("Deletado com sucesso")
+        close()
+      })
+
+    } else if (bd === 'subject') {
+      console.log(id)
+      Axios.delete(`${baseURL}/deleteSubject/${id}`).then((response) => {
+        console.log(response)
+        toast.success("Deletado com sucesso")
+        close()
+      })
+
     }
 
     console.log(id)

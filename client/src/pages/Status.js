@@ -1,4 +1,4 @@
-import { FiUsers, FiTrash, FiEdit2, FiType } from "react-icons/fi";
+import { FiUsers, FiTrash, FiEdit2, FiType, FiMenu, FiList } from "react-icons/fi";
 import Sidebar from "../components/Sidebar";
 import Title from "../components/Title";
 import { useContext, useEffect, useState } from "react";
@@ -16,25 +16,22 @@ import Axios from "axios"
 
 
 
-export default function Status() {
+export default function Subjects() {
 
     const validation = yup.object().shape({
-        taskType: yup.string().required("Nome é obrigatório")
+        status: yup.string().required("Nome é obrigatório")
         
     })
 
-    const { registerUser, baseURL } = useContext(AuthContext)
+    const {  baseURL } = useContext(AuthContext)
     
-    const [taskType, setTaskType] = useState('') //tasktype
-    const [taskTypeId, setTaskTypeId] = useState('') //tasktype
-    const [taskTypeList, setTaskTypeList] = useState([]) //tasktype
+    const [status, setStatus] = useState('') //tasktype
+    const [statusId, setStatusId] = useState('') //tasktype
+    const [statusList, setStatusList] = useState([]) //tasktype
     const [editing, setEditing] = useState()
     const [showModal, setShowModal] = useState()
     let list = []
 
-    const elementForm = document.querySelector('.form-client')
-    
-    const elementButton = document.querySelector('.new')
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(validation)
@@ -43,52 +40,29 @@ export default function Status() {
     const save = async value => {
 
 
-        console.log("Tipo" + taskType)
+        console.log("Tipo" + status)
 
         
         if(editing === true){
-            Axios.put(`${baseURL}/editTaskType`, {
-                taskType: taskType,
-                id: taskTypeId
+            Axios.put(`${baseURL}/editStatus`, {
+                status: status,
+                id: statusId
             }).then(() =>{
                 toast.success('Edição realizada com sucesso')
-                setTaskType('')
+                setStatus('')
             })
-            console.log(taskTypeId)
+            console.log(statusId)
         }else{
-            Axios.post(`${baseURL}/registerTaskType`, {
-                taskType: taskType
+            Axios.post(`${baseURL}/registerStatus`, {
+                status: status
             }).then(() =>{
-                toast.success('Tipo de chamado cadastrado com sucesso')
-                setTaskType('')
+                toast.success('Status cadastrado com sucesso')
+                setStatus('')
             })
 
         }
 
 
-        // if (editing === true) {
-        //     console.log(clientId)
-        //     await Axios.put(`${baseURL}/editClient`, {
-        //         clientId: clientId,
-        //         name: name,
-        //         adress: adress
-        //     }).then(() => {
-        //         toast.success("Editado com sucesso")
-        //         // showForm()
-        //     })
-        // } else {
-
-        //     const newClient = {
-        //         login: login,
-        //         password: password,
-        //         name: name,
-        //         adress: adress
-        //     }
-
-        //     registerUser(newClient)
-        //     // showForm()
-        //     console.log(newClient)
-        // }
 
 
     }
@@ -99,24 +73,24 @@ export default function Status() {
 
         async function loadTaskType() {
 
-            await Axios.get(`${baseURL}/getTaskTypes`).then((response) => {
+            await Axios.get(`${baseURL}/getStatus`).then((response) => {
                 
                 response.data.forEach((doc) => {
                     list.push({
                         id: doc.id,
-                        taskType: doc.taskType,
+                        status: doc.status,
                         
                     })
                     
                 })
                 
-                setTaskTypeList(list)   
+                setStatusList(list)   
             })
             
         }
         loadTaskType()
-        console.log(taskTypeList)
-    }, [taskType, taskTypeId])
+        console.log(statusList)
+    }, [status, statusId])
 
 
 
@@ -125,15 +99,15 @@ export default function Status() {
 
         console.log(c)
         setEditing(true)
-        setTaskType(c.taskType)
-        setTaskTypeId(c.id)
+        setStatus (c.status)
+        setStatusId(c.id)
         // showForm()
         // toast.success("Editado com sucesso")
     }
 
     function deleteItem(id) {
         setShowModal(!showModal)
-        setTaskTypeId(id)
+        setStatusId(id)
     }
 
 
@@ -145,19 +119,19 @@ export default function Status() {
             <Sidebar />
             <div className="title">
                 <Title name="Cadastro de Status">
-                    <FiType size={22} />
+                    <FiList size={22} />
                 </Title>
             </div>
             <div className="container-client ">
                 <form className="form-profile form-options" onSubmit={handleSubmit(save)}>
                     <div className="form-div">
                         <div >
-                            <label>Tipo de chamado</label>
-                            <input type='text' name="taskType" {...register("taskType")} value={taskType} onChange={(e) => setTaskType(e.target.value)} />
+                            <label>Status</label>
+                            <input type='text' name="status" {...register("status")} value={status} onChange={(e) => setStatus(e.target.value)} />
 
                             <div className="buttons">
                                 <button type="submit">Salvar</button>
-                                <button type="button" onClick={() => {setTaskType("")}}>Limpar</button>
+                                <button type="button" onClick={() => {setStatus("")}}>Limpar</button>
                             </div>
                         </div>
                         <article className="error-message">
@@ -165,11 +139,11 @@ export default function Status() {
                         </article>
                     </div>
                 </form>
-                {taskTypeList.map((c) => {
+                {statusList.map((c) => {
                     return (
                         <div key={c.id} className="clients-list">
                             <div className="task-types-list">
-                                <label>{c.taskType}</label>
+                                <label>{c.status}</label>
                                 <FiEdit2 className="client-btn edit" onClick={() => editingTaskType(c)} />
                                 <FiTrash className="client-btn delete" onClick={() => deleteItem(c.id)} />
                             </div>
@@ -178,7 +152,7 @@ export default function Status() {
                 })}
             </div>
             {showModal && (
-                <DeleteModal close={deleteItem} id={taskTypeId} bd={"taskTypes"}  />
+                <DeleteModal close={deleteItem} id={statusId} bd={"status"}  />
             )}
         </div>
     )
