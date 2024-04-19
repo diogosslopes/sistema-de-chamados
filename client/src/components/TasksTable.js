@@ -117,7 +117,8 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
             <table className="table-tasks">
                 <thead>
                     <tr className="table-head">
-                        <th scope="col" accessKey='client'  onClick={(e) => order(e.target.accessKey)}>Cliente</th>
+                        <th scope="col" onClick={() => order('id', 'completedtask')}>ID</th>
+                        <th scope="col" onClick={() => order('client', 'completedtask')}>Cliente</th>
                         <th scope="col" onClick={() => order('subject', 'completedtask')}>Assunto</th>
                         <th scope="col" onClick={() => order('priority', 'completedtask')}>Prioridade</th>
                         <th scope="col" onClick={() => order('status', 'completedtask')}>Status</th>
@@ -132,6 +133,7 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                     {tasks.map((task) => {
                         return (
                             <tr className="table-body-line" key={task.taskId}>
+                                <td id="id-column" data-label="ID" >{task.taskId}</td>
                                 <td data-label="Cliente" >{task.client}</td>
                                 <td data-label="Assunto">{task.subject}</td>
                                 <td data-label="Prioridade">{task.priority}</td>
