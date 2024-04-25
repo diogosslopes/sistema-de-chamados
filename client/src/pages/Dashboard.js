@@ -204,8 +204,6 @@ export default function Dashboard() {
         obsList = []
       })
 
-      console.log(obs)
-      console.log(list)
       const lastDoc = docs[docs.length - 1]
       setLastTask(lastDoc)
       setFirstTask(docs[0])
