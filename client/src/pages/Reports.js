@@ -15,6 +15,7 @@ import { toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
 import { format } from 'date-fns'
 import emailjs from '@emailjs/browser'
+import { ButtonGroup } from "@mui/material";
 
 
 const validation = yup.object().shape({
@@ -25,148 +26,163 @@ const validation = yup.object().shape({
 
 export default function Reports() {
 
-  const resolveAfter3Sec = new Promise(resolve => setTimeout(resolve, 3000))
+  // const resolveAfter3Sec = new Promise(resolve => setTimeout(resolve, 3000))
 
-  let list = []
-  const [task, setTask] = useState('')
-  const [type, setType] = useState('')
-  const [showModal, setShowModal] = useState(false)
-  const [isEmpty, setIsEmpty] = useState(false)
-  const [isAdmin, setIsAdmin] = useState(false)
+  // let list = []
+  // const [task, setTask] = useState('')
+  // const [type, setType] = useState('')
+  // const [showModal, setShowModal] = useState(false)
+  // const [isEmpty, setIsEmpty] = useState(false)
+  // const [isAdmin, setIsAdmin] = useState(false)
 
-  const { user, getDocs, loadClients, loadTasks, loading, loadingMore, setLoading, setLoadingMore, tasks, clients, setTasks, lastTask } = useContext(AuthContext)
-
-
-
-  const [newTask, setNewTask] = useState({})
-  const [client, setClient] = useState(user.name)
-  const [priority, setPriority] = useState('')
-  const [subject, setSubject] = useState('')
-  const [taskType, setTaskType] = useState(['TI', 'Estrutura'])
-  const [selectedType, setSelectedType] = useState('')
-  const [status, setStatus] = useState('')
-  const [created, setCreated] = useState()
-  const [concluded, setConcluded] = useState('')
-  const [obs, setObs] = useState()
-  const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
-  const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet', 'Eletrica', 'Pintura', 'Ar Condicionado', 'Hidraulico', 'Portas', 'Outros'])
-  const [stats, setStats] = useState(['Criado', 'Aberto', 'Em andamento', 'Enviado p/ tec', 'Aguardando liberação', 'Fechado'])
-  const [disable, setDisable] = useState(true)
-  const [images, setImages] = useState([])
+  // const { user, getDocs, loadClients, loadTasks, loading, loadingMore, setLoading, setLoadingMore, tasks, clients, setTasks, lastTask } = useContext(AuthContext)
 
 
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(validation)
-  })
+  // const [newTask, setNewTask] = useState({})
+  // const [client, setClient] = useState(user.name)
+  // const [priority, setPriority] = useState('')
+  // const [subject, setSubject] = useState('')
+  // const [taskType, setTaskType] = useState(['TI', 'Estrutura'])
+  // const [selectedType, setSelectedType] = useState('')
+  // const [status, setStatus] = useState('')
+  // const [created, setCreated] = useState()
+  // const [concluded, setConcluded] = useState('')
+  // const [obs, setObs] = useState()
+  // const [prioritys, setPrioritys] = useState(['Baixa', 'Média', 'Alta'])
+  // const [subjects, setSubjects] = useState(['Impressora', 'Sistema', 'Internet', 'Eletrica', 'Pintura', 'Ar Condicionado', 'Hidraulico', 'Portas', 'Outros'])
+  // const [stats, setStats] = useState(['Criado', 'Aberto', 'Em andamento', 'Enviado p/ tec', 'Aguardando liberação', 'Fechado'])
+  // const [disable, setDisable] = useState(true)
+  // const [images, setImages] = useState([])
 
 
-  useEffect(() => {
 
-    loadClients()
-    getDocs('tasks')
-
-    if (user.group === 'admin') {
-      setIsAdmin(true)
-      setDisable(false)
-    }
-
-  }, [])
-
-  async function moreTasks() {
-
-    setLoadingMore(true)
-
-    if (selectedType !== "" && isAdmin === false) {
-      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .where("type", "==", selectedType).limit('2').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    } else if (selectedType === "" && isAdmin === false) {
-      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
-        .limit('2').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    } else if (selectedType !== "" && isAdmin === true) {
-      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("type", "==", selectedType)
-        .limit('2').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    } else if (selectedType === "" && isAdmin === true) {
-      const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('2').startAfter(lastTask).get()
-      await loadTasks(newDocs)
-    }
-
-  }
-
-  function newClient(t, item) {
-    setType(t)
-    setShowModal(!showModal)
-    if (t === 'new') {
-      setTask('')
-    } else {
-      setTask('25/01/2023')
-    }
-  }
-
-  function showForm(e) {
-    e.preventDefault()
-
-    const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
-    setCreated(fullDate)
-
-    const elementForm = document.querySelector('.form-task')
-    const elementButton = document.querySelector('.new')
-
-    if (elementForm.classList.contains('hide')) {
-      elementButton.classList.add('hide')
-      elementForm.classList.remove('hide')
-    } else {
-      elementForm.classList.add('hide')
-      elementButton.classList.remove('hide')
-
-    }
-  }
-
-  function closeForm() {
-    const elementForm = document.querySelector('.form-task')
-    const elementButton = document.querySelector('.new')
-    if (!elementForm.classList.contains('hide')) {
-      elementForm.classList.add('hide')
-      elementButton.classList.remove('hide')
-    }
-  }
-
-  async function filter(value, name) {
+  // const { register, handleSubmit, formState: { errors } } = useForm({
+  //   resolver: yupResolver(validation)
+  // })
 
 
-    setTasks('')
-    const docs = await firebase.firestore().collection('tasks').orderBy('created', 'asc').where(name, "==", value).get()
-    await loadTasks(docs)
+  // useEffect(() => {
 
-  }
+  //   loadClients()
+  //   getDocs('tasks')
 
-  async function orderBy(e) {
-    const order = e.target.value
+  //   if (user.group === 'admin') {
+  //     setIsAdmin(true)
+  //     setDisable(false)
+  //   }
 
-    setTasks('')
-    const docs = await firebase.firestore().collection('tasks').orderBy(order, 'asc').get()
-    await loadTasks(docs)
-  }
+  // }, [])
+
+  // async function moreTasks() {
+
+  //   setLoadingMore(true)
+
+  //   if (selectedType !== "" && isAdmin === false) {
+  //     const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
+  //       .where("type", "==", selectedType).limit('2').startAfter(lastTask).get()
+  //     await loadTasks(newDocs)
+  //   } else if (selectedType === "" && isAdmin === false) {
+  //     const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("client", "==", user.name)
+  //       .limit('2').startAfter(lastTask).get()
+  //     await loadTasks(newDocs)
+  //   } else if (selectedType !== "" && isAdmin === true) {
+  //     const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').where("type", "==", selectedType)
+  //       .limit('2').startAfter(lastTask).get()
+  //     await loadTasks(newDocs)
+  //   } else if (selectedType === "" && isAdmin === true) {
+  //     const newDocs = await firebase.firestore().collection('tasks').orderBy('created', 'desc').limit('2').startAfter(lastTask).get()
+  //     await loadTasks(newDocs)
+  //   }
+
+  // }
+
+  // function newClient(t, item) {
+  //   setType(t)
+  //   setShowModal(!showModal)
+  //   if (t === 'new') {
+  //     setTask('')
+  //   } else {
+  //     setTask('25/01/2023')
+  //   }
+  // }
+
+  // function showForm(e) {
+  //   e.preventDefault()
+
+  //   const fullDate = format(new Date(), "dd/MM/yyyy HH:mm")
+  //   setCreated(fullDate)
+
+  //   const elementForm = document.querySelector('.form-task')
+  //   const elementButton = document.querySelector('.new')
+
+  //   if (elementForm.classList.contains('hide')) {
+  //     elementButton.classList.add('hide')
+  //     elementForm.classList.remove('hide')
+  //   } else {
+  //     elementForm.classList.add('hide')
+  //     elementButton.classList.remove('hide')
+
+  //   }
+  // }
+
+  // function closeForm() {
+  //   const elementForm = document.querySelector('.form-task')
+  //   const elementButton = document.querySelector('.new')
+  //   if (!elementForm.classList.contains('hide')) {
+  //     elementForm.classList.add('hide')
+  //     elementButton.classList.remove('hide')
+  //   }
+  // }
+
+  // async function filter(value, name) {
 
 
-  if (loading) {
-    return (
+  //   setTasks('')
+  //   const docs = await firebase.firestore().collection('tasks').orderBy('created', 'asc').where(name, "==", value).get()
+  //   await loadTasks(docs)
 
-      <div className="rigth-container">
-        <Sidebar />
-        <div className="title">
-          <Title name="Relatorios">
-            <FiMessageSquare size={22} />
-          </Title>
-          <div className="new-task title">
-            <span>Carregando chamados !</span>
-          </div>
-        </div>
-      </div>
-    )
+  // }
+
+  // async function orderBy(e) {
+  //   const order = e.target.value
+
+  //   setTasks('')
+  //   const docs = await firebase.firestore().collection('tasks').orderBy(order, 'asc').get()
+  //   await loadTasks(docs)
+  // }
+
+
+  // if (loading) {
+  //   return (
+
+  //     <div className="rigth-container">
+  //       <Sidebar />
+  //       <div className="title">
+  //         <Title name="Relatorios">
+  //           <FiMessageSquare size={22} />
+  //         </Title>
+  //         <div className="new-task title">
+  //           <span>Carregando chamados !</span>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   )
+  // }
+
+  const [dateIni, setDateIni] = useState()
+  const [dateEnd, setDateEnd] = useState()
+  const [unity, setUnity] = useState()
+  const [status, setStatus] = useState()
+  const [type, setType] = useState()
+
+  function handleReport(){
+    console.log("Gerou")
+    console.log(dateIni)
+    console.log(dateEnd)
+    console.log(status)
+    console.log(type)
+    console.log(unity)
   }
 
   return (
@@ -177,7 +193,40 @@ export default function Reports() {
           <FiMessageSquare size={22} />
         </Title>
       </div>
-      <div className="container-task">
+      <div className="container-task container-reports">
+        <div className="reports">
+          <label>Data Inicio</label>
+        <input type="date" value={dateIni} onChange={(e)=> {setDateIni(e.target.value)}}></input>
+          <label>Data Fim</label>
+        <input type="date" value={dateEnd} onChange={(e)=> {setDateEnd(e.target.value)}}></input>
+        </div>
+        <div className="reports">
+          <label>Unidade</label>
+          <select value={unity} onChange={(e)=> {setUnity(e.target.value)}}>
+            <option value="facil">Facil</option>
+            <option value="centrolab">Centrolab</option>
+            <option value="diagnolab">Diagnolab</option>
+          </select>
+        </div>
+        <div className="reports">
+          <label >Status</label>
+          <select value={status} onChange={(e)=> {setStatus(e.target.value)}}>
+            <option value="aberto">Aberto</option>
+            <option value="andamento">Em Andamento</option>
+            <option value="finalizado">Finalizado</option>
+          </select>
+        </div>
+        <div className="reports">
+          <label>Tipo</label>
+          <select value={type} onChange={(e)=> {setType(e.target.value)}}>
+            <option>Todos</option>
+            <option value="ti">TI</option>
+            <option value="estrutura">Estrutura</option>
+          </select>
+        </div>
+        <button onClick={handleReport} >Gerar</button>
+      </div>
+      {/* <div className="container-task">
         <form className="form-task form-filter hide" onSubmit={handleSubmit(filter)} >
           <div>
             <div className="tipo_select">
@@ -265,7 +314,7 @@ export default function Reports() {
       </div>
       {showModal && (
         <Modal tipo={type} close={newClient} item={task} />
-      )}
+      )} */}
     </div>
   )
 }
