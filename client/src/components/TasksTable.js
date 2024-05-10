@@ -124,7 +124,7 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                                         <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
                                         :
                                         <div >
-                                            <button className="task-btn search" disabled='true' onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
+                                            <button className="task-btn search"  onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
                                             <button className="task-btn edit" onClick={() => editClient('edit', task)}><FiEdit2 size={17} /></button>
                                             {user.group === 'admin' && (
                                                 <button className="task-btn check" onClick={() => completeTask(task)}><FiCheck size={17} /></button>
