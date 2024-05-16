@@ -273,16 +273,18 @@ export default function CompletedTasks() {
     let filterDocs = ""
 
     if (user.group === "admin") {
-      Axios.post(`${baseURL}/filtertask`, {
-        type: e.target.value
+      Axios.post(`${baseURL}/filterTasks`, {
+        type: e.target.value,
+        table: 'completedTasks'
       }).then((response) => {
         setIsEmpty(false)
         setLoadingMore(false)
         loadTasks(response.data, newObsList)
       })
     } else {
-      Axios.post(`${baseURL}/filtertask`, {
-        type: e.target.value
+      Axios.post(`${baseURL}/filterTasks`, {
+        type: e.target.value,
+        table: 'completedTasks'
       }).then((response) => {
         const tasksDocs = response.data.filter((t) => user.email === t.userEmail)
         const obsDocs = newObsList.filter((o) => user.name === o.client)

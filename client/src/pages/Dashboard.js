@@ -67,6 +67,7 @@ export default function Dashboard() {
   const [taskTypeList, setTaskTypeList] = useState([])
   const [pages, setPages] = useState()
   const [actualPage, setActualPage] = useState(0)
+  const [filtred, setFiltred] = useState(false)
 
 
   let obsList = []
@@ -351,7 +352,6 @@ export default function Dashboard() {
     // setLoadingMore(true)
     setActualPage(actualPage + 1)
     let page = actualPage + 1
-    console.log(page)
     if (page !== pages) {
       await Axios.get(`${baseURL}/getObsList`).then((response) => {
         newObsList = response.data
@@ -359,6 +359,8 @@ export default function Dashboard() {
           actualPage: page,
           userGroup: user.group,
           userId: user.id,
+          filtred: filtred,
+          type: selectedType
         }).then((response) => {
           newTasks = response.data
 
@@ -381,41 +383,11 @@ export default function Dashboard() {
       console.log(page)
       setLoadingMore(false)
       setIsEmpty(true)
+      setActualPage(pages - 1)
       toast.warning("Não existem mais chamados")
 
     }
-
-    // await Axios.get(`${baseURL}/getObsList`).then((response) => {
-    //   newObsList = response.data
-    //   Axios.post(`${baseURL}/getNextTasks`, {
-    //     actualPage: page,
-    //     userGroup: user.group,
-    //     userId: user.id,
-    //   }).then((response) => {
-    //     newTasks = response.data
-
-    //     if (response.data.length > 0) {
-    //       if (user.group === "admin") {
-    //         setTasks("")
-    //         loadTasks(newTasks, newObsList)
-    //         setFirstPage(false)
-
-    //       } else {
-    //         setTasks("")
-    //         const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
-    //         const obsDocs = newObsList.filter((o) => user.name === o.client)
-    //         loadTasks(tasksDocs, obsDocs)
-    //         setFirstPage(false)
-    //       }
-    //     } else {
-    //       setLoadingMore(false)
-    //       setIsEmpty(true)
-    //       toast.warning("Não existem mais chamados")
-
-    //     }
-    //   })
-    // })
-
+    console.log(page)
 
   }
 
@@ -434,6 +406,8 @@ export default function Dashboard() {
           actualPage: page,
           userGroup: user.group,
           userId: user.id,
+          filtred: filtred,
+          type: selectedType
         }).then((response) => {
           newTasks = response.data
 
@@ -454,12 +428,12 @@ export default function Dashboard() {
     } else {
       setLoadingMore(false)
       setFirstPage(true)
+      setActualPage(0)
       toast.warning("Não existem páginas anteriores")
 
     }
 
   }
-
 
   function showForm(e) {
     e.preventDefault()
@@ -488,35 +462,45 @@ export default function Dashboard() {
 
     e.preventDefault()
     setLoading(true)
+    setActualPage(0)
     setTasks('')
     setSelectedType(e.target.value)
     let filterDocs = ""
 
+    await Axios.post(`${baseURL}/getFiltredPages`,{
+      type: selectedType
+    }).then(async (response) => {
+      console.log(response.data)
+      if(response.data[0].pagina === 1 ){
+        setPages(0)
+      }else{
+        setPages(response.data[0].pagina)
+      }
+    })
 
     if (user.group === "admin") {
-      await Axios.get(`${baseURL}/getTasks`).then((response) => {
-        Axios.get(`${baseURL}/getObsList`).then((responseOBS) => {
-
-          setIsEmpty(false)
-          setLoadingMore(false)
-          const tasksDocs = response.data.filter((t) => t.type === e.target.value)
-          loadTasks(tasksDocs, responseOBS.data)
-        })
+      Axios.post(`${baseURL}/filterTasks`, {
+        type: e.target.value,
+        table: 'tasks'
+      }).then((response) => {
+        setIsEmpty(false)
+        setLoadingMore(false)
+        loadTasks(response.data, newObsList)
+        console.log(response.data)
       })
     } else {
-      await Axios.get(`${baseURL}/getTasks`).then((response) => {
-        Axios.get(`${baseURL}/getObsList`).then((responseOBS) => {
-
-          const tasksDocs = response.data.filter((t) => t.type === e.target.value && user.email === t.userEmail)
-          setIsEmpty(false)
-          setLoadingMore(false)
-          loadTasks(tasksDocs, responseOBS.data)
-        })
+      Axios.post(`${baseURL}/filterTasks`, {
+        type: e.target.value,
+        table: 'tasks'
+      }).then((response) => {
+        const tasksDocs = response.data.filter((t) => user.email === t.userEmail)
+        const obsDocs = newObsList.filter((o) => user.name === o.client)
+        setIsEmpty(false)
+        setLoadingMore(false)
+        loadTasks(tasksDocs, obsDocs)
       })
-
-
     }
-
+    setFiltred(true)
 
   }
 
