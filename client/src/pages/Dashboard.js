@@ -380,14 +380,12 @@ export default function Dashboard() {
         })
       })
     } else {
-      console.log(page)
       setLoadingMore(false)
       setIsEmpty(true)
       setActualPage(pages - 1)
       toast.warning("Não existem mais chamados")
 
     }
-    console.log(page)
 
   }
 
@@ -440,7 +438,6 @@ export default function Dashboard() {
     const fullDate = format(new Date(), "yyyy-MM-dd HH:mm:ss")
     // const fullDate = new Date(1,4,24)
     //  format(new Date(), "dd/MM/yyyy HH:mm")
-    console.log(fullDate)
     setCreated(fullDate)
 
     document.querySelector('.form-task').classList.toggle('show-form-task')
@@ -468,12 +465,14 @@ export default function Dashboard() {
     let filterDocs = ""
 
     await Axios.post(`${baseURL}/getFiltredPages`,{
-      type: selectedType
+      type: e.target.value
     }).then(async (response) => {
-      console.log(response.data)
+      console.log(selectedType)
       if(response.data[0].pagina === 1 ){
-        setPages(0)
+        console.log("Uma Pagina" + response.data[0].pagina)
+        setPages(response.data[0].pagina)
       }else{
+        console.log("Mais de uma Pagina" + response.data[0].pagina)
         setPages(response.data[0].pagina)
       }
     })
@@ -486,7 +485,6 @@ export default function Dashboard() {
         setIsEmpty(false)
         setLoadingMore(false)
         loadTasks(response.data, newObsList)
-        console.log(response.data)
       })
     } else {
       Axios.post(`${baseURL}/filterTasks`, {
