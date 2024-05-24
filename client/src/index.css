@@ -1040,10 +1040,30 @@ th {
   justify-content: space-between;
 }
 
-.bottom-menu label{
+.bottom-menu label,
+.evaluation-container label{
   color: #1BC6B4;
   font-size: 1.2em;
   margin-right: 5px;
+}
+
+.evaluation-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.evaluation-container span{
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.evaluation-container span:hover{
+  color: #A1B4C4;
+  font-size: 22px;
+  text-decoration: underline;
+  transition: all ease-in-out .1s;
+
 }
 
 /* -------------------------------------------------------------------------------------------------------------------------------------------------- */

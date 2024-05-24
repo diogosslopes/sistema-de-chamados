@@ -64,7 +64,7 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
         const fullDate = format(new Date(), "yyyy-MM-dd HH:mm:ss")
         setConcluded(fullDate)
 
-        await Axios.put(`${baseURL}/editTaskConcluded`, {
+        await Axios.put(`${baseURL}/concludeTask`, {
             taskId: task.taskId,
             concluded: fullDate
         }).then(() => {

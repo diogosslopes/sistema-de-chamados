@@ -69,6 +69,8 @@ export default function CompletedTasks() {
   const [pages, setPages] = useState()
   const [actualPage, setActualPage] = useState(0)
   const [filtred, setFiltred] = useState(false)
+  const [evaluationTasks, setEvaluationTasks] = useState()
+  const [obsEvalution, setObsEvalution] = useState()
 
 
 
@@ -88,9 +90,31 @@ export default function CompletedTasks() {
     }
 
     async function getpages() {
-      Axios.get(`${baseURL}/getPages`).then(async (response) => {
+      Axios.get(`${baseURL}/getCompletedPages`).then(async (response) => {
         setPages(response.data[0].pagina)
       })
+
+      if(user.group === 'admin'){
+        Axios.post(`${baseURL}/getEvaluationTasks`, {
+          userGroup: user.group
+        }).then(async(response)=>{
+          if(response.data !== 0){
+              setEvaluationTasks(response.data)
+              console.log(response.data)
+          }
+        })
+      }else{
+        Axios.post(`${baseURL}/getEvaluationTasks`, {
+          userGroup: user.group,
+          userId: user.id
+        }).then(async(response)=>{
+          if(response.data !== 0){
+              setEvaluationTasks(response.data)
+              console.log(response.data)
+          }
+        })
+
+      }
     }
 
     getpages()
@@ -106,6 +130,7 @@ export default function CompletedTasks() {
       newTasks = response.data
       Axios.get(`${baseURL}/getObsList`).then((response) => {
         newObsList = response.data
+        setObsEvalution(response.data)
         if (user.group === "admin") {
           loadTasks(newTasks, newObsList)
 
@@ -392,6 +417,12 @@ export default function CompletedTasks() {
 
   }
 
+  async function handleEvaluation(){
+    setTasks('')
+    loadTasks(evaluationTasks, obsEvalution)
+  }
+
+
   if (loading) {
     return (
 
@@ -507,8 +538,8 @@ export default function CompletedTasks() {
           </>
           :
           <div>
-            <div className="new-task more-task">
-
+            <div className="new-task more-task evaluation-container">
+              <label>Existem <span onClick={handleEvaluation}>{evaluationTasks.length}</span>  chamados para serem avaliados</label>
               <div className="filter-select">
                 <label>Filtrar</label>
                 <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { filter(e) }}>
