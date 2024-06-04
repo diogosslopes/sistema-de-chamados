@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../context/auth";
 import emailjs, { send } from '@emailjs/browser'
 import Axios from "axios";
+import Title from "./Title";
 
 
 const validation = yup.object().shape({
@@ -20,7 +21,7 @@ const validation = yup.object().shape({
 })
 
 
-export default function Modal({ tipo, close, item, getDoc }) {
+export default function Modal({ tipo, close, item, getDoc, title }) {
 
   const { user, baseURL } = useContext(AuthContext)
   const [newTask, setNewTask] = useState({})
@@ -59,6 +60,9 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
 
   useEffect(() => {
+
+    console.log(title)
+    console.log(tipo)
 
     async function loadClients() {
 
@@ -135,7 +139,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
       })
 
       await Axios.get(`${baseURL}/getStatus`).then((response) => {
-        console.log(item)
 
         response.data.forEach((doc) => {
           listStatus.push({
@@ -259,7 +262,6 @@ export default function Modal({ tipo, close, item, getDoc }) {
 
   function handleSubjects(value) {
     setTaskType(value)
-    console.log(value)
 
     setSubjects(subjectList.filter((s) => s.taskType === value))
 
@@ -272,7 +274,8 @@ export default function Modal({ tipo, close, item, getDoc }) {
   return (
     <div className="modal">
       <div className="modal-new">
-        <h1>Cadastro de Chamado</h1>
+        <Title className='modal-title' name={title} />
+        
         <form onSubmit={handleSubmit(saveTask)} className="form-modal" >
           <div>
             <label>Cliente</label>

@@ -758,6 +758,11 @@ table td svg {
   color: #fff;
 }
 
+.grade {
+  background-color: #069441;
+  color: #fff;
+}
+
 .delete {
   background-color: red;
   color: #fff;
@@ -1064,6 +1069,10 @@ th {
   text-decoration: underline;
   transition: all ease-in-out .1s;
 
+}
+
+.modal-new .title h1{
+  font-size: 2em;
 }
 
 /* -------------------------------------------------------------------------------------------------------------------------------------------------- */

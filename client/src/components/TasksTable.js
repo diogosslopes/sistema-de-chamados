@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { FiEdit2, FiSearch, FiDelete, FiTrash, FiCheck } from "react-icons/fi";
+import { FiEdit2, FiSearch, FiDelete, FiTrash, FiCheck, FiClipboard } from "react-icons/fi";
 import firebase from '../services/firebaseConnection';
 import '../index.css'
 import { format } from 'date-fns'
@@ -29,23 +29,29 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [newTask, setNewTask] = useState()
     const [hide, setHide] = useState()
+    const [name, setName] = useState()
 
 
     useEffect(() => {
+
+        console.log(tasks)
         if (page === 'report') {
             setHide('hide-column')
         }
-        console.log(page)
     }, [])
 
     function editClient(t, item) {
+        
         setType(t)
         setShowModal(!showModal)
-        if (showModal) {
 
+        if (showModal === false) {
+            setName(`Chamado numero ${item.taskId}`)
         }
+
         if (t === 'edit') {
             setTask(item)
+            setName("Editar Chamado")
         } else {
             setTask(item)
         }
@@ -71,22 +77,13 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
             toast.success("Chamado finalizado!")
         })
 
-        // await Axios.post(`${baseURL}/completeTask`, {
-        //     client: task.client,
-        //     subject: task.subject,
-        //     priority: task.priority,
-        //     status: task.status,
-        //     type: task.type,
-        //     created: task.created,
-        //     concluded: fullDate,
-        //     obs: task.obs,
-        //     userId: task.clientId,
-        //     userEmail: task.userEmail,
-        //     taskId: task.taskId
-        // }).then(() => {
-        // })
+    }
 
-
+    async function evaluateTask(t, item){
+        setTask(item)
+        setType(t)
+        setName(`Avaliação de chamado`)
+        setShowModal(!showModal)
     }
 
     return (
@@ -121,7 +118,10 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                                 }
                                 <td data-label="#" className={hide}>
                                     {page === 'completedtasks' ?
-                                        <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
+                                        <div>
+                                            <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
+                                            <button className="task-btn grade" onClick={() => evaluateTask('evaluate' ,task)}><FiClipboard size={17} /></button>
+                                        </div>
                                         :
                                         <div >
                                             <button className="task-btn search"  onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
@@ -141,7 +141,7 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                 </tbody>
             </table>
             {showModal && (
-                <Modal tipo={type} close={editClient} item={task} getDoc={getDoc} itens={tasks} />
+                <Modal tipo={type} close={editClient} item={task} getDoc={getDoc} itens={tasks} title={name} />
             )}
             {showDeleteModal && (
                 <DeleteModal id={taskId} close={deleteTask} bd={"tasks"} getDoc={getDoc} />

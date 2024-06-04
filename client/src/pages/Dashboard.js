@@ -474,12 +474,9 @@ export default function Dashboard() {
     await Axios.post(`${baseURL}/getFiltredPages`, {
       type: e.target.value
     }).then(async (response) => {
-      console.log(selectedType)
       if (response.data[0].pagina === 1) {
-        console.log("Uma Pagina" + response.data[0].pagina)
         setPages(response.data[0].pagina)
       } else {
-        console.log("Mais de uma Pagina" + response.data[0].pagina)
         setPages(response.data[0].pagina)
       }
     })
