@@ -566,7 +566,7 @@ export default function CompletedTasks() {
         }
       </div>
       {showModal && (
-        <Modal tipo={type} close={newClient} item={task} />
+        <Modal tipo={type} close={newClient} item={task} handleEvaluation={handleEvaluation} />
       )}
     </div>
   )
