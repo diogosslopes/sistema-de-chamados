@@ -246,10 +246,33 @@ export default function Dashboard() {
   }
 
   function sendEmail() {
-    emailjs.send("service_uw92p6x", "template_a9s048m", templateParams, "BrAq6Nxcac_3F_GXo")
-      .then((response) => {
-        console.log("Email enviado ", response.status, response.text)
-      })
+
+      if(taskType === 'TI'){
+        emailjs.send("service_uw92p6x", "template_a9s048m", {
+          unity: client,
+          subject: subject,
+          message: obs,
+          emailDest: 'ticentrolab@centrolabvr.com.br'
+        }, "BrAq6Nxcac_3F_GXo").then((response) => {
+            console.log("Email enviado ", response.status, response.text)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+        }else if(taskType === 'Estrutura'){
+        emailjs.send("service_uw92p6x", "template_a9s048m", {
+          unity: client,
+          subject: subject,
+          message: obs,
+          emailDest: 'compras@centrolabvr.com.br'
+        }, "BrAq6Nxcac_3F_GXo").then((response) => {
+            console.log("Email enviado ", response.status, response.text)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+  
+      }
   }
 
   async function saveTask(e) {

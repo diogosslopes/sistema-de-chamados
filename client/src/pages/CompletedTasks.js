@@ -71,6 +71,9 @@ export default function CompletedTasks() {
   const [filtred, setFiltred] = useState(false)
   const [evaluationTasks, setEvaluationTasks] = useState()
   const [obsEvalution, setObsEvalution] = useState()
+  const [tasksNumber, setTasksNumber] = useState()
+  const [tablePage, setTablePage] = useState('completedTasks')
+  
 
 
 
@@ -100,18 +103,21 @@ export default function CompletedTasks() {
         }).then(async(response)=>{
           if(response.data !== 0){
               setEvaluationTasks(response.data)
-              console.log(response.data)
-          }
-        })
-      }else{
-        Axios.post(`${baseURL}/getEvaluationTasks`, {
-          userGroup: user.group,
-          userId: user.id
-        }).then(async(response)=>{
-          if(response.data !== 0){
+              console.log(response.data.length)
+              setTasksNumber(response.data.length)
+            }
+          })
+        }else{
+          Axios.post(`${baseURL}/getEvaluationTasks`, {
+            userGroup: user.group,
+            userId: user.id
+          }).then(async(response)=>{
+            if(response.data !== 0){
               setEvaluationTasks(response.data)
               console.log(response.data)
-          }
+              setTasksNumber(response.data.length)
+              
+            }
         })
 
       }
@@ -119,6 +125,7 @@ export default function CompletedTasks() {
 
     getpages()
 
+    
 
   }, [])
 
@@ -149,7 +156,7 @@ export default function CompletedTasks() {
 
     const isTaksEmpty = docs.length === 0
 
-
+    console.log(docs)
     if (!isTaksEmpty) {
       docs.forEach((doc) => {
         obsList = obs.filter((o) => doc.taskId === o.taskid)
@@ -167,7 +174,9 @@ export default function CompletedTasks() {
           subject: doc.subject,
           userId: doc.userId,
           taskId: doc.taskId,
-          taskImages: doc.taskImages
+          taskImages: doc.taskImages,
+          grade: doc.grade,
+          comment: doc.comment,
         })
       })
 
@@ -419,6 +428,7 @@ export default function CompletedTasks() {
 
   async function handleEvaluation(){
     setTasks('')
+    setTablePage('evaluation')
     loadTasks(evaluationTasks, obsEvalution)
   }
 
@@ -539,7 +549,7 @@ export default function CompletedTasks() {
           :
           <div>
             <div className="new-task more-task evaluation-container">
-              <label>Existem <span onClick={handleEvaluation}>{evaluationTasks.length}</span>  chamados para serem avaliados</label>
+              <label>Existem <span onClick={handleEvaluation}>{tasksNumber}</span>  chamados para serem avaliados</label>
               <div className="filter-select">
                 <label>Filtrar</label>
                 <select name="selectedType" {...register("selectedType")} value={selectedType} onChange={(e) => { filter(e) }}>
@@ -550,7 +560,7 @@ export default function CompletedTasks() {
               </div>
             </div>
 
-            {loadingMore ? <Loading /> : <TasksTable tasks={tasks} order={orderBy} page={'completedtasks'} />}
+            {loadingMore ? <Loading /> : <TasksTable tasks={tasks} order={orderBy} page={'completedtasks'} tipo={tablePage} />}
 
 
             <div className="bottom-menu">

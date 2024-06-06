@@ -13,6 +13,7 @@ import emailjs, { send } from '@emailjs/browser'
 import Axios from "axios";
 import Title from "./Title";
 import { useNavigate } from "react-router-dom";
+import { FiCheckSquare } from "react-icons/fi";
 
 
 const validation = yup.object().shape({
@@ -47,8 +48,8 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
   const [subjectList, setSubjectList] = useState([])
   const [taskTypeList, setTaskTypeList] = useState([])
   const [statusList, setStatusList] = useState([])
-  const [comment, setComment] = useState()
-  const [grade, setGrade] = useState()
+  const [comment, setComment] = useState(item.comment)
+  const [grade, setGrade] = useState(item.grade)
   const navigate = useNavigate()
 
 
@@ -65,8 +66,6 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
 
   useEffect(() => {
 
-    console.log(title)
-    console.log(tipo)
 
     async function loadClients() {
 
@@ -169,23 +168,61 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
     saveTask()
   }
 
-  const templateParams = {
-    unity: user.name,
-    subject: subject,
-    message: obs,
-    email: item.userEmail,
-    status: status,
-    priority: priority
-  }
+
+
 
   function sendEmail() {
-    emailjs.send("service_uw92p6x", "template_shcpe8x", templateParams, "BrAq6Nxcac_3F_GXo")
-      .then((response) => {
-        console.log("Email enviado ", response.status, response.text)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+
+    if(user.group === 'admin'){
+      emailjs.send("service_uw92p6x", "template_shcpe8x", {
+        unity: user.name,
+        subject: subject,
+        message: obs,
+        email: item.userEmail,
+        status: status,
+        priority: priority
+      }, "BrAq6Nxcac_3F_GXo").then((response) => {
+          console.log("Email enviado ", response.status, response.text)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }else{
+      if(item.type === 'TI'){
+        emailjs.send("service_uw92p6x", "template_shcpe8x", {
+          unity: user.name,
+          subject: subject,
+          message: obs,
+          email: 'ticentrolab@centrolabvr.com.br',
+          status: status,
+          priority: priority
+        }, "BrAq6Nxcac_3F_GXo").then((response) => {
+            console.log("Email enviado ", response.status, response.text)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+        }else if(item.type === 'Estrutura'){
+        emailjs.send("service_uw92p6x", "template_shcpe8x", {
+          unity: user.name,
+          subject: subject,
+          message: obs,
+          email: 'compras@centrolabvr.com.br',
+          status: status,
+          priority: priority
+        }, "BrAq6Nxcac_3F_GXo").then((response) => {
+            console.log("Email enviado ", response.status, response.text)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+  
+      }
+
+    }
+
+
+
   }
 
   async function saveTask() {
@@ -217,8 +254,6 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
 
       }).then(() => {
         close()
-        sendEmail()
-        // getDoc()
         navigate('/')
         toast.success("Avaliação realizada!")
 
@@ -255,9 +290,6 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
       ...obsList,
       newOBS
     ])
-
-
-
 
 
     Axios.post(`${baseURL}/registerobs`, {
@@ -301,7 +333,13 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
   return (
     <div className="modal">
       <div className="modal-new">
-        <Title className='modal-title' name={title} />
+       
+          <>
+            <Title className='modal-title' name={title} task={item} id={item.taskId} />
+            
+           
+          </>
+      
 
         <form onSubmit={handleSubmit(saveTask)} className="form-modal" >
 

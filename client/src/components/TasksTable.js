@@ -15,7 +15,7 @@ import DeleteModal from "./DeleteModal";
 import Axios from "axios";
 
 
-export default function TasksTable({ tasks, order, getDoc, page }) {
+export default function TasksTable({ tasks, order, getDoc, page, tipo }) {
 
     const { user, baseURL } = useContext(AuthContext)
 
@@ -29,21 +29,29 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [newTask, setNewTask] = useState()
     const [hide, setHide] = useState()
+    const [show, setShow] = useState()
     const [name, setName] = useState()
+    const [disable, setDisable] = useState('none')
 
 
     useEffect(() => {
-
-        console.log(tasks)
+        console.log(tipo)
+        console.log(page)
         if (page === 'report') {
             setHide('hide-column')
+            setShow('show-column')
         }
-    }, [])
+
+        if (tipo === 'evaluation') {
+            setDisable('inline')
+        }
+    }, [tasks])
 
     function editClient(t, item) {
-        
+
         setType(t)
         setShowModal(!showModal)
+        console.log(disable)
 
         if (showModal === false) {
             setName(`Chamado numero ${item.taskId}`)
@@ -56,7 +64,6 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
             setTask(item)
         }
     }
-
 
     async function deleteTask(id) {
         setTaskId(id)
@@ -79,7 +86,7 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
 
     }
 
-    async function evaluateTask(t, item){
+    async function evaluateTask(t, item) {
         setTask(item)
         setType(t)
         setName(`Avaliação de chamado`)
@@ -98,8 +105,16 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                         <th scope="col" onClick={() => order('status', 'completedtask')}>Status</th>
                         <th scope="col" onClick={() => order('created', 'completedtask')}>Criado em</th>
                         {page === 'completedtasks' &&
-                            <th scope="col" onClick={() => order('concluded', 'completedtask')}>Concluido em</th>
+                            <>
+                                <th scope="col" onClick={() => order('concluded', 'completedtask')}>Concluido em</th>
+                                <th scope="col" >Nota</th>
+                            </>
                         }
+                        {page === 'report' &&
+
+                            <th scope="col" >Nota</th>
+                        }
+
                         <th scope="col" className={hide} >#</th>
                     </tr>
                 </thead>
@@ -114,17 +129,23 @@ export default function TasksTable({ tasks, order, getDoc, page }) {
                                 <td data-label="Status"><span className="status">{task.status}</span></td>
                                 <td data-label="Criado em">{task.created}</td>
                                 {page === 'completedtasks' &&
-                                    <td data-label="Concluido em">{task.concluded}</td>
+                                    <>
+                                        <td data-label="Concluido em">{task.concluded}</td>
+                                        <td data-label="Nota" className={`${show}`}>{task.grade}</td>
+                                    </>
+                                }
+                                {page === 'report' &&
+                                    <td data-label="Nota" className={`${show}`}>{task.grade}</td>
                                 }
                                 <td data-label="#" className={hide}>
                                     {page === 'completedtasks' ?
                                         <div>
                                             <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
-                                            <button className="task-btn grade" onClick={() => evaluateTask('evaluate' ,task)}><FiClipboard size={17} /></button>
+                                            <button className="task-btn grade" style={{ display: disable }} onClick={() => evaluateTask('evaluate', task)}><FiClipboard size={17} /></button>
                                         </div>
                                         :
                                         <div >
-                                            <button className="task-btn search"  onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
+                                            <button className="task-btn search" onClick={() => editClient('show', task)}><FiSearch size={17} /></button>
                                             <button className="task-btn edit" onClick={() => editClient('edit', task)}><FiEdit2 size={17} /></button>
                                             {user.group === 'admin' && (
                                                 <button className="task-btn check" onClick={() => completeTask(task)}><FiCheck size={17} /></button>
