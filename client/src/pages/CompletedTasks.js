@@ -135,6 +135,7 @@ export default function CompletedTasks() {
     setTasks([])
     Axios.get(`${baseURL}/getCompletedTasks`).then((response) => {
       newTasks = response.data
+      console.log(response.data)
       Axios.get(`${baseURL}/getObsList`).then((response) => {
         newObsList = response.data
         setObsEvalution(response.data)
@@ -142,9 +143,14 @@ export default function CompletedTasks() {
           loadTasks(newTasks, newObsList)
 
         } else {
-          const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
-          const obsDocs = newObsList.filter((o) => user.name === o.client)
-          loadTasks(tasksDocs, obsDocs)
+          Axios.post(`${baseURL}/getCompletedUnitsTasks`, {
+            userId: user.id
+          }).then((response) => {
+            newTasks = response.data
+            const tasksDocs = newTasks.filter((t) => user.email === t.userEmail)
+            const obsDocs = newObsList.filter((o) => user.name === o.client)
+            loadTasks(tasksDocs, obsDocs)
+          })
 
 
         }
@@ -177,6 +183,7 @@ export default function CompletedTasks() {
           taskImages: doc.taskImages,
           grade: doc.grade,
           comment: doc.comment,
+          responsable: doc.responsable,
         })
       })
 

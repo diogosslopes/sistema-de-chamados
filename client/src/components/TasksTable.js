@@ -33,6 +33,8 @@ export default function TasksTable({ tasks, order, getDoc, page, tipo }) {
     const [name, setName] = useState()
     const [disable, setDisable] = useState('none')
 
+    console.log(tasks)
+
 
     useEffect(() => {
         console.log(tipo)

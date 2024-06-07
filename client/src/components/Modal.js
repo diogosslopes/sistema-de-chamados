@@ -62,7 +62,7 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
   })
 
 
-
+console.log(item)
 
   useEffect(() => {
 
@@ -160,20 +160,13 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
     loadStatus()
   }, [])
 
-
-
-
-
   const save = data => {
     saveTask()
   }
 
-
-
-
   function sendEmail() {
 
-    if(user.group === 'admin'){
+    if (user.group === 'admin') {
       emailjs.send("service_uw92p6x", "template_shcpe8x", {
         unity: user.name,
         subject: subject,
@@ -182,13 +175,13 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
         status: status,
         priority: priority
       }, "BrAq6Nxcac_3F_GXo").then((response) => {
-          console.log("Email enviado ", response.status, response.text)
-        })
+        console.log("Email enviado ", response.status, response.text)
+      })
         .catch((err) => {
           console.log(err)
         })
-    }else{
-      if(item.type === 'TI'){
+    } else {
+      if (item.type === 'TI') {
         emailjs.send("service_uw92p6x", "template_shcpe8x", {
           unity: user.name,
           subject: subject,
@@ -197,12 +190,12 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
           status: status,
           priority: priority
         }, "BrAq6Nxcac_3F_GXo").then((response) => {
-            console.log("Email enviado ", response.status, response.text)
-          })
+          console.log("Email enviado ", response.status, response.text)
+        })
           .catch((err) => {
             console.log(err)
           })
-        }else if(item.type === 'Estrutura'){
+      } else if (item.type === 'Estrutura') {
         emailjs.send("service_uw92p6x", "template_shcpe8x", {
           unity: user.name,
           subject: subject,
@@ -211,12 +204,12 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
           status: status,
           priority: priority
         }, "BrAq6Nxcac_3F_GXo").then((response) => {
-            console.log("Email enviado ", response.status, response.text)
-          })
+          console.log("Email enviado ", response.status, response.text)
+        })
           .catch((err) => {
             console.log(err)
           })
-  
+
       }
 
     }
@@ -252,7 +245,20 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
         comment: comment,
         grade: grade,
 
-      }).then(() => {
+      }).then(async() => {
+
+       await Axios.post(`${baseURL}/getGrades`, {
+          userId: item.responsable
+        }).then(async (response) => {
+
+          await Axios.post(`${baseURL}/editGrade`, {
+            userId: item.responsable,
+            grade: response.data[0].media
+          })
+
+          console.log(response.data[0].media)
+        })
+
         close()
         navigate('/')
         toast.success("Avaliação realizada!")
@@ -327,19 +333,14 @@ export default function Modal({ tipo, close, item, getDoc, title, handleEvaluati
   }
 
 
-
-
-
   return (
     <div className="modal">
       <div className="modal-new">
-       
-          <>
-            <Title className='modal-title' name={title} task={item} id={item.taskId} />
-            
-           
-          </>
-      
+
+        <>
+          <Title className='modal-title' name={title} task={item} id={item.taskId} />
+
+        </>
 
         <form onSubmit={handleSubmit(saveTask)} className="form-modal" >
 
