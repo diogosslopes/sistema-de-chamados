@@ -66,6 +66,7 @@ export default function TasksTable({ tasks, order, getDoc, page, tipo }) {
             setTask(item)
         }
     }
+    
 
     async function deleteTask(id) {
         setTaskId(id)
