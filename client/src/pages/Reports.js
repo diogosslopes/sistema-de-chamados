@@ -113,10 +113,7 @@ export default function Reports() {
   }, [])
 
   function handleReport() {
-    console.log("Gerou")
 
-    console.log(dateEnd)
-    console.log(dateIni)
 
     if(dateIni !== '' && dateEnd !== ''){
 
@@ -146,7 +143,6 @@ export default function Reports() {
       }
   
       if (unity && type && status) {
-        console.log("Dados completos")
         Axios.post(`${baseURL}/getReport`, {
           caseNumber: 1,
           unity: unity,
